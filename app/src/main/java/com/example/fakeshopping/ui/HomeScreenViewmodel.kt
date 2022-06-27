@@ -4,6 +4,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fakeshopping.R
 import com.example.fakeshopping.data.FakeShopApi
 import com.example.fakeshopping.data.ShopApiCategoriesResponse
 import com.example.fakeshopping.data.ShopApiProductsResponse
@@ -39,5 +40,21 @@ class HomeScreenViewmodel @Inject constructor( private val repository:ShopApiRep
         }
     }
 
+
+    fun generateBannerSlidesResouuce():Map<String,Int>{
+
+        val bannerResource = mutableMapOf<String,Int>()
+        categories.forEach {
+            when(it){
+                "electronics" -> bannerResource.put(it , R.drawable.electronics_category_display)
+                "jewelery" -> bannerResource.put(it , R.drawable.jwellery_category_display)
+                "men's clothing" -> bannerResource.put(it , R.drawable.mensclothes_category_display)
+                "women's clothing" -> bannerResource.put(it , R.drawable.womenclothes_category_display)
+            }
+        }
+
+        return bannerResource
+
+    }
 
 }
