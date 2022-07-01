@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.fakeshopping.ui.presentation.CategoriesSection
 import com.example.fakeshopping.ui.presentation.HomeScreen
+import com.example.fakeshopping.ui.presentation.ProductDetailScreen
 import com.example.fakeshopping.utils.Routes
 
 @Composable
@@ -20,8 +21,8 @@ fun Navigation(){
             HomeScreen(navController)
         }
 
-        composable(Routes.categoryProductsScreen){
-            CategoriesSection()
+        composable(Routes.productDetailScreen){
+            ProductDetailScreen(category = "TEST", navController)
         }
 
     }

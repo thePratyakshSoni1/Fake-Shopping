@@ -8,13 +8,15 @@ interface ShopApiRepository {
 
     suspend fun getAllCategories(): List<String>
 
-    suspend fun getAllJewelery(): ShopApiProductsResponse
+    suspend fun getAllJewelery(): List<ShopApiProductsResponse>
 
-    suspend fun getAllMensClothes(): ShopApiProductsResponse
+    suspend fun getAllMensClothes(): List<ShopApiProductsResponse>
 
-    suspend fun getAllElectronics(): ShopApiProductsResponse
+    suspend fun getAllElectronics(): List<ShopApiProductsResponse>
 
-    suspend fun getAllWomensClothes(): ShopApiProductsResponse
+    suspend fun getAllWomensClothes(): List<ShopApiProductsResponse>
+
+    suspend fun getProductFromCategory(category:String): List<ShopApiProductsResponse>
 
 
 }

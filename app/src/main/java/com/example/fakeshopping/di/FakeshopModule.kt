@@ -4,6 +4,8 @@ import com.example.fakeshopping.data.BASE_URL
 import com.example.fakeshopping.data.FakeShopApi
 import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.ShopApiRepositoryImpl
+import com.example.fakeshopping.data.repository.TestDataRepo
+import com.example.fakeshopping.data.test_data.TestApiService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -41,6 +43,12 @@ object FakeshopModule {
     @Singleton
     fun provideshopApiRepository(apiService:FakeShopApi):ShopApiRepository{
         return ShopApiRepositoryImpl(apiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTestDataApiService():TestDataRepo{
+        return TestDataRepo()
     }
 
 }

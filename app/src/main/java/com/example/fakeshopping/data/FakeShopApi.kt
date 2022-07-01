@@ -12,17 +12,17 @@ interface FakeShopApi {
     @GET("products/categories")
     suspend fun getAllCategories(): List<String>
 
-    @GET("products/categories/jewelery")
-    suspend fun getAllJewelery(): ShopApiProductsResponse
+    @GET("products/category/jewelery")
+    suspend fun getAllJewelery(): List<ShopApiProductsResponse>
 
-    @GET("products/categories/men's clothing")
-    suspend fun getAllMensClothes(): ShopApiProductsResponse
+    @GET("products/category/men's clothing")
+    suspend fun getAllMensClothes(): List<ShopApiProductsResponse>
 
-    @GET("products/categories/electronics")
-    suspend fun getAllElectronics(): ShopApiProductsResponse
+    @GET("products/category/electronics")
+    suspend fun getAllElectronics(): List<ShopApiProductsResponse>
 
-    @GET("products/categories/women's clothing")
-    suspend fun getAllWomensClothes(): ShopApiProductsResponse
+    @GET("products/category/women's clothing")
+    suspend fun getAllWomensClothes(): List<ShopApiProductsResponse>
 
 
 }

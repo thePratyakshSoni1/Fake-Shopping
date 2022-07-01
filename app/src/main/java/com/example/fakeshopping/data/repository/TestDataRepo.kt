@@ -1,59 +1,63 @@
 package com.example.fakeshopping.data.repository
 
-import com.example.fakeshopping.R
-import com.example.fakeshopping.data.FakeShopApi
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.data.test_data.TestApiService
+import kotlinx.coroutines.delay
 
-class ShopApiRepositoryImpl(private val shopApiService:FakeShopApi): ShopApiRepository {
-
+class TestDataRepo: ShopApiRepository {
     override suspend fun getallProducts(): List<ShopApiProductsResponse> {
-        return shopApiService.getallProducts()
+        delay(2000L)
+        return TestApiService().getAllProducts()
     }
 
     override suspend fun getAllCategories(): List<String> {
         val tempList = mutableListOf<String>()
-        tempList.addAll(shopApiService.getAllCategories())
+        tempList.addAll(TestApiService().getAllCategories())
         tempList.add(0,"All")
+        delay(1500L)
         return tempList
     }
 
     override suspend fun getAllJewelery(): List<ShopApiProductsResponse> {
-        return shopApiService.getAllJewelery()
+        delay(1500L)
+        return TestApiService().getJweleryProducts()
     }
 
     override suspend fun getAllMensClothes(): List<ShopApiProductsResponse> {
-        return shopApiService.getAllMensClothes()
+        delay(1500L)
+        return TestApiService().getMensProducts()
     }
 
     override suspend fun getAllElectronics(): List<ShopApiProductsResponse> {
-        return shopApiService.getAllElectronics()
+        delay(2000L)
+        return TestApiService().getElectronicsProducts()
     }
 
     override suspend fun getAllWomensClothes(): List<ShopApiProductsResponse> {
-        return shopApiService.getAllWomensClothes()
+        delay(2000L)
+        return TestApiService().getWomensProducts()
     }
 
     override suspend fun getProductFromCategory(category: String): List<ShopApiProductsResponse> {
-
+        delay(2000L)
         return when(category){
             "electronics" ->{
-                getAllElectronics()
+                TestApiService().getJweleryProducts()
             }
             "All" ->{
-                getallProducts()
+                TestApiService().getAllProducts()
             }
             "jewelery" -> {
-                getAllJewelery()
+                TestApiService().getJweleryProducts()
             }
             "men's clothing" -> {
-                getAllMensClothes()
+                TestApiService().getMensProducts()
             }
             "women's clothing" -> {
-                getAllWomensClothes()
+                TestApiService().getWomensProducts()
             }
-            else -> getallProducts()
+            else -> TestApiService().getAllProducts()
         }
 
     }
-
 }
