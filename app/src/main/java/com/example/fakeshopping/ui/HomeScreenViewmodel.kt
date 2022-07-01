@@ -8,13 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenViewmodel @Inject constructor(private val repository: TestDataRepo) : ViewModel() {
+class HomeScreenViewmodel @Inject constructor(private val repository: ShopApiRepository) : ViewModel() {
 
     private val _products = mutableStateListOf<ShopApiProductsResponse>()
     private val _categories = mutableStateListOf<String>()

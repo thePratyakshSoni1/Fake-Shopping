@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import kotlinx.coroutines.CoroutineScope
@@ -178,13 +179,20 @@ fun ProductsCard(
     onNavigate: () -> Unit
 ) {
 
+    val imageFromUrl = rememberAsyncImagePainter(
+        model = product.image,
+        contentScale = ContentScale.FillBounds,
+        placeholder = painterResource(id = R.drawable.test_product_placeholder),
+    )
+
+
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Card(modifier = Modifier
             .clickable { onNavigate() }
             .fillMaxSize(), elevation = 8.dp) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Image(
-                    painter = painter,
+                    painter = imageFromUrl,
                     contentScale = ContentScale.Crop,
                     contentDescription = "image of ${product.title}" ,
                     modifier = Modifier

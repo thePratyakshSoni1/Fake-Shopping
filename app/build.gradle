@@ -87,4 +87,8 @@ dependencies {
     //kotlin Extensions & Coroutines for Room
     implementation "androidx.room:room-ktx:2.4.2"
 
+    //Coil
+    implementation("io.coil-kt:coil-compose:2.1.0")
+
+
 }
