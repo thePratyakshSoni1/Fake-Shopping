@@ -1,10 +1,9 @@
 package com.example.fakeshopping.data.repository
 
-import com.example.fakeshopping.R
 import com.example.fakeshopping.data.FakeShopApi
 import com.example.fakeshopping.data.ShopApiProductsResponse
 
-class ShopApiRepositoryImpl(private val shopApiService:FakeShopApi): ShopApiRepository {
+class ShopApiRepositoryImpl(private val shopApiService: FakeShopApi) : ShopApiRepository {
 
     override suspend fun getallProducts(): List<ShopApiProductsResponse> {
         return shopApiService.getallProducts()
@@ -13,7 +12,7 @@ class ShopApiRepositoryImpl(private val shopApiService:FakeShopApi): ShopApiRepo
     override suspend fun getAllCategories(): List<String> {
         val tempList = mutableListOf<String>()
         tempList.addAll(shopApiService.getAllCategories())
-        tempList.add(0,"All")
+        tempList.add(0, "All")
         return tempList
     }
 
@@ -35,11 +34,11 @@ class ShopApiRepositoryImpl(private val shopApiService:FakeShopApi): ShopApiRepo
 
     override suspend fun getProductFromCategory(category: String): List<ShopApiProductsResponse> {
 
-        return when(category){
-            "electronics" ->{
+        return when (category) {
+            "electronics" -> {
                 getAllElectronics()
             }
-            "All" ->{
+            "All" -> {
                 getallProducts()
             }
             "jewelery" -> {

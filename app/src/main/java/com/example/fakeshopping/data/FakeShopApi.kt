@@ -7,7 +7,7 @@ const val BASE_URL = "https://fakestoreapi.com"
 interface FakeShopApi {
 
     @GET("products")
-    suspend fun getallProducts():List<ShopApiProductsResponse>
+    suspend fun getallProducts(): List<ShopApiProductsResponse>
 
     @GET("products/categories")
     suspend fun getAllCategories(): List<String>

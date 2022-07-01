@@ -2,9 +2,11 @@ package com.example.fakeshopping.ui.presentation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -12,7 +14,6 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateMap
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -27,20 +28,20 @@ import com.example.fakeshopping.utils.Routes
 
 
 @Composable
-fun HomeScreen(navController: NavController){
+fun HomeScreen(navController: NavController) {
 
-    val viewmodel:HomeScreenViewmodel = hiltViewModel()
+    val viewmodel: HomeScreenViewmodel = hiltViewModel()
 
-    Column(modifier= Modifier.fillMaxSize()){
+    Column(modifier = Modifier.fillMaxSize()) {
 
         HeaderSection(
             modifier = Modifier
-            .fillMaxWidth(),
+                .fillMaxWidth(),
             viewmodel.searchBoxText,
             categories = viewmodel.categories,
             selectedCategory = viewmodel.selectedProductCategory,
             onCategoryChange = {
-                viewmodel.onCategoryChange( it )
+                viewmodel.onCategoryChange(it)
             }
         )
 
@@ -50,15 +51,16 @@ fun HomeScreen(navController: NavController){
         BannerSection(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.35f) ,
-            viewmodel.bannerResources ,
+                .fillMaxHeight(0.3f),
+            viewmodel.bannerResources,
             viewmodel.userInteractedWithBanners
 
         )
 
-        AllProductsSection(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
+        AllProductsSection(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
             viewmodel.products
         ) { navController.navigate(Routes.productDetailScreen) }
 
@@ -68,22 +70,24 @@ fun HomeScreen(navController: NavController){
 }
 
 @Composable
-fun HeaderSection (
-    modifier:Modifier = Modifier.fillMaxWidth(),
+fun HeaderSection(
+    modifier: Modifier = Modifier.fillMaxWidth(),
     searchText: MutableState<String>,
-    categories:List<String>,
-    selectedCategory:MutableState<String>,
-    onCategoryChange:(String)->Unit
-){
+    categories: List<String>,
+    selectedCategory: MutableState<String>,
+    onCategoryChange: (String) -> Unit
+) {
 
-    Column(modifier= modifier
-        .fillMaxWidth()
-        .background(Color.Blue)){
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Color.Blue)
+    ) {
 
         //HeaderTitle
         Text(
             text = "FakeShop",
-            modifier= Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp, top = 16.dp, start = 16.dp),
             fontSize = 21.sp, fontWeight = FontWeight.Bold, color = Color.White
@@ -93,20 +97,20 @@ fun HeaderSection (
         TextField(
             value = searchText.value,
             onValueChange = {
-                searchText.value= it
+                searchText.value = it
             },
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.White ,
+                backgroundColor = Color.White,
                 textColor = Color.Black,
                 cursorColor = Color.Blue,
             ),
-            modifier= modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp) ,
-            shape = RoundedCornerShape(8.dp) ,
+                .padding(horizontal = 16.dp),
+            shape = RoundedCornerShape(8.dp),
             textStyle = TextStyle(
-                fontSize = 16.sp ,
-            ) ,
+                fontSize = 16.sp,
+            ),
             placeholder = { Text("Search Products...") }
 
         )
@@ -114,10 +118,10 @@ fun HeaderSection (
         Spacer(Modifier.height(12.dp))
 
         //category selection section
-        Box(modifier=Modifier.fillMaxWidth()){
+        Box(modifier = Modifier.fillMaxWidth()) {
 
-            LazyRow(modifier=Modifier.padding(horizontal = 8.dp)){
-                items(categories){ item ->
+            LazyRow(modifier = Modifier.padding(horizontal = 8.dp)) {
+                items(categories) { item ->
 
                     HeaderSectionCategoryListItem(
                         isSelected = (item == selectedCategory.value),
@@ -134,10 +138,18 @@ fun HeaderSection (
 }
 
 @Composable
-fun BannerSection (modifier:Modifier = Modifier.fillMaxWidth(), bannerResource: SnapshotStateMap<String, Int>, userInteracted:MutableState<Boolean>){
+fun BannerSection(
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    bannerResource: SnapshotStateMap<String, Int>,
+    userInteracted: MutableState<Boolean>
+) {
 
-    Box(modifier = modifier){
-        BannerSlides(modifier = Modifier.fillMaxWidth(), bannersResource = bannerResource, userInteracted)
+    Box(modifier = modifier) {
+        BannerSlides(
+            modifier = Modifier.fillMaxWidth(),
+            bannersResource = bannerResource,
+            userInteracted
+        )
     }
 
 
@@ -145,16 +157,26 @@ fun BannerSection (modifier:Modifier = Modifier.fillMaxWidth(), bannerResource: 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AllProductsSection (modifier:Modifier = Modifier.fillMaxWidth(), products:List<ShopApiProductsResponse>, onNavigate:()->Unit){
+fun AllProductsSection(
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    products: List<ShopApiProductsResponse>,
+    onNavigate: () -> Unit
+) {
 
-    Column(modifier=modifier){
+    Column(modifier = modifier) {
 
 
-        LazyVerticalGrid(cells=GridCells.Fixed(3)){
+        LazyVerticalGrid(cells = GridCells.Fixed(3)) {
 
             items(products) { product ->
 
-                ProductsCard(modifier = Modifier.width(53.dp).padding(16.dp), product = product, onNavigate = onNavigate)
+                ProductsCard(
+                    modifier = Modifier
+                        .width(64.dp)
+                        .padding(4.dp),
+                    product = product,
+                    onNavigate = onNavigate
+                )
 
             }
         }

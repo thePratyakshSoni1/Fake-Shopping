@@ -3,9 +3,9 @@ package com.example.fakeshopping.data.test_data
 import com.example.fakeshopping.data.ShopApiProductsResponse
 
 private val listOfCategories = listOf<String>(
-    "electronics" ,
-    "jewelery" ,
-    "men's clothing" ,
+    "electronics",
+    "jewelery",
+    "men's clothing",
     "women's clothing"
 )
 
@@ -14,56 +14,56 @@ private val listOfelectronicProducts = listOf<ShopApiProductsResponse>(
     ShopApiProductsResponse(
         id = 1,
         title = "ProductX - electronics",
-        category = "electronics" ,
+        category = "electronics",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 2,
         title = "ProductX - electronics",
-        category = "electronics" ,
+        category = "electronics",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 3,
         title = "ProductX - electronics",
-        category = "electronics" ,
+        category = "electronics",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 4,
         title = "ProductX - electronics",
-        category = "electronics" ,
+        category = "electronics",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 5,
         title = "ProductX - electronics",
-        category = "electronics" ,
+        category = "electronics",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 6,
         title = "ProductX - electronics",
-        category = "electronics" ,
+        category = "electronics",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 )
 
 private val listOfJweleryProducts = listOf<ShopApiProductsResponse>(
@@ -71,36 +71,36 @@ private val listOfJweleryProducts = listOf<ShopApiProductsResponse>(
     ShopApiProductsResponse(
         id = 7,
         title = "ProductX - jewelery",
-        category = "jewelery" ,
+        category = "jewelery",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 8,
         title = "ProductX - jewelery",
-        category = "jewelery" ,
+        category = "jewelery",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 9,
         title = "ProductX -jewelery ",
-        category = "jewelery" ,
+        category = "jewelery",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 10,
         title = "ProductX - jewelery",
-        category = "jewelery" ,
+        category = "jewelery",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
     )
 )
@@ -110,101 +110,101 @@ private val listOfMensProducts = listOf<ShopApiProductsResponse>(
     ShopApiProductsResponse(
         id = 11,
         title = "ProductX - men's clothing",
-        category = "men's clothing" ,
+        category = "men's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 12,
         title = "ProductX - men's clothing",
-        category = "men's clothing" ,
+        category = "men's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 13,
         title = "ProductX - men's clothing",
-        category = "men's clothing" ,
+        category = "men's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 14,
         title = "ProductX -men's clothing ",
-        category = "men's clothing" ,
+        category = "men's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 15,
         title = "ProductX - men's clothing",
-        category = "men's clothing" ,
+        category = "men's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 16,
         title = "ProductX - men's clothing",
-        category = "men's clothing" ,
+        category = "men's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 17,
         title = "ProductX - men's clothing",
-        category = "men's clothing" ,
+        category = "men's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 18,
         title = "ProductX - men's clothing",
-        category = "men's clothing" ,
+        category = "men's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 19,
         title = "ProductX - men's clothing",
-        category = "men's clothing" ,
+        category = "men's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 20,
         title = "ProductX - men's clothing",
-        category = "men's clothing" ,
+        category = "men's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 21,
         title = "ProductX - men's clothing",
-        category = "men's clothing" ,
+        category = "men's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 )
 
 private val listOfWomensProducts = listOf<ShopApiProductsResponse>(
@@ -212,61 +212,61 @@ private val listOfWomensProducts = listOf<ShopApiProductsResponse>(
     ShopApiProductsResponse(
         id = 22,
         title = "ProductX - women's clothing",
-        category = "women's clothing" ,
+        category = "women's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 23,
         title = "ProductX - women's clothing",
-        category = "women's clothing" ,
+        category = "women's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 24,
         title = "ProductX - women's clothing",
-        category = "women's clothing" ,
+        category = "women's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 25,
         title = "ProductX - women's clothing",
-        category = "women's clothing" ,
+        category = "women's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 26,
         title = "ProductX - women's clothing",
-        category = "women's clothing" ,
+        category = "women's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 
     ShopApiProductsResponse(
         id = 27,
         title = "ProductX - women's clothing",
-        category = "women's clothing" ,
+        category = "women's clothing",
         price = "99",
-        description = "ProductX description is added here to display the indepth details of product , would you buy it." ,
+        description = "ProductX description is added here to display the indepth details of product , would you buy it.",
         image = "#nothingworks.url"
-    ) ,
+    ),
 )
 
-class TestApiService{
+class TestApiService {
 
-    fun getAllProducts():List<ShopApiProductsResponse>{
+    fun getAllProducts(): List<ShopApiProductsResponse> {
         val tempList = mutableListOf<ShopApiProductsResponse>()
 
         tempList.addAll(listOfJweleryProducts)
@@ -277,15 +277,14 @@ class TestApiService{
         return tempList
     }
 
-    fun getJweleryProducts():List<ShopApiProductsResponse> = listOfJweleryProducts
-    fun getElectronicsProducts():List<ShopApiProductsResponse> = listOfelectronicProducts
-    fun getMensProducts():List<ShopApiProductsResponse> = listOfMensProducts
-    fun getWomensProducts():List<ShopApiProductsResponse> = listOfWomensProducts
-    fun getAllCategories():List<String> = listOfCategories
+    fun getJweleryProducts(): List<ShopApiProductsResponse> = listOfJweleryProducts
+    fun getElectronicsProducts(): List<ShopApiProductsResponse> = listOfelectronicProducts
+    fun getMensProducts(): List<ShopApiProductsResponse> = listOfMensProducts
+    fun getWomensProducts(): List<ShopApiProductsResponse> = listOfWomensProducts
+    fun getAllCategories(): List<String> = listOfCategories
 
 
 }
-
 
 
 /**

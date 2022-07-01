@@ -4,7 +4,7 @@ import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.data.test_data.TestApiService
 import kotlinx.coroutines.delay
 
-class TestDataRepo: ShopApiRepository {
+class TestDataRepo : ShopApiRepository {
     override suspend fun getallProducts(): List<ShopApiProductsResponse> {
         delay(2000L)
         return TestApiService().getAllProducts()
@@ -13,7 +13,7 @@ class TestDataRepo: ShopApiRepository {
     override suspend fun getAllCategories(): List<String> {
         val tempList = mutableListOf<String>()
         tempList.addAll(TestApiService().getAllCategories())
-        tempList.add(0,"All")
+        tempList.add(0, "All")
         delay(1500L)
         return tempList
     }
@@ -40,11 +40,11 @@ class TestDataRepo: ShopApiRepository {
 
     override suspend fun getProductFromCategory(category: String): List<ShopApiProductsResponse> {
         delay(2000L)
-        return when(category){
-            "electronics" ->{
+        return when (category) {
+            "electronics" -> {
                 TestApiService().getJweleryProducts()
             }
-            "All" ->{
+            "All" -> {
                 TestApiService().getAllProducts()
             }
             "jewelery" -> {

@@ -14,13 +14,17 @@ import androidx.navigation.NavController
 import com.example.fakeshopping.utils.Routes
 
 @Composable
-fun ProductDetailScreen(category:String, navController: NavController){
+fun ProductDetailScreen(category: String, navController: NavController) {
 
-
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
-        Text("Product..", fontSize = 43.sp, fontWeight = FontWeight.Bold, color = Color.LightGray, modifier = Modifier.clickable {
-            navController.navigate(Routes.homeScreen)
-        })
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(
+            "Product..",
+            fontSize = 43.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.LightGray,
+            modifier = Modifier.clickable {
+                navController.navigate(Routes.homeScreen)
+            })
     }
 
 
