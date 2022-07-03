@@ -61,8 +61,10 @@ fun HomeScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(),
-            viewmodel.products
-        ) { navController.navigate(Routes.productDetailScreen) }
+             viewmodel.products
+        ) { product ->
+            navController.navigate("${Routes.productDetailScreen}/${product.id}")
+        }
 
     }
 
@@ -160,11 +162,10 @@ fun BannerSection(
 fun AllProductsSection(
     modifier: Modifier = Modifier.fillMaxWidth(),
     products: List<ShopApiProductsResponse>,
-    onNavigate: () -> Unit
+    onNavigate: (product:ShopApiProductsResponse) -> Unit
 ) {
 
     Column(modifier = modifier) {
-
 
         LazyVerticalGrid(cells = GridCells.Fixed(3)) {
 
@@ -180,6 +181,7 @@ fun AllProductsSection(
 
             }
         }
+
     }
 
 }

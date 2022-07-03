@@ -278,6 +278,18 @@ class TestApiService {
     }
 
     fun getJweleryProducts(): List<ShopApiProductsResponse> = listOfJweleryProducts
+
+    fun getProductById(productId:Int): ShopApiProductsResponse{
+        lateinit var reqProduct:ShopApiProductsResponse
+        getAllProducts().forEach {
+            if(it.id == productId){
+                reqProduct = it
+            }
+        }
+
+        return reqProduct
+    }
+
     fun getElectronicsProducts(): List<ShopApiProductsResponse> = listOfelectronicProducts
     fun getMensProducts(): List<ShopApiProductsResponse> = listOfMensProducts
     fun getWomensProducts(): List<ShopApiProductsResponse> = listOfWomensProducts

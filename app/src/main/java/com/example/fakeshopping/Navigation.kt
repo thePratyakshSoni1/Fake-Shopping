@@ -10,6 +10,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.fakeshopping.ui.presentation.HomeScreen
 import com.example.fakeshopping.ui.presentation.ProductDetailScreen
 import com.example.fakeshopping.utils.Routes
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.fakeshopping.data.ShopApiProductsResponse
 
 @Composable
 fun Navigation(window:Window) {
@@ -23,9 +26,16 @@ fun Navigation(window:Window) {
             HomeScreen(navController)
         }
 
-        composable(Routes.productDetailScreen) {
+        composable(
+            route = Routes.productDetailScreen+"/{productId}",
+            arguments = kotlin.collections.listOf(
+                navArgument("productId"){ type = NavType.IntType  }
+            )
+        ) { backStackEntry ->
+
             window.statusBarColor = Color.White.toArgb()
-            ProductDetailScreen(category = "TEST", navController)
+            ProductDetailScreen(navController, backStackEntry.arguments?.getInt("productId")!!)
+
         }
 
     }

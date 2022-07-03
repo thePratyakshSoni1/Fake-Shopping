@@ -9,6 +9,10 @@ class ShopApiRepositoryImpl(private val shopApiService: FakeShopApi) : ShopApiRe
         return shopApiService.getallProducts()
     }
 
+    override suspend fun getProductbyId(productId:Int): ShopApiProductsResponse {
+        return shopApiService.getProductbyid(productId)
+    }
+
     override suspend fun getAllCategories(): List<String> {
         val tempList = mutableListOf<String>()
         tempList.addAll(shopApiService.getAllCategories())

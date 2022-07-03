@@ -176,7 +176,7 @@ fun ProductsCard(
     modifier: Modifier,
     product: ShopApiProductsResponse,
     painter: Painter = painterResource(R.drawable.test_product_placeholder),
-    onNavigate: () -> Unit
+    onNavigate: (ShopApiProductsResponse) -> Unit
 ) {
 
     val imageFromUrl = rememberAsyncImagePainter(
@@ -188,7 +188,7 @@ fun ProductsCard(
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Card(modifier = Modifier
-            .clickable { onNavigate() }
+            .clickable { onNavigate(product) }
             .fillMaxSize(), elevation = 8.dp) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Image(

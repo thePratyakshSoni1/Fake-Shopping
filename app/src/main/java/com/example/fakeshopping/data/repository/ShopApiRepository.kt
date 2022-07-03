@@ -6,6 +6,8 @@ interface ShopApiRepository {
 
     suspend fun getallProducts(): List<ShopApiProductsResponse>
 
+    suspend fun getProductbyId(productId:Int): ShopApiProductsResponse
+
     suspend fun getAllCategories(): List<String>
 
     suspend fun getAllJewelery(): List<ShopApiProductsResponse>

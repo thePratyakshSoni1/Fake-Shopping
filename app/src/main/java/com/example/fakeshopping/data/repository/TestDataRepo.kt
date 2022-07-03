@@ -10,6 +10,10 @@ class TestDataRepo : ShopApiRepository {
         return TestApiService().getAllProducts()
     }
 
+    override suspend fun getProductbyId(productId: Int): ShopApiProductsResponse {
+        return TestApiService().getProductById(productId)
+    }
+
     override suspend fun getAllCategories(): List<String> {
         val tempList = mutableListOf<String>()
         tempList.addAll(TestApiService().getAllCategories())
