@@ -61,7 +61,7 @@ fun HomeScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(),
-             viewmodel.products
+            viewmodel.products
         ) { product ->
             navController.navigate("${Routes.productDetailScreen}/${product.id}")
         }
@@ -162,7 +162,7 @@ fun BannerSection(
 fun AllProductsSection(
     modifier: Modifier = Modifier.fillMaxWidth(),
     products: List<ShopApiProductsResponse>,
-    onNavigate: (product:ShopApiProductsResponse) -> Unit
+    onNavigate: (product: ShopApiProductsResponse) -> Unit
 ) {
 
     Column(modifier = modifier) {

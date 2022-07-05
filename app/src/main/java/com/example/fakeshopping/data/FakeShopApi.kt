@@ -11,7 +11,7 @@ interface FakeShopApi {
     suspend fun getallProducts(): List<ShopApiProductsResponse>
 
     @GET("products/{id}")
-    suspend fun getProductbyid(@Path("id") productId:Int): ShopApiProductsResponse
+    suspend fun getProductbyid(@Path("id") productId: Int): ShopApiProductsResponse
 
     @GET("products/categories")
     suspend fun getAllCategories(): List<String>

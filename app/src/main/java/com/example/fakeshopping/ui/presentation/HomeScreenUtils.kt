@@ -119,12 +119,12 @@ fun BannerSlides(
         var i = 0
         while (true) {
 
-            if(userInteracted.value) {
-                Log.i("BANNER","User interacted Delaying")
+            if (userInteracted.value) {
+                Log.i("BANNER", "User interacted Delaying")
                 delay(4500L)
                 userInteracted.value = false
                 i++
-                Log.i("BANNER","User Banner Delayed , Interacted: $i times")
+                Log.i("BANNER", "User Banner Delayed , Interacted: $i times")
             }
 
             delay(2400L)
@@ -175,7 +175,6 @@ fun CategoriesSection() {
 fun ProductsCard(
     modifier: Modifier,
     product: ShopApiProductsResponse,
-    painter: Painter = painterResource(R.drawable.test_product_placeholder),
     onNavigate: (ShopApiProductsResponse) -> Unit
 ) {
 
@@ -188,13 +187,12 @@ fun ProductsCard(
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Card(modifier = Modifier
-            .clickable { onNavigate(product) }
-            .fillMaxSize(), elevation = 8.dp) {
+            .clickable { onNavigate(product) }, elevation = 8.dp) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Image(
                     painter = imageFromUrl,
                     contentScale = ContentScale.Crop,
-                    contentDescription = "image of ${product.title}" ,
+                    contentDescription = "image of ${product.title}",
                     modifier = Modifier
                         .aspectRatio(1f / 1f)
                         .fillMaxWidth()

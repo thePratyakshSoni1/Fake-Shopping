@@ -17,7 +17,7 @@ private val listOfelectronicProducts = listOf<ShopApiProductsResponse>(
         category = "electronics",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -26,7 +26,7 @@ private val listOfelectronicProducts = listOf<ShopApiProductsResponse>(
         category = "electronics",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -35,7 +35,7 @@ private val listOfelectronicProducts = listOf<ShopApiProductsResponse>(
         category = "electronics",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -44,7 +44,7 @@ private val listOfelectronicProducts = listOf<ShopApiProductsResponse>(
         category = "electronics",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -53,7 +53,7 @@ private val listOfelectronicProducts = listOf<ShopApiProductsResponse>(
         category = "electronics",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -62,7 +62,7 @@ private val listOfelectronicProducts = listOf<ShopApiProductsResponse>(
         category = "electronics",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 )
 
@@ -74,7 +74,7 @@ private val listOfJweleryProducts = listOf<ShopApiProductsResponse>(
         category = "jewelery",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -83,7 +83,7 @@ private val listOfJweleryProducts = listOf<ShopApiProductsResponse>(
         category = "jewelery",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -92,7 +92,7 @@ private val listOfJweleryProducts = listOf<ShopApiProductsResponse>(
         category = "jewelery",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -101,7 +101,7 @@ private val listOfJweleryProducts = listOf<ShopApiProductsResponse>(
         category = "jewelery",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     )
 )
 
@@ -113,7 +113,7 @@ private val listOfMensProducts = listOf<ShopApiProductsResponse>(
         category = "men's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -122,7 +122,7 @@ private val listOfMensProducts = listOf<ShopApiProductsResponse>(
         category = "men's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -131,7 +131,7 @@ private val listOfMensProducts = listOf<ShopApiProductsResponse>(
         category = "men's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -140,7 +140,7 @@ private val listOfMensProducts = listOf<ShopApiProductsResponse>(
         category = "men's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -149,7 +149,7 @@ private val listOfMensProducts = listOf<ShopApiProductsResponse>(
         category = "men's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -158,7 +158,7 @@ private val listOfMensProducts = listOf<ShopApiProductsResponse>(
         category = "men's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -167,7 +167,7 @@ private val listOfMensProducts = listOf<ShopApiProductsResponse>(
         category = "men's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -176,7 +176,7 @@ private val listOfMensProducts = listOf<ShopApiProductsResponse>(
         category = "men's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -185,7 +185,7 @@ private val listOfMensProducts = listOf<ShopApiProductsResponse>(
         category = "men's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -194,7 +194,7 @@ private val listOfMensProducts = listOf<ShopApiProductsResponse>(
         category = "men's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -203,7 +203,7 @@ private val listOfMensProducts = listOf<ShopApiProductsResponse>(
         category = "men's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 )
 
@@ -215,7 +215,7 @@ private val listOfWomensProducts = listOf<ShopApiProductsResponse>(
         category = "women's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -224,7 +224,7 @@ private val listOfWomensProducts = listOf<ShopApiProductsResponse>(
         category = "women's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -233,7 +233,7 @@ private val listOfWomensProducts = listOf<ShopApiProductsResponse>(
         category = "women's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -242,7 +242,7 @@ private val listOfWomensProducts = listOf<ShopApiProductsResponse>(
         category = "women's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -251,7 +251,7 @@ private val listOfWomensProducts = listOf<ShopApiProductsResponse>(
         category = "women's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 
     ShopApiProductsResponse(
@@ -260,7 +260,7 @@ private val listOfWomensProducts = listOf<ShopApiProductsResponse>(
         category = "women's clothing",
         price = "99",
         description = "ProductX description is added here to display the indepth details of product , would you buy it.",
-        image = "#nothingworks.url"
+        image = "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
     ),
 )
 
@@ -279,10 +279,10 @@ class TestApiService {
 
     fun getJweleryProducts(): List<ShopApiProductsResponse> = listOfJweleryProducts
 
-    fun getProductById(productId:Int): ShopApiProductsResponse{
-        lateinit var reqProduct:ShopApiProductsResponse
+    fun getProductById(productId: Int): ShopApiProductsResponse {
+        lateinit var reqProduct: ShopApiProductsResponse
         getAllProducts().forEach {
-            if(it.id == productId){
+            if (it.id == productId) {
                 reqProduct = it
             }
         }
