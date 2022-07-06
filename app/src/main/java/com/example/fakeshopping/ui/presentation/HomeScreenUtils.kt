@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.MotionEvent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -160,7 +161,7 @@ fun BannerViewItem(modifier: Modifier, bannerImage: Painter, contentDescription:
         Image(
             painter = bannerImage,
             contentDescription = contentDescription,
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.FillWidth
         )
     }
 
@@ -180,18 +181,19 @@ fun ProductsCard(
 
     val imageFromUrl = rememberAsyncImagePainter(
         model = product.image,
-        contentScale = ContentScale.FillBounds,
+        contentScale = ContentScale.FillWidth,
         placeholder = painterResource(id = R.drawable.test_product_placeholder),
     )
 
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Card(modifier = Modifier
+            .wrapContentHeight()
             .clickable { onNavigate(product) }, elevation = 8.dp) {
             Column(modifier = Modifier.fillMaxSize()) {
                 Image(
                     painter = imageFromUrl,
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.FillWidth,
                     contentDescription = "image of ${product.title}",
                     modifier = Modifier
                         .aspectRatio(1f / 1f)

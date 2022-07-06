@@ -139,7 +139,7 @@ fun ProductPreviewSection(
                         .fillParentMaxWidth()
                         .aspectRatio(2f),
                     contentDescription = "Product Preview",
-                    contentScale = ContentScale.Fit
+                    contentScale = ContentScale.FillBounds
                 )
 
             }
@@ -203,11 +203,11 @@ fun DottedProgressIndicator(
 fun ProductTextDetails(modifier: Modifier, product: ShopApiProductsResponse) {
 
     Column(modifier = modifier.padding(horizontal = 12.dp)) {
-
+        Spacer(Modifier.height(8.dp))
         Text(
             text = product.title,
             fontFamily = FontFamily.SansSerif,
-            fontSize = 16.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(6.dp))
@@ -215,14 +215,14 @@ fun ProductTextDetails(modifier: Modifier, product: ShopApiProductsResponse) {
             text = product.description,
             fontFamily = FontFamily.SansSerif,
             fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.DarkGray
+            fontWeight = FontWeight.Medium,
+            color = Color.LightGray
         )
         Spacer(Modifier.height(8.dp))
         Text(
             text = "$" + product.price,
             fontFamily = FontFamily.SansSerif,
-            fontSize = 20.sp,
+            fontSize = 24.sp,
             fontWeight = FontWeight.Black
         )
 
@@ -270,13 +270,13 @@ fun BottomBarContent(modifier: Modifier) {
 
 
 @Composable
-fun RecommendationSectionTitle(txt:String){
+fun RecommendationSectionTitle(txt:String,modifier:Modifier = Modifier.fillMaxWidth()){
 
     Text(
         text= txt,
-        modifier=Modifier.fillMaxWidth(),
+        modifier=modifier,
         fontSize = 16.sp,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.Bold,
         fontFamily = FontFamily.SansSerif
     )
 
@@ -287,9 +287,8 @@ fun RecommendationSectionSeeAllButton(){
 
     Box(
         modifier= Modifier
-            .size(32.dp)
+            .size(69.dp)
             .clip(CircleShape)
-            .padding(8.dp)
             .border(2.dp, Color.Blue, shape = CircleShape),
         contentAlignment = Alignment.Center
     ) {
@@ -306,28 +305,41 @@ fun RecommendationSectionSeeAllButton(){
 @Composable
 fun OtherProductRecommendations(productsList:SnapshotStateList<ShopApiProductsResponse>, onNavigate:(ShopApiProductsResponse)->Unit){
 
-    RecommendationSectionTitle(txt = "Other Products")
-    LazyRow(modifier=Modifier,verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center){
+    RecommendationSectionTitle(txt = "Other Products",modifier= Modifier
+        .fillMaxWidth()
+        .padding(start = 10.dp))
+    Spacer(modifier = Modifier.height(8.dp))
+    LazyRow(
+        modifier=Modifier.padding(start=12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
 
-        if(productsList.isNotEmpty()) {
+        if (productsList.isNotEmpty()) {
             items(productsList) { product ->
 
                 ProductsCard(
                     modifier = Modifier
+                        .wrapContentHeight()
                         .padding(horizontal = 4.dp)
                         .fillParentMaxWidth(0.3f),
                     product = product,
                     onNavigate = onNavigate
                 )
             }
-        }else{
+        } else {
             item {
-                RecommendationSectionTitle(txt = "Loading Products...")
+                RecommendationSectionTitle(
+                    txt = "Loading Products...",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 12.dp)
+                )
             }
         }
 
         item {
-            Card(modifier=Modifier.fillParentMaxWidth(0.3f)) {
+            Card(modifier = Modifier.fillParentMaxWidth(0.3f)) {
                 RecommendationSectionSeeAllButton()
             }
         }
@@ -336,11 +348,14 @@ fun OtherProductRecommendations(productsList:SnapshotStateList<ShopApiProductsRe
 }
 
 @Composable
-fun RelevantProductRecommendations(productCategory:String, productsList:SnapshotStateList<ShopApiProductsResponse>, onNavigate:(ShopApiProductsResponse)->Unit) {
+fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProductsResponse>, onNavigate:(ShopApiProductsResponse)->Unit) {
 
-    RecommendationSectionTitle(txt = "Relevant Products")
+    RecommendationSectionTitle(txt = "Relevant Products",modifier= Modifier
+        .fillMaxWidth()
+        .padding(start = 10.dp))
+    Spacer(modifier = Modifier.height(8.dp))
     LazyRow(
-        modifier = Modifier,
+        modifier = Modifier.padding(start=12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -358,13 +373,17 @@ fun RelevantProductRecommendations(productCategory:String, productsList:Snapshot
             }
         }else{
             item {
-                RecommendationSectionTitle(txt = "Loading Products...")
+                RecommendationSectionTitle(txt = "Loading Products...",modifier= Modifier
+                    .fillMaxWidth()
+                    .padding(start = 12.dp))
             }
         }
 
 
         item {
-            RecommendationSectionSeeAllButton()
+            Card(modifier = Modifier.fillParentMaxWidth(0.3f)) {
+                RecommendationSectionSeeAllButton()
+            }
         }
     }
 

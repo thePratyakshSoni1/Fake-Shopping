@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -40,17 +43,19 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
             }
         ) {
 
-            Column() {
-                    //Product Preview
-                    ProductDetailsSection(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .defaultMinSize(minHeight = 180.dp),
-                        product = viewModel.product.value!!,
-                        currentImageIndex = viewModel.currentProductPreviewSlide
-                    )
+            Column(
+                modifier=Modifier.verticalScroll(state = rememberScrollState(), enabled = true)
+            ) {
+                //Product Preview
+                ProductDetailsSection(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 180.dp),
+                    product = viewModel.product.value!!,
+                    currentImageIndex = viewModel.currentProductPreviewSlide
+                )
 
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(24.dp))
 
                 //Recommendations
                 ProductRecommendationsSection(
@@ -73,22 +78,25 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
 @Composable
 fun ProductRecommendationsSection(productCategory:String, relevantProductList: SnapshotStateList<ShopApiProductsResponse>, otherProductsList:SnapshotStateList<ShopApiProductsResponse>, onNaviagte:(ShopApiProductsResponse)->Unit){
 
-    Column(modifier=Modifier.fillMaxWidth()){
-
+    Column(modifier= Modifier
+        .fillMaxWidth()
+        .wrapContentHeight()
+    ){
 
             RelevantProductRecommendations(
-                productCategory = productCategory,
                 productsList = relevantProductList,
                 onNavigate = onNaviagte
             )
 
 
-            Spacer(Modifier.height(6.dp))
+            Spacer(Modifier.height(39.dp))
 
             OtherProductRecommendations(
                 productsList = otherProductsList,
                 onNavigate = onNaviagte
             )
+
+            Spacer(Modifier.height(6.dp))
 
 
     }

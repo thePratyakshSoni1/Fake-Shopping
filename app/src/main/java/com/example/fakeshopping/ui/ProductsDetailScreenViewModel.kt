@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProductsDetailScreenViewModel @Inject constructor(val repository: TestDataRepo) :
+class ProductsDetailScreenViewModel @Inject constructor(val repository: ShopApiRepository) :
     ViewModel() {
 
     private var _product: MutableState<ShopApiProductsResponse?> = mutableStateOf(null)
@@ -38,7 +38,7 @@ class ProductsDetailScreenViewModel @Inject constructor(val repository: TestData
             _relevantProducts.addAll(getRandomProducts())
             _otherProducts.addAll(getRelevantProducts())
 
-            Log.i("PROD_VIEWMODEL","Rel: ${relevantproduct.toList()}\n\nOther: ${otherPproducts.toList()}")
+            Log.d("PROD_VIEWMODEL","Rel: ${relevantproduct.toList()}\n\nOther: ${otherPproducts.toList()}")
 
         }
 
@@ -56,7 +56,7 @@ class ProductsDetailScreenViewModel @Inject constructor(val repository: TestData
             relevantProducts.add(allProducts.random())
         }
 
-        Log.i("PROD_VIEWMODEL","returning: ${relevantproduct.toList()}")
+        Log.d("PROD_VIEWMODEL","returning: ${relevantproduct.toList()}")
         return relevantProducts
     }
 
