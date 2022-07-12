@@ -29,86 +29,115 @@ import androidx.navigation.NavController
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.ui.HomeScreenViewmodel
 import com.example.fakeshopping.utils.Routes
+import com.example.fakeshopping.utils.ToolbarSizes
 import com.example.fakeshopping.utils.ToolbarSizes.inDp
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController){
 
-//    val toolbarHeightPx = ToolbarSizes.STATE_EXPANDED_CONTENT_HEIGHT
-    //  our offset to collapse toolbar
-    val toolbarCollapsingContentHeight =
+    val viewmodel:HomeScreenViewmodel = hiltViewModel()
+    val toolBaroffsetY:MutableState<Float> = remember{ mutableStateOf(0f) }
 
-        remember { mutableStateOf(0f) }
-    // now, let's create connection to the nested scroll system and listen to the scroll
-    // happening inside child LazyColumn
-    val nestedScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-                // try to consume before LazyColumn to collapse toolbar if needed, hence pre-scroll
-                val delta = available.y
-                val newOffset = toolbarCollapsingContentHeight.value + delta
-                Log.d("TOPBAR","newOffset: ${toolbarCollapsingContentHeight.value} + $delta")
-//                toolbarCollapsingContentHeight.value = newOffset.coerceIn(0f, ToolbarSizes.STATE_COLLAPSED_CONSTENT_HEIGHT)
-                // here's the catch: let's pretend we consumed 0 in any case, since we want
-                // LazyColumn to scroll anyway for good UX
-                // We're basically watching scroll without taking it
-//                Log.d("TOPBAR","toolbarCollapsingContentHeight: ${toolbarCollapsingContentHeight.value}, toolbarHeightPx: $toolbarHeightPx")
-                return Offset.Zero
-            }
-        }
-    }
-
-    val viewmodel: HomeScreenViewmodel = hiltViewModel()
+    val homefeedScrollOffset = rememberLazyGridState()
 
 
-    Scaffold( modifier=Modifier.nestedScroll(
-        nestedScrollConnection
-    ),
-    ) {
+    Box(
+        modifier= Modifier.fillMaxSize()
+    ){
 
-        LazyVerticalGrid(columns = GridCells.Fixed(3)){
+        Column(
+            modifier= Modifier.nestedScroll(
 
-            item (span= { GridItemSpan(3)}){
-                HeaderSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .offset(x = 0f.inDp(), y = toolbarCollapsingContentHeight.value.inDp()),
-                    offsetReq = toolbarCollapsingContentHeight,
-                    searchText=viewmodel.searchBoxText, //73 dp
-//                    height = toolbarCollapsingContentHeight.value.inDp(),
-                    categories = viewmodel.categories,
-                    selectedCategory = viewmodel.selectedProductCategory,
-                    onCategoryChange = {
-                        viewmodel.onCategoryChange(it)
+                object :NestedScrollConnection {
+
+                    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+
+                        Log.d("TOPBAR","${available.y}")
+                        val delta = available.y
+                        val newScrollOffset = toolBaroffsetY.value + delta
+
+                        if(homefeedScrollOffset.firstVisibleItemIndex == 0 && homefeedScrollOffset.firstVisibleItemScrollOffset <= ToolbarSizes.STATE_COLLAPSING_CONTENT_HEIGHT){
+                            toolBaroffsetY.value = newScrollOffset.coerceIn(-ToolbarSizes.TOOLBAR_COLLAPSED_HEIGHT , 0f)
+                            Log.d("TOPBAR","TOOLBAR OFFSET: ${toolBaroffsetY.value}")
+                        }else{
+                            toolBaroffsetY.value = newScrollOffset.coerceIn(-ToolbarSizes.TOOLBAR_COLLAPSED_HEIGHT , -ToolbarSizes.STATE_COLLAPSING_CONTENT_HEIGHT)
+                            Log.d("TOPBAR","TOOLBAR OFFSET: ${toolBaroffsetY.value}")
+                        }
+
+                        return Offset.Zero
                     }
-                )
-            }
 
-            item( span= { GridItemSpan(3) } ){
-
-                BannerSection(
-                    modifier = Modifier.padding(vertical = 22.dp),
-                    viewmodel.bannerResources,
-                    viewmodel.userInteractedWithBanners
-
-                )
-            }
-
-            allProductsSection(
-                viewmodel.products
-            ) { product ->
-                navController.navigate("${Routes.productDetailScreen}/${product.id}")
-            }
-
+                }
+            )
+        ){
+            ContentSection(
+                navController,
+                viewmodel,
+                homefeedScrollOffset
+            )
         }
 
-    }
+        HeaderSection(
 
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset {
+                    IntOffset(x = 0, y = toolBaroffsetY.value.toInt())
+                },
+            viewmodel.searchBoxText, //73 dp
+            categories = viewmodel.categories,
+            selectedCategory = viewmodel.selectedProductCategory,
+            onCategoryChange = {
+                viewmodel.onCategoryChange(it)
+            },
+            offsetReq = toolBaroffsetY
+
+        )
+    }
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ContentSection(
+    navController:NavController,
+    viewmodel:HomeScreenViewmodel, listState: LazyGridState
+){
+
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        state = listState,
+    ){
+
+        item(span = { GridItemSpan(3) }){
+            Spacer(Modifier.height(ToolbarSizes.TOOLBAR_EXPANDED_HEIGHT.inDp() - ToolbarSizes.TOOLBAR_COLLAPSED_HEIGHT.inDp()))
+        }
+
+        item(span = { GridItemSpan(3) }){
+            Spacer(Modifier.height(ToolbarSizes.TOOLBAR_COLLAPSED_HEIGHT.inDp()))
+        }
+
+        item( span= { GridItemSpan(3) } ){
+
+            BannerSection(
+                Modifier.padding(vertical=22.dp),
+                viewmodel.bannerResources,
+                viewmodel.userInteractedWithBanners
+
+            )
+        }
+
+        allProductsSection(
+            viewmodel.products
+        ) { product ->
+            navController.navigate("${Routes.productDetailScreen}/${product.id}")
+        }
+
+    }
+
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

@@ -59,7 +59,6 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
 
                 //Recommendations
                 ProductRecommendationsSection(
-                    productCategory = viewModel.product.value!!.category,
                     relevantProductList = viewModel.relevantproduct,
                     otherProductsList = viewModel.otherPproducts,
                     onNaviagte = {
@@ -76,7 +75,7 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
 }
 
 @Composable
-fun ProductRecommendationsSection(productCategory:String, relevantProductList: SnapshotStateList<ShopApiProductsResponse>, otherProductsList:SnapshotStateList<ShopApiProductsResponse>, onNaviagte:(ShopApiProductsResponse)->Unit){
+fun ProductRecommendationsSection( relevantProductList: SnapshotStateList<ShopApiProductsResponse>, otherProductsList:SnapshotStateList<ShopApiProductsResponse>, onNaviagte:(ShopApiProductsResponse)->Unit){
 
     Column(modifier= Modifier
         .fillMaxWidth()

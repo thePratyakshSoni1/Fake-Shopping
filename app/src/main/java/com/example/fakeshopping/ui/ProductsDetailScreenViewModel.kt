@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProductsDetailScreenViewModel @Inject constructor(val repository: TestDataRepo) :
+class ProductsDetailScreenViewModel @Inject constructor(val repository: ShopApiRepository) :
     ViewModel() {
 
     private var _product: MutableState<ShopApiProductsResponse?> = mutableStateOf(null)

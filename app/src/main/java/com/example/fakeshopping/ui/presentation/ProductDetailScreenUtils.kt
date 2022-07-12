@@ -105,10 +105,10 @@ fun ProductPreviewSection(
                         MotionEvent.ACTION_UP -> {
 
                             upOffsetX = it.x
-                            if (upOffsetX - downOffsetX < -100f && currentImageIndex.value < (productImagesUrl.size - 1)) {
+                            if (upOffsetX - downOffsetX < -70f && currentImageIndex.value < (productImagesUrl.size - 1)) {
                                 currentImageIndex.value++
                                 Log.i("SWIPE", "ActionUp ++: Curr: ${currentImageIndex.value}")
-                            } else if (upOffsetX - downOffsetX > 100f && currentImageIndex.value > 0) {
+                            } else if (upOffsetX - downOffsetX > 70f && currentImageIndex.value > 0) {
                                 currentImageIndex.value--
                                 Log.i("SWIPE", "ActionUp -- : Curr: ${currentImageIndex.value}")
                             } else {
@@ -139,7 +139,7 @@ fun ProductPreviewSection(
                         .fillParentMaxWidth()
                         .aspectRatio(2f),
                     contentDescription = "Product Preview",
-                    contentScale = ContentScale.FillBounds
+                    contentScale = ContentScale.Fit
                 )
 
             }
@@ -287,17 +287,12 @@ fun RecommendationSectionSeeAllButton(){
 
     Box(
         modifier= Modifier
-            .size(69.dp)
-            .clip(CircleShape)
-            .border(2.dp, Color.Blue, shape = CircleShape),
+            .clickable { Unit }
+            .clip(RoundedCornerShape(2.dp))
+            .padding(6.dp),
         contentAlignment = Alignment.Center
     ) {
-        Image(
-            imageVector = Icons.Default.ArrowForward,
-            contentDescription = "See All",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+        Text( "SEE ALL", color = Color.Blue )
     }
 
 }
@@ -313,6 +308,7 @@ fun OtherProductRecommendations(productsList:SnapshotStateList<ShopApiProductsRe
         modifier=Modifier.padding(start=12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
+        contentPadding = PaddingValues(horizontal = 12.dp)
     ) {
 
         if (productsList.isNotEmpty()) {
@@ -337,11 +333,11 @@ fun OtherProductRecommendations(productsList:SnapshotStateList<ShopApiProductsRe
                 )
             }
         }
-
         item {
-            Card(modifier = Modifier.fillParentMaxWidth(0.3f)) {
+            Spacer(Modifier.width(4.dp))
+        }
+        item {
                 RecommendationSectionSeeAllButton()
-            }
         }
     }
 
@@ -357,7 +353,8 @@ fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProduc
     LazyRow(
         modifier = Modifier.padding(start=12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
+        contentPadding = PaddingValues(horizontal = 12.dp)
     ) {
 
         if(productsList.isNotEmpty()){
@@ -379,11 +376,12 @@ fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProduc
             }
         }
 
+        item {
+            Spacer(Modifier.width(4.dp))
+        }
 
         item {
-            Card(modifier = Modifier.fillParentMaxWidth(0.3f)) {
-                RecommendationSectionSeeAllButton()
-            }
+            RecommendationSectionSeeAllButton()
         }
     }
 
