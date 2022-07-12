@@ -91,7 +91,7 @@ fun BannerSlides(
 
             items(bannersResource.keys.toList()) { bannerName ->
                 BannerViewItem(
-                    modifier = Modifier.fillMaxHeight(0.9f),
+                    modifier = Modifier.fillParentMaxWidth(0.9f),
                     bannerImage = painterResource(id = bannersResource[bannerName]!!)
                 )
             }
@@ -161,7 +161,7 @@ fun BannerViewItem(modifier: Modifier, bannerImage: Painter, contentDescription:
         Image(
             painter = bannerImage,
             contentDescription = contentDescription,
-            contentScale = ContentScale.FillWidth
+            contentScale = ContentScale.Crop
         )
     }
 
