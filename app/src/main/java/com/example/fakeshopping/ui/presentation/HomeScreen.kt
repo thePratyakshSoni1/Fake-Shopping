@@ -8,12 +8,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -35,14 +34,19 @@ import com.example.fakeshopping.utils.ToolbarSizes.inDp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(navController: NavController){
+fun HomeScreen(navController: NavController, category:String = "All"){
 
     val viewmodel:HomeScreenViewmodel = hiltViewModel()
     val toolBaroffsetY:MutableState<Float> = remember{ mutableStateOf(0f) }
-
     val homefeedScrollOffset = rememberLazyGridState()
 
 
+    Log.d("CLICKED","HOME SCREEN RECOMPOSED")
+    LaunchedEffect(key1 = true ) {
+        viewmodel.changeCategory(category)
+        viewmodel.refreshCategories()
+        Log.d("API", "Api requests were made does that succeed ?")
+    }
     Box(
         modifier= Modifier.fillMaxSize()
     ){
@@ -74,8 +78,10 @@ fun HomeScreen(navController: NavController){
         ){
             ContentSection(
                 navController,
-                viewmodel,
-                homefeedScrollOffset
+                viewmodel.bannerResources,
+                viewmodel.userInteractedWithBanners,
+                homefeedScrollOffset,
+                viewmodel.products
             )
         }
 
@@ -88,9 +94,10 @@ fun HomeScreen(navController: NavController){
                 },
             viewmodel.searchBoxText, //73 dp
             categories = viewmodel.categories,
-            selectedCategory = viewmodel.selectedProductCategory,
+            selectedCategory = viewmodel.selectedCategory,
             onCategoryChange = {
-                viewmodel.onCategoryChange(it)
+                Log.d("CLICKED","Category Header Section")
+                viewmodel.changeCategory(it)
             },
             offsetReq = toolBaroffsetY
 
@@ -103,7 +110,10 @@ fun HomeScreen(navController: NavController){
 @Composable
 fun ContentSection(
     navController:NavController,
-    viewmodel:HomeScreenViewmodel, listState: LazyGridState
+    bannerResource: SnapshotStateMap<String, Int>,
+    userInteracted: MutableState<Boolean>,
+    listState: LazyGridState,
+    products: SnapshotStateList<ShopApiProductsResponse>
 ){
 
     LazyVerticalGrid(
@@ -123,14 +133,14 @@ fun ContentSection(
 
             BannerSection(
                 Modifier.padding(vertical=22.dp),
-                viewmodel.bannerResources,
-                viewmodel.userInteractedWithBanners
+                bannerResource,
+                userInteracted
 
             )
         }
 
         allProductsSection(
-            viewmodel.products
+            products
         ) { product ->
             navController.navigate("${Routes.productDetailScreen}/${product.id}")
         }
@@ -144,7 +154,6 @@ fun ContentSection(
 fun HeaderSection(
     modifier: Modifier = Modifier.fillMaxWidth(),
     searchText: MutableState<String>,
-//    height: Dp,
     categories: List<String>,
     selectedCategory: MutableState<String>,
     onCategoryChange: (String) -> Unit,
@@ -156,13 +165,9 @@ fun HeaderSection(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.Blue)
-//            .height(ToolbarSizes.STATE_EXPANDED_CONTENT_HEIGHT.inDp())
     ) {
 
-        Column(
-//            Modifier.height(height)
-        ) {
-
+        Column() {
 
             //HeaderTitle
             Text(
@@ -186,12 +191,11 @@ fun HeaderSection(
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .offset(x=0.dp,y = -offsetReq.value.inDp()),
+                    .offset(x = 0.dp, y = -offsetReq.value.inDp()),
                 shape = RoundedCornerShape(8.dp),
                 textStyle = TextStyle(
                     fontSize = 16.sp,
                 ),
-//                placeholder = { Text(((-height.value).inDp()).toString()) }
                 placeholder = { Text("Serach Products ...") }
 
             )
@@ -254,4 +258,3 @@ fun LazyGridScope.allProductsSection(
 
     }
 }
-

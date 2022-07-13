@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenViewmodel @Inject constructor(private val repository: ShopApiRepository) :
+class HomeScreenViewmodel @Inject constructor(private val repository: TestDataRepo) :
     ViewModel() {
 
     private val _products = mutableStateListOf<ShopApiProductsResponse>()
@@ -27,24 +27,18 @@ class HomeScreenViewmodel @Inject constructor(private val repository: ShopApiRep
     val bannerResources get() = _bannerResources
 
     val searchBoxText = mutableStateOf("")
-    val selectedProductCategory = mutableStateOf("All")
+    val selectedCategory = mutableStateOf("All")
 
     val userInteractedWithBanners = mutableStateOf(false)
 
-    init {
-        refreshProducts()
-        refreshCategories()
-        Log.d("API", "Api requests were made does that succeed ?")
-    }
-
-    private fun refreshProducts() {
+    fun refreshProducts() {
         viewModelScope.launch {
             _products.addAll(repository.getallProducts())
             Log.i("API", "Products Updated")
         }
     }
 
-    private fun refreshCategories() {
+    fun refreshCategories() {
         viewModelScope.launch {
             _categories.addAll(repository.getAllCategories())
             generateBannerSlidesResouuce()
@@ -73,11 +67,14 @@ class HomeScreenViewmodel @Inject constructor(private val repository: ShopApiRep
 
     }
 
-    fun onCategoryChange(category: String) {
-        selectedProductCategory.value = category
+    fun changeCategory(category: String) {
+        Log.d("CATEGORY_CHANGE","Changing Category")
         viewModelScope.launch {
             _products.clear()
+            Log.d("CATEGORY_CHANGE","CATEGORY: ${selectedCategory.value}\n\t\t${products.toList()}")
             _products.addAll(repository.getProductFromCategory(category))
+            selectedCategory.value = category
+            Log.d("CATEGORY_CHANGE","CATEGORY: ${selectedCategory.value}\n\t\t${products.toList()}")
         }
     }
 

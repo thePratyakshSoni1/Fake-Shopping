@@ -14,12 +14,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.ui.ProductsDetailScreenViewModel
+import com.example.fakeshopping.utils.Routes
 
 @Composable
 fun ProductDetailScreen(navController: NavController, productId: Int) {
@@ -46,6 +48,9 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
             Column(
                 modifier=Modifier.verticalScroll(state = rememberScrollState(), enabled = true)
             ) {
+
+                Spacer(Modifier.height(12.dp))
+
                 //Product Preview
                 ProductDetailsSection(
                     modifier = Modifier
@@ -62,9 +67,18 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
                     relevantProductList = viewModel.relevantproduct,
                     otherProductsList = viewModel.otherPproducts,
                     onNaviagte = {
-                        //HI
+                        viewModel.setProduct(it)
+                    },
+                    onRelevantSeeAllBtnClick = {
+                        navController.navigate("${Routes.homeScreen}?category=${viewModel.product.value!!.category}")
+                    },
+                    onOtherSeeAllBtnClick = {
+                        navController.navigate("${Routes.homeScreen}?category=All")
                     }
+
                 )
+
+                Spacer(Modifier.height(32.dp))
 
             }
 
@@ -75,7 +89,13 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
 }
 
 @Composable
-fun ProductRecommendationsSection( relevantProductList: SnapshotStateList<ShopApiProductsResponse>, otherProductsList:SnapshotStateList<ShopApiProductsResponse>, onNaviagte:(ShopApiProductsResponse)->Unit){
+fun ProductRecommendationsSection(
+    relevantProductList: SnapshotStateList<ShopApiProductsResponse>,
+    otherProductsList:SnapshotStateList<ShopApiProductsResponse>,
+    onNaviagte:(ShopApiProductsResponse)->Unit,
+    onRelevantSeeAllBtnClick: () -> Unit,
+    onOtherSeeAllBtnClick: () -> Unit,
+){
 
     Column(modifier= Modifier
         .fillMaxWidth()
@@ -84,7 +104,8 @@ fun ProductRecommendationsSection( relevantProductList: SnapshotStateList<ShopAp
 
             RelevantProductRecommendations(
                 productsList = relevantProductList,
-                onNavigate = onNaviagte
+                onNavigate = onNaviagte,
+                onSellAllBtnClick = onRelevantSeeAllBtnClick,
             )
 
 
@@ -92,7 +113,8 @@ fun ProductRecommendationsSection( relevantProductList: SnapshotStateList<ShopAp
 
             OtherProductRecommendations(
                 productsList = otherProductsList,
-                onNavigate = onNaviagte
+                onNavigate = onNaviagte,
+                onOtherSeelBtnClick = onOtherSeeAllBtnClick,
             )
 
             Spacer(Modifier.height(6.dp))

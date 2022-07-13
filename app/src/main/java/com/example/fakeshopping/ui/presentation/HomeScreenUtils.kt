@@ -271,6 +271,7 @@ fun HeaderSectionCategoryListItem(
         .padding(horizontal = 4.dp)
         .defaultMinSize(minWidth = 46.dp)
         .clickable {
+            Log.d("CLICKED","Category Header Section")
             onCategoryClick(categoryName)
         }
     ) {

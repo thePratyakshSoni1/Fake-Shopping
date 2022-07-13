@@ -283,12 +283,12 @@ fun RecommendationSectionTitle(txt:String,modifier:Modifier = Modifier.fillMaxWi
 }
 
 @Composable
-fun RecommendationSectionSeeAllButton(){
+fun RecommendationSectionSeeAllButton(onButtonClick: () -> Unit){
 
     Box(
         modifier= Modifier
-            .clickable { Unit }
             .clip(RoundedCornerShape(2.dp))
+            .clickable { onButtonClick() }
             .padding(6.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -298,7 +298,11 @@ fun RecommendationSectionSeeAllButton(){
 }
 
 @Composable
-fun OtherProductRecommendations(productsList:SnapshotStateList<ShopApiProductsResponse>, onNavigate:(ShopApiProductsResponse)->Unit){
+fun OtherProductRecommendations(
+    productsList:SnapshotStateList<ShopApiProductsResponse>,
+    onNavigate:(ShopApiProductsResponse)->Unit,
+    onOtherSeelBtnClick:() -> Unit
+){
 
     RecommendationSectionTitle(txt = "Other Products",modifier= Modifier
         .fillMaxWidth()
@@ -337,14 +341,14 @@ fun OtherProductRecommendations(productsList:SnapshotStateList<ShopApiProductsRe
             Spacer(Modifier.width(4.dp))
         }
         item {
-                RecommendationSectionSeeAllButton()
+            RecommendationSectionSeeAllButton( onOtherSeelBtnClick )
         }
     }
 
 }
 
 @Composable
-fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProductsResponse>, onNavigate:(ShopApiProductsResponse)->Unit) {
+fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProductsResponse>, onNavigate:(ShopApiProductsResponse)->Unit, onSellAllBtnClick: () -> Unit) {
 
     RecommendationSectionTitle(txt = "Relevant Products",modifier= Modifier
         .fillMaxWidth()
@@ -381,7 +385,7 @@ fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProduc
         }
 
         item {
-            RecommendationSectionSeeAllButton()
+            RecommendationSectionSeeAllButton(onSellAllBtnClick )
         }
     }
 

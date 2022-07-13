@@ -18,11 +18,19 @@ fun Navigation(window: Window) {
 
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Routes.homeScreen) {
+    NavHost(navController = navController, startDestination = Routes.homeScreen+"?category={category}") {
 
-        composable(Routes.homeScreen) {
+        composable(
+            route = Routes.homeScreen+"?category={category}",
+            arguments = listOf(
+                navArgument("category") {
+                    type = NavType.StringType
+                    defaultValue = "All"
+                }
+            )
+        ) { backStackEntry ->
             window.statusBarColor = Color.Blue.toArgb()
-            HomeScreen(navController)
+            HomeScreen(navController, backStackEntry.arguments?.getString("category")!!)
         }
 
         composable(

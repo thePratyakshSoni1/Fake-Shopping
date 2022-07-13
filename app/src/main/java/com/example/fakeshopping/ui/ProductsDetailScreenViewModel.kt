@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProductsDetailScreenViewModel @Inject constructor(val repository: ShopApiRepository) :
+class ProductsDetailScreenViewModel @Inject constructor(val repository: TestDataRepo) :
     ViewModel() {
 
     private var _product: MutableState<ShopApiProductsResponse?> = mutableStateOf(null)
@@ -35,8 +35,8 @@ class ProductsDetailScreenViewModel @Inject constructor(val repository: ShopApiR
         viewModelScope.launch {
 
             _product.value = repository.getProductbyId(productId)
-            _relevantProducts.addAll(getRandomProducts())
-            _otherProducts.addAll(getRelevantProducts())
+            _relevantProducts.addAll(getRelevantProducts())
+            _otherProducts.addAll(getRandomProducts())
 
             Log.d("PROD_VIEWMODEL","Rel: ${relevantproduct.toList()}\n\nOther: ${otherPproducts.toList()}")
 
@@ -45,7 +45,17 @@ class ProductsDetailScreenViewModel @Inject constructor(val repository: ShopApiR
     }
 
     fun setProduct(productDetails: ShopApiProductsResponse) {
-        _product.value = productDetails
+
+        viewModelScope.launch {
+            _product.value = productDetails
+            _relevantProducts.addAll(getRandomProducts())
+            _otherProducts.addAll(getRelevantProducts())
+
+            Log.d(
+                "PROD_VIEWMODEL",
+                "Rel: ${relevantproduct.toList()}\n\nOther: ${otherPproducts.toList()}"
+            )
+        }
     }
 
     suspend fun getRelevantProducts():List<ShopApiProductsResponse> {
@@ -64,8 +74,13 @@ class ProductsDetailScreenViewModel @Inject constructor(val repository: ShopApiR
 
         val randomProducts = mutableListOf<ShopApiProductsResponse>()
         val allProducts = repository.getallProducts()
-        repeat(6){
-            randomProducts.add(allProducts.random())
+        while(randomProducts.size <= 5){
+//            randomProducts.add(allProducts.random())
+            allProducts.random().let {
+                if(!randomProducts.contains(it)){
+                    randomProducts.add(it)
+                }
+            }
         }
         return randomProducts
     }
