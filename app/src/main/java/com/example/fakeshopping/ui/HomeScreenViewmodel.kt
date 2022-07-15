@@ -70,10 +70,10 @@ class HomeScreenViewmodel @Inject constructor(private val repository: TestDataRe
     fun changeCategory(category: String) {
         Log.d("CATEGORY_CHANGE","Changing Category")
         viewModelScope.launch {
+            selectedCategory.value = category
             _products.clear()
             Log.d("CATEGORY_CHANGE","CATEGORY: ${selectedCategory.value}\n\t\t${products.toList()}")
             _products.addAll(repository.getProductFromCategory(category))
-            selectedCategory.value = category
             Log.d("CATEGORY_CHANGE","CATEGORY: ${selectedCategory.value}\n\t\t${products.toList()}")
         }
     }

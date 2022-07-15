@@ -29,8 +29,8 @@ fun Navigation(window: Window) {
                 }
             )
         ) { backStackEntry ->
-            window.statusBarColor = Color.Blue.toArgb()
-            HomeScreen(navController, backStackEntry.arguments?.getString("category")!!)
+            window.statusBarColor = Color.White.toArgb()
+            HomeScreen(navController, backStackEntry.arguments?.getString("category")!!,window)
         }
 
         composable(

@@ -1,26 +1,26 @@
 package com.example.fakeshopping.ui.presentation
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.ui.ProductsDetailScreenViewModel
+import com.example.fakeshopping.ui.presentation.components.LoadingView
+import com.example.fakeshopping.ui.theme.ColorYellow
 import com.example.fakeshopping.utils.Routes
 
 @Composable
@@ -33,23 +33,18 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
     }
 
     if (viewModel.product.value == null) {
-        Text("Loading", fontSize = 18.sp, color = Color.DarkGray)
+        LoadingView(modifier = Modifier.fillMaxSize(), circleSize = 64.dp)
     } else {
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            bottomBar = {
-                BottomBarContent(
-                    modifier = Modifier
-                )
-            }
         ) {
 
             Column(
-                modifier=Modifier.verticalScroll(state = rememberScrollState(), enabled = true)
+                modifier = Modifier.verticalScroll(state = rememberScrollState(), enabled = true)
             ) {
 
-                Spacer(Modifier.height(12.dp))
+//                Spacer(Modifier.height(12.dp))
 
                 //Product Preview
                 ProductDetailsSection(
@@ -62,12 +57,53 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
 
                 Spacer(Modifier.height(24.dp))
 
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = ColorYellow
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = ButtonDefaults.elevation(0.dp)
+                ) {
+                    Text(
+                        "BUY NOW",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.SansSerif,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                }
+
+                Spacer(Modifier.height(6.dp))
+
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Transparent
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(3.dp, ColorYellow),
+                    elevation = ButtonDefaults.elevation(0.dp)
+                ) {
+                    Text(
+                        "ADD TO CART",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.SansSerif,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                }
+
+                Spacer(Modifier.height(24.dp))
+
                 //Recommendations
                 ProductRecommendationsSection(
                     relevantProductList = viewModel.relevantproduct,
                     otherProductsList = viewModel.otherPproducts,
                     onNaviagte = {
-                        viewModel.setProduct(it)
+                        navController.navigate(Routes.productDetailScreen + "/${it.id}")
                     },
                     onRelevantSeeAllBtnClick = {
                         navController.navigate("${Routes.homeScreen}?category=${viewModel.product.value!!.category}")
@@ -78,7 +114,7 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
 
                 )
 
-                Spacer(Modifier.height(32.dp))
+                Spacer(Modifier.height(120.dp))
 
             }
 
@@ -105,7 +141,7 @@ fun ProductRecommendationsSection(
             RelevantProductRecommendations(
                 productsList = relevantProductList,
                 onNavigate = onNaviagte,
-                onSellAllBtnClick = onRelevantSeeAllBtnClick,
+                onSeeAllBtnClick = onRelevantSeeAllBtnClick,
             )
 
 
@@ -114,7 +150,7 @@ fun ProductRecommendationsSection(
             OtherProductRecommendations(
                 productsList = otherProductsList,
                 onNavigate = onNaviagte,
-                onOtherSeelBtnClick = onOtherSeeAllBtnClick,
+                onOtherSeeAllBtnClick = onOtherSeeAllBtnClick,
             )
 
             Spacer(Modifier.height(6.dp))

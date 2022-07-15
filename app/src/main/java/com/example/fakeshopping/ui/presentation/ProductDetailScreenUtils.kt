@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -21,19 +20,21 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
-import com.example.fakeshopping.data.repository.TestDataRepo
+import com.example.fakeshopping.ui.presentation.components.LoadingView
+import com.example.fakeshopping.ui.presentation.components.RatingBar
+import kotlin.math.roundToInt
 
 @Composable
 fun ProductDetailsSection(
@@ -50,19 +51,18 @@ fun ProductDetailsSection(
         ProductPreviewSection(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(2f),
+                .height(243.dp),
             currentImageIndex = currentImageIndex,
             listState = currentProductPrevSlideState,
             product.image,product.image
         )
 
-        Spacer(
-            Modifier
-                .height(8.dp)
-                .shadow(12.dp))
+        Spacer(Modifier.height(18.dp))
 
         ProductTextDetails(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.5f),
             product = product
         )
 
@@ -95,66 +95,63 @@ fun ProductPreviewSection(
     var downOffsetX = 0f
     var upOffsetX = 0f
 
-    Box(modifier = modifier) {
-        LazyRow(
-            state = listState,
-            modifier = Modifier
-                .pointerInteropFilter {
-                    when (it.action) {
+    Card(modifier=modifier, shape = RoundedCornerShape(bottomEnd = 16.dp, bottomStart = 16.dp), elevation = 10.dp) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+            LazyRow(
+                state = listState,
+                modifier = Modifier
+                    .pointerInteropFilter {
+                        when (it.action) {
 
-                        MotionEvent.ACTION_UP -> {
+                            MotionEvent.ACTION_UP -> {
 
-                            upOffsetX = it.x
-                            if (upOffsetX - downOffsetX < -70f && currentImageIndex.value < (productImagesUrl.size - 1)) {
-                                currentImageIndex.value++
-                                Log.i("SWIPE", "ActionUp ++: Curr: ${currentImageIndex.value}")
-                            } else if (upOffsetX - downOffsetX > 70f && currentImageIndex.value > 0) {
-                                currentImageIndex.value--
-                                Log.i("SWIPE", "ActionUp -- : Curr: ${currentImageIndex.value}")
-                            } else {
-                                Log.i("SWIPE", "ActionUp: NONE CONDITION MET !")
+                                upOffsetX = it.x
+                                if (upOffsetX - downOffsetX < -70f && currentImageIndex.value < (productImagesUrl.size - 1)) {
+                                    currentImageIndex.value++
+                                    Log.i("SWIPE", "ActionUp ++: Curr: ${currentImageIndex.value}")
+                                } else if (upOffsetX - downOffsetX > 70f && currentImageIndex.value > 0) {
+                                    currentImageIndex.value--
+                                    Log.i("SWIPE", "ActionUp -- : Curr: ${currentImageIndex.value}")
+                                } else {
+                                    Log.i("SWIPE", "ActionUp: NONE CONDITION MET !")
+                                }
+
+                            }
+
+                            MotionEvent.ACTION_DOWN -> {
+                                downOffsetX = it.x
                             }
 
                         }
 
-                        MotionEvent.ACTION_DOWN -> {
-                            downOffsetX = it.x
-                        }
+                        true
 
                     }
+                    .fillMaxWidth()) {
+                items(productImagesUrl) { product ->
 
-                    true
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            model = product, placeholder = painterResource(
+                                id = R.drawable.test_product_placeholder
+                            )
+                        ),
+                        modifier = Modifier.fillParentMaxWidth(),
+                        contentDescription = "Product Preview",
+                        contentScale = ContentScale.FillHeight
+                    )
 
                 }
-                .fillMaxWidth()) {
-            items(productImagesUrl) { product ->
-
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = product, placeholder = painterResource(
-                            id = R.drawable.test_product_placeholder
-                        )
-                    ),
-                    modifier = Modifier
-                        .fillParentMaxWidth()
-                        .aspectRatio(2f),
-                    contentDescription = "Product Preview",
-                    contentScale = ContentScale.Fit
-                )
-
             }
-        }
 
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
             DottedProgressIndicator(
-                currentImageIndex,
-                productImagesUrl.size,
-                Modifier.fillMaxSize()
-            )
+                    currentImageIndex,
+                    productImagesUrl.size,
+                    Modifier.fillMaxSize()
+                )
+            Spacer(Modifier.height(21.dp))
         }
-        Spacer(Modifier.height(14.dp))
     }
-
 }
 
 @Composable
@@ -165,7 +162,7 @@ fun DottedProgressIndicator(
 ) {
 
     Box(modifier = modifier, contentAlignment = Alignment.BottomCenter) {
-        Row {
+        Row (Modifier.padding(bottom=12.dp)){
 
             for (index in 0 until totalSlides) {
                 if (index == currentSlideIndex.value) {
@@ -202,22 +199,41 @@ fun DottedProgressIndicator(
 @Composable
 fun ProductTextDetails(modifier: Modifier, product: ShopApiProductsResponse) {
 
-    Column(modifier = modifier.padding(horizontal = 12.dp)) {
+    Column(modifier = modifier.padding(start = 14.dp, end=12.dp)) {
+
         Spacer(Modifier.height(8.dp))
-        Text(
-            text = product.title,
-            fontFamily = FontFamily.SansSerif,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(Modifier.height(6.dp))
+        Row(Modifier.fillMaxWidth()){
+            Text(
+                modifier= Modifier
+                    .fillMaxWidth(0.65f)
+                    .padding(end = 8.dp),
+                text = product.title,
+                fontFamily = FontFamily.SansSerif,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+            )
+
+            Box(modifier = Modifier
+                .fillMaxWidth(0.35f)
+                .height(43.dp)
+                .padding(top = 8.dp), contentAlignment = Alignment.TopEnd) {
+                RatingBar(
+                    modifier = Modifier.fillMaxSize(),
+                    starsCount = 5,
+                    ratingOutOfFive = product.rating.rate.roundToInt(),
+                    isSmallSize = false
+                )
+            }
+        }
+
+        Spacer(Modifier.height(4.dp))
         Text(
             text = product.description,
             fontFamily = FontFamily.SansSerif,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Medium,
-            color = Color.LightGray
+            fontSize = 14.sp,
+            color = Color.Black
         )
+
         Spacer(Modifier.height(8.dp))
         Text(
             text = "$" + product.price,
@@ -226,6 +242,7 @@ fun ProductTextDetails(modifier: Modifier, product: ShopApiProductsResponse) {
             fontWeight = FontWeight.Black
         )
 
+
     }
 
 }
@@ -233,7 +250,7 @@ fun ProductTextDetails(modifier: Modifier, product: ShopApiProductsResponse) {
 @Composable
 fun BottomBarContent(modifier: Modifier) {
 
-    Row(Modifier.shadow(114.dp)) {
+    Row(Modifier.shadow(1140.dp)) {
 
         Box(
 
@@ -270,15 +287,37 @@ fun BottomBarContent(modifier: Modifier) {
 
 
 @Composable
-fun RecommendationSectionTitle(txt:String,modifier:Modifier = Modifier.fillMaxWidth()){
+fun RecommendationSectionTitle(
+    txt:String,
+    modifier:Modifier = Modifier.fillMaxWidth(), onArrowClick: () -> Unit
+){
 
-    Text(
-        text= txt,
-        modifier=modifier,
-        fontSize = 16.sp,
-        fontWeight = FontWeight.Bold,
-        fontFamily = FontFamily.SansSerif
-    )
+    Row(modifier= modifier){
+        
+        Text(
+            text= txt,
+            modifier=Modifier.fillMaxWidth(0.8f),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.SansSerif
+        )
+        
+        Box(modifier=Modifier
+            .clip(CircleShape)
+            .fillMaxHeight().fillMaxWidth(0.2f).clickable { onArrowClick }
+            .padding(2.dp),
+            contentAlignment= Alignment.CenterEnd){
+            
+            Image(
+                imageVector = Icons.Default.ArrowForward,
+                contentDescription= "See All $txt",
+                modifier= Modifier.fillMaxSize(),
+                contentScale = ContentScale.FillHeight
+            )
+            
+        }
+        
+    }
 
 }
 
@@ -301,94 +340,119 @@ fun RecommendationSectionSeeAllButton(onButtonClick: () -> Unit){
 fun OtherProductRecommendations(
     productsList:SnapshotStateList<ShopApiProductsResponse>,
     onNavigate:(ShopApiProductsResponse)->Unit,
-    onOtherSeelBtnClick:() -> Unit
-){
-
-    RecommendationSectionTitle(txt = "Other Products",modifier= Modifier
-        .fillMaxWidth()
-        .padding(start = 10.dp))
-    Spacer(modifier = Modifier.height(8.dp))
-    LazyRow(
-        modifier=Modifier.padding(start=12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-        contentPadding = PaddingValues(horizontal = 12.dp)
+    onOtherSeeAllBtnClick:() -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .background(Brush.linearGradient(listOf(Color(0x260055FF), Color(0x268800FF))))
     ) {
 
-        if (productsList.isNotEmpty()) {
-            items(productsList) { product ->
+        Spacer(modifier = Modifier.height(18.dp))
+        RecommendationSectionTitle(
+            txt = "Other Products", modifier = Modifier
+                .fillMaxWidth()
+                .height(20.dp)
+                .padding(start = 14.dp),
+            onOtherSeeAllBtnClick
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        LazyRow(
+            modifier = Modifier.padding(start = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            contentPadding = PaddingValues(horizontal = 12.dp)
+        ) {
 
-                ProductsCard(
-                    modifier = Modifier
-                        .wrapContentHeight()
-                        .padding(horizontal = 4.dp)
-                        .fillParentMaxWidth(0.3f),
-                    product = product,
-                    onNavigate = onNavigate
-                )
+            if (productsList.isNotEmpty()) {
+                items(productsList) { product ->
+
+                    ProductsCard(
+                        modifier = Modifier
+                            .wrapContentHeight()
+                            .padding(horizontal = 4.dp)
+                            .fillParentMaxWidth(0.3f),
+                        product = product,
+                        onNavigate = onNavigate,
+                        withEleveation = false
+                    )
+                }
+            } else {
+                item {
+                    LoadingView(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f / 1f), circleSize = 39.dp
+                    )
+                }
             }
-        } else {
             item {
-                RecommendationSectionTitle(
-                    txt = "Loading Products...",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 12.dp)
-                )
+                Spacer(Modifier.width(4.dp))
             }
-        }
-        item {
-            Spacer(Modifier.width(4.dp))
-        }
-        item {
-            RecommendationSectionSeeAllButton( onOtherSeelBtnClick )
+//            item {
+//                RecommendationSectionSeeAllButton(onOtherSeelBtnClick)
+//            }
         }
     }
-
+    Spacer(modifier = Modifier.height(18.dp))
 }
 
 @Composable
-fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProductsResponse>, onNavigate:(ShopApiProductsResponse)->Unit, onSellAllBtnClick: () -> Unit) {
+fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProductsResponse>, onNavigate:(ShopApiProductsResponse)->Unit, onSeeAllBtnClick: () -> Unit) {
 
-    RecommendationSectionTitle(txt = "Relevant Products",modifier= Modifier
-        .fillMaxWidth()
-        .padding(start = 10.dp))
-    Spacer(modifier = Modifier.height(8.dp))
-    LazyRow(
-        modifier = Modifier.padding(start=12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-        contentPadding = PaddingValues(horizontal = 12.dp)
+    Column(
+        modifier= Modifier
+            .padding(vertical = 23.dp)
+            .background(Brush.linearGradient(listOf(Color(0x260055FF), Color(0x268800FF))))
     ) {
+        Spacer(modifier = Modifier.height(18.dp))
+        RecommendationSectionTitle(
+            txt = "Relevant Products", modifier = Modifier
+                .height(20.dp)
+                .fillMaxWidth()
+                .padding(start = 14.dp),
+            onSeeAllBtnClick
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        LazyRow(
+            modifier = Modifier.padding(start = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            contentPadding = PaddingValues(horizontal = 12.dp)
+        ) {
 
-        if(productsList.isNotEmpty()){
-            items(productsList) { product ->
+            if (productsList.isNotEmpty()) {
+                items(productsList) { product ->
 
-                ProductsCard(
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp)
-                        .fillParentMaxWidth(0.3f),
-                    product = product,
-                    onNavigate = onNavigate
-                )
+                    ProductsCard(
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .fillParentMaxWidth(0.3f),
+                        product = product,
+                        onNavigate = onNavigate,
+                        withEleveation = false
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                }
+            } else {
+                item {
+                    LoadingView(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f / 1f), circleSize = 39.dp
+                    )
+                }
             }
-        }else{
+
             item {
-                RecommendationSectionTitle(txt = "Loading Products...",modifier= Modifier
-                    .fillMaxWidth()
-                    .padding(start = 12.dp))
+                Spacer(Modifier.width(4.dp))
             }
-        }
 
-        item {
-            Spacer(Modifier.width(4.dp))
+//            item {
+//                RecommendationSectionSeeAllButton(onSellAllBtnClick)
+//            }
         }
-
-        item {
-            RecommendationSectionSeeAllButton(onSellAllBtnClick )
-        }
+        Spacer(modifier = Modifier.height(18.dp))
     }
-
 }
 
 @Composable

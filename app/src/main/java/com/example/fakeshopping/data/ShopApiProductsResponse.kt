@@ -7,7 +7,13 @@ data class ShopApiProductsResponse(
     val price: String,
     val category: String,
     val description: String,
-    val image: String
+    val image: String,
+    val rating:ProductRating
 
+)
+
+data class ProductRating(
+    val rate: Float,
+    val count: Int
 )
 

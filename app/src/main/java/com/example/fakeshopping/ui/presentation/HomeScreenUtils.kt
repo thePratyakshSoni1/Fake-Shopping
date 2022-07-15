@@ -3,6 +3,7 @@ package com.example.fakeshopping.ui.presentation
 import android.util.Log
 import android.view.MotionEvent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,9 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInteropFilter
@@ -31,9 +35,13 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.ui.presentation.components.RatingBar
+import com.example.fakeshopping.ui.theme.ColorWhiteVariant
+import com.example.fakeshopping.ui.theme.ColorYellow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -176,7 +184,8 @@ fun CategoriesSection() {
 fun ProductsCard(
     modifier: Modifier,
     product: ShopApiProductsResponse,
-    onNavigate: (ShopApiProductsResponse) -> Unit
+    onNavigate: (ShopApiProductsResponse) -> Unit,
+    withEleveation:Boolean
 ) {
 
     val imageFromUrl = rememberAsyncImagePainter(
@@ -186,41 +195,64 @@ fun ProductsCard(
     )
 
 
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        Card(modifier = Modifier
-            .wrapContentHeight()
-            .clickable { onNavigate(product) }, elevation = 8.dp) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Image(
-                    painter = imageFromUrl,
-                    contentScale = ContentScale.FillWidth,
-                    contentDescription = "image of ${product.title}",
-                    modifier = Modifier
-                        .aspectRatio(1f / 1f)
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+
+        Card(
+            shape = RoundedCornerShape(8.dp),
+            modifier= Modifier.clickable { onNavigate(product) },
+            elevation = if(withEleveation) 1.dp else 0.dp,
+            backgroundColor = Color.Transparent
+            ) {
+            Column(modifier = Modifier.fillMaxSize().background(Color.Transparent)) {
+                Card(
+                    Modifier
                         .fillMaxWidth()
-                )
+                        .aspectRatio(1f / 1f),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = 2.dp,
+                    backgroundColor = Color.Transparent
+                ) {
+                    Image(
+                        painter = imageFromUrl,
+                        contentDescription = "image of ${product.title}",
+                        modifier = Modifier
+                            .aspectRatio(1f / 1f)
+                            .fillMaxSize(),
+                        contentScale = ContentScale.FillHeight,
+                    )
+                }
+
                 Spacer(Modifier.height(4.dp))
 
                 Text(
                     text = product.title,
                     overflow = TextOverflow.Clip,
                     fontFamily = FontFamily.SansSerif,
-                    fontSize = 14.sp,
+                    fontSize = 16.sp,
                     maxLines = 2,
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
 
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(6.dp))
 
                 Text(
                     text = "$${product.price}",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Black,
+                    fontSize = 16.sp,
                     fontFamily = FontFamily.SansSerif,
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
                 Spacer(Modifier.height(8.dp))
+                RatingBar(
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    starsCount = 5,
+                    ratingOutOfFive = product.rating.rate.roundToInt(),
+                    false
+                )
+                Spacer(Modifier.height(6.dp))
 
             }
 
@@ -256,39 +288,36 @@ fun swipeRight(
 fun HeaderSectionCategoryListItem(
     isSelected: Boolean,
     categoryName: String,
-    onCategoryClick: (String) -> Unit
+    onCategoryClick: (String) -> Unit,
+    chipColor: State<Color>
 ) {
 
     val backgroundColor: Color =
-        if (isSelected) Color.White
-        else Color.Blue
+        if (isSelected) ColorYellow
+        else chipColor.value
 
     val textColor: Color =
-        if (isSelected) Color.Black
-        else Color.White
+        if (isSelected) Color.White
+        else Color.DarkGray
 
     Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier
         .padding(horizontal = 4.dp)
-        .defaultMinSize(minWidth = 46.dp)
+        .clip(RoundedCornerShape(12.dp))
+        .defaultMinSize(minWidth = 68.dp)
+        .background(color = backgroundColor)
         .clickable {
-            Log.d("CLICKED","Category Header Section")
+            Log.d("CLICKED", "Category Header Section")
             onCategoryClick(categoryName)
         }
     ) {
-        Card(
-            backgroundColor = backgroundColor,
-            shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
-            elevation = 0.dp
-        ) {
-            Text(
-                text = categoryName,
-                color = textColor,
-                fontFamily = FontFamily.SansSerif,
-                fontSize = 14.sp,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp, vertical = 2.dp)
-            )
-        }
+        Text(
+            text = categoryName,
+            color = textColor,
+            fontFamily = FontFamily.SansSerif,
+            fontSize = 16.sp,
+            fontWeight=FontWeight.Bold,
+            modifier = Modifier
+                .padding(horizontal = 12.dp, vertical = 10.dp)
+        )
     }
-
 }

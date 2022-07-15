@@ -1,6 +1,8 @@
 package com.example.fakeshopping.ui.presentation
 
 import android.util.Log
+import android.view.Window
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,30 +18,53 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.ui.HomeScreenViewmodel
+import com.example.fakeshopping.ui.theme.ColorWhiteVariant
 import com.example.fakeshopping.utils.Routes
-import com.example.fakeshopping.utils.ToolbarSizes
-import com.example.fakeshopping.utils.ToolbarSizes.inDp
+import com.example.fakeshopping.utils.ToolbarProperties
+import com.example.fakeshopping.utils.ToolbarProperties.CollapsedToolbarColor
+import com.example.fakeshopping.utils.ToolbarProperties.inDp
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen(navController: NavController, category:String = "All"){
+fun HomeScreen( navController: NavController, category:String = "All",window: Window){
 
     val viewmodel:HomeScreenViewmodel = hiltViewModel()
     val toolBaroffsetY:MutableState<Float> = remember{ mutableStateOf(0f) }
     val homefeedScrollOffset = rememberLazyGridState()
+    val toolbarColor = remember { mutableStateOf(ToolbarProperties.ExpandedToolbarColor) }
 
+    val searchBarColor = remember {
+        mutableStateOf(ColorWhiteVariant)
+    }
+
+    fun setHeaderColor(isCollapsed:Boolean){
+        if(isCollapsed){
+            toolbarColor.value = ToolbarProperties.CollapsedToolbarColor
+            searchBarColor.value = Color.White
+            window.statusBarColor = Color.Blue.toArgb()
+        }else{
+            toolbarColor.value = ToolbarProperties.ExpandedToolbarColor
+            searchBarColor.value = ColorWhiteVariant
+            window.statusBarColor = Color.White.toArgb()
+        }
+    }
+
+    val animateSearchBarColor = animateColorAsState(targetValue = searchBarColor.value)
 
     Log.d("CLICKED","HOME SCREEN RECOMPOSED")
     LaunchedEffect(key1 = true ) {
@@ -62,11 +87,13 @@ fun HomeScreen(navController: NavController, category:String = "All"){
                         val delta = available.y
                         val newScrollOffset = toolBaroffsetY.value + delta
 
-                        if(homefeedScrollOffset.firstVisibleItemIndex == 0 && homefeedScrollOffset.firstVisibleItemScrollOffset <= ToolbarSizes.STATE_COLLAPSING_CONTENT_HEIGHT){
-                            toolBaroffsetY.value = newScrollOffset.coerceIn(-ToolbarSizes.TOOLBAR_COLLAPSED_HEIGHT , 0f)
+                        if(homefeedScrollOffset.firstVisibleItemIndex == 0 && homefeedScrollOffset.firstVisibleItemScrollOffset <= ToolbarProperties.STATE_COLLAPSING_CONTENT_HEIGHT){
+                            toolBaroffsetY.value = newScrollOffset.coerceIn(-ToolbarProperties.TOOLBAR_COLLAPSED_HEIGHT , 0f)
+                            setHeaderColor(false)
                             Log.d("TOPBAR","TOOLBAR OFFSET: ${toolBaroffsetY.value}")
                         }else{
-                            toolBaroffsetY.value = newScrollOffset.coerceIn(-ToolbarSizes.TOOLBAR_COLLAPSED_HEIGHT , -ToolbarSizes.STATE_COLLAPSING_CONTENT_HEIGHT)
+                            toolBaroffsetY.value = newScrollOffset.coerceIn(-ToolbarProperties.STATE_COLLAPSING_CONTENT_HEIGHT , -ToolbarProperties.STATE_COLLAPSING_CONTENT_HEIGHT)
+                            setHeaderColor(true)
                             Log.d("TOPBAR","TOOLBAR OFFSET: ${toolBaroffsetY.value}")
                         }
 
@@ -99,7 +126,9 @@ fun HomeScreen(navController: NavController, category:String = "All"){
                 Log.d("CLICKED","Category Header Section")
                 viewmodel.changeCategory(it)
             },
-            offsetReq = toolBaroffsetY
+            offsetReq = toolBaroffsetY,
+            toolbarColor = toolbarColor,
+            searchbarColor = animateSearchBarColor
 
         )
     }
@@ -117,22 +146,22 @@ fun ContentSection(
 ){
 
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
+        columns = GridCells.Fixed(2),
         state = listState,
     ){
 
-        item(span = { GridItemSpan(3) }){
-            Spacer(Modifier.height(ToolbarSizes.TOOLBAR_EXPANDED_HEIGHT.inDp() - ToolbarSizes.TOOLBAR_COLLAPSED_HEIGHT.inDp()))
+        item(span = { GridItemSpan(2) }){
+            Spacer(Modifier.height(ToolbarProperties.TOOLBAR_EXPANDED_HEIGHT.inDp() - ToolbarProperties.TOOLBAR_COLLAPSED_HEIGHT.inDp()))
         }
 
-        item(span = { GridItemSpan(3) }){
-            Spacer(Modifier.height(ToolbarSizes.TOOLBAR_COLLAPSED_HEIGHT.inDp()))
+        item(span = { GridItemSpan(2) }){
+            Spacer(Modifier.height(ToolbarProperties.TOOLBAR_COLLAPSED_HEIGHT.inDp()))
         }
 
-        item( span= { GridItemSpan(3) } ){
+        item( span= { GridItemSpan(2) } ){
 
             BannerSection(
-                Modifier.padding(vertical=22.dp),
+                Modifier.padding(bottom=22.dp,top=36.dp),
                 bannerResource,
                 userInteracted
 
@@ -157,25 +186,28 @@ fun HeaderSection(
     categories: List<String>,
     selectedCategory: MutableState<String>,
     onCategoryChange: (String) -> Unit,
-    offsetReq: MutableState<Float>
+    offsetReq: MutableState<Float>,
+    toolbarColor: MutableState<Brush>,
+    searchbarColor: State<Color>
 ) {
 
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color.Blue)
+            .background(toolbarColor.value)
     ) {
 
         Column() {
 
             //HeaderTitle
             Text(
-                text = "FakeShop",
+                text = "Hello Pratyaksh",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp, top = 16.dp, start = 16.dp),
-                fontSize = 21.sp, fontWeight = FontWeight.Bold, color = Color.White
+                    .padding(bottom = 16.dp, top = 16.dp),
+                fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black,
+                textAlign = TextAlign.Center
             )
             //HeaderSearchBar
             TextField(
@@ -184,42 +216,47 @@ fun HeaderSection(
                     searchText.value = it
                 },
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = Color.White,
+                    backgroundColor = searchbarColor.value,
                     textColor = Color.Black,
                     cursorColor = Color.Blue,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
                 ),
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .offset(x = 0.dp, y = -offsetReq.value.inDp()),
-                shape = RoundedCornerShape(8.dp),
+                shape = RoundedCornerShape(10.dp),
                 textStyle = TextStyle(
                     fontSize = 16.sp,
                 ),
-                placeholder = { Text("Serach Products ...") }
+                placeholder = { Text("Search Products ...") }
 
             )
 
 
         }
-            Spacer(Modifier.height(12.dp))
 
+        Spacer(Modifier.height(12.dp))
 
         //category selection section
         Box(modifier = Modifier.fillMaxWidth()) {
 
-            LazyRow(modifier = Modifier.padding(horizontal = 8.dp)) {
+            LazyRow(contentPadding = PaddingValues(horizontal = 16.dp)) {
                 items(categories) { item ->
 
                     HeaderSectionCategoryListItem(
                         isSelected = (item == selectedCategory.value),
                         categoryName = item,
-                        onCategoryClick = onCategoryChange
+                        onCategoryClick = onCategoryChange,
+                        chipColor = searchbarColor
                     )
 
                 }
             }
         }
+
+        Spacer(Modifier.height(8.dp))
     }
 
 }
@@ -250,10 +287,11 @@ fun LazyGridScope.allProductsSection(
 
         ProductsCard(
             modifier = Modifier
-                .width(64.dp)
-                .padding(4.dp),
+                .fillMaxWidth(0.45f)
+                .padding(horizontal = 10.dp, vertical = 10.dp),
             product = product,
-            onNavigate = onNavigate
+            onNavigate = onNavigate,
+            withEleveation = true
         )
 
     }

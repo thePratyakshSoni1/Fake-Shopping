@@ -47,6 +47,10 @@ class ProductsDetailScreenViewModel @Inject constructor(val repository: TestData
     fun setProduct(productDetails: ShopApiProductsResponse) {
 
         viewModelScope.launch {
+
+            _relevantProducts.clear()
+            _otherProducts.clear()
+
             _product.value = productDetails
             _relevantProducts.addAll(getRandomProducts())
             _otherProducts.addAll(getRelevantProducts())
