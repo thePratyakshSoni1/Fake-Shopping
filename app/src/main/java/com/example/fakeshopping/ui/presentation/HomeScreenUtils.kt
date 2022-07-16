@@ -196,32 +196,31 @@ fun ProductsCard(
 
 
     Box(
-        modifier = modifier,
+        modifier = modifier.clip(RoundedCornerShape(12.dp)),
         contentAlignment = Alignment.Center
     ) {
 
         Card(
-            shape = RoundedCornerShape(8.dp),
-            modifier= Modifier.clickable { onNavigate(product) },
-            elevation = if(withEleveation) 1.dp else 0.dp,
-            backgroundColor = Color.Transparent
+            modifier= Modifier.padding(vertical = 8.dp).clickable { onNavigate(product) },
+            elevation = if(withEleveation) 2.dp else 0.dp,
+            backgroundColor = Color.Transparent,
+            shape = RoundedCornerShape(12.dp)
             ) {
             Column(modifier = Modifier.fillMaxSize().background(Color.Transparent)) {
                 Card(
-                    Modifier
+                    backgroundColor=Color.White,
+                    modifier = Modifier
                         .fillMaxWidth()
+                        .padding(4.dp)
                         .aspectRatio(1f / 1f),
                     shape = RoundedCornerShape(12.dp),
-                    elevation = 2.dp,
-                    backgroundColor = Color.Transparent
+                    elevation = 0.dp
                 ) {
                     Image(
                         painter = imageFromUrl,
                         contentDescription = "image of ${product.title}",
-                        modifier = Modifier
-                            .aspectRatio(1f / 1f)
-                            .fillMaxSize(),
-                        contentScale = ContentScale.FillHeight,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Fit,
                     )
                 }
 
@@ -231,9 +230,9 @@ fun ProductsCard(
                     text = product.title,
                     overflow = TextOverflow.Clip,
                     fontFamily = FontFamily.SansSerif,
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     maxLines = 2,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
 
@@ -241,13 +240,14 @@ fun ProductsCard(
 
                 Text(
                     text = "$${product.price}",
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     fontFamily = FontFamily.SansSerif,
+                    fontWeight = FontWeight.Medium,
                     modifier = Modifier.padding(horizontal = 8.dp)
                 )
                 Spacer(Modifier.height(8.dp))
                 RatingBar(
-                    modifier = Modifier.padding(horizontal = 8.dp),
+                    modifier = Modifier.padding(start = 8.dp).fillMaxWidth(0.8f),
                     starsCount = 5,
                     ratingOutOfFive = product.rating.rate.roundToInt(),
                     false

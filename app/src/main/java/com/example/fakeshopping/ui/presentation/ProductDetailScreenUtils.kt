@@ -205,7 +205,7 @@ fun ProductTextDetails(modifier: Modifier, product: ShopApiProductsResponse) {
         Row(Modifier.fillMaxWidth()){
             Text(
                 modifier= Modifier
-                    .fillMaxWidth(0.65f)
+                    .fillMaxWidth(0.7f)
                     .padding(end = 8.dp),
                 text = product.title,
                 fontFamily = FontFamily.SansSerif,
@@ -214,9 +214,9 @@ fun ProductTextDetails(modifier: Modifier, product: ShopApiProductsResponse) {
             )
 
             Box(modifier = Modifier
-                .fillMaxWidth(0.35f)
-                .height(43.dp)
-                .padding(top = 8.dp), contentAlignment = Alignment.TopEnd) {
+                .fillMaxWidth(1f)
+                .height(36.dp),
+                contentAlignment = Alignment.TopEnd) {
                 RatingBar(
                     modifier = Modifier.fillMaxSize(),
                     starsCount = 5,
@@ -292,7 +292,7 @@ fun RecommendationSectionTitle(
     modifier:Modifier = Modifier.fillMaxWidth(), onArrowClick: () -> Unit
 ){
 
-    Row(modifier= modifier){
+    Row(modifier= modifier, verticalAlignment = Alignment.CenterVertically){
         
         Text(
             text= txt,
@@ -302,17 +302,18 @@ fun RecommendationSectionTitle(
             fontFamily = FontFamily.SansSerif
         )
         
-        Box(modifier=Modifier
+        Box(
+            modifier=Modifier
             .clip(CircleShape)
-            .fillMaxHeight().fillMaxWidth(0.2f).clickable { onArrowClick }
-            .padding(2.dp),
-            contentAlignment= Alignment.CenterEnd){
+            .fillMaxHeight().fillMaxWidth().aspectRatio(1f/1f).clickable { onArrowClick() },
+            contentAlignment= Alignment.CenterEnd
+        ){
             
             Image(
                 imageVector = Icons.Default.ArrowForward,
                 contentDescription= "See All $txt",
                 modifier= Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillHeight
+                contentScale = ContentScale.Inside
             )
             
         }
@@ -347,20 +348,19 @@ fun OtherProductRecommendations(
             .background(Brush.linearGradient(listOf(Color(0x260055FF), Color(0x268800FF))))
     ) {
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         RecommendationSectionTitle(
             txt = "Other Products", modifier = Modifier
                 .fillMaxWidth()
-                .height(20.dp)
+                .height(32.dp)
                 .padding(start = 14.dp),
             onOtherSeeAllBtnClick
         )
         Spacer(modifier = Modifier.height(8.dp))
         LazyRow(
-            modifier = Modifier.padding(start = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
-            contentPadding = PaddingValues(horizontal = 12.dp)
+            contentPadding = PaddingValues(start= 24.dp,end = 12.dp,top=8.dp,bottom=8.dp)
         ) {
 
             if (productsList.isNotEmpty()) {
@@ -369,7 +369,7 @@ fun OtherProductRecommendations(
                     ProductsCard(
                         modifier = Modifier
                             .wrapContentHeight()
-                            .padding(horizontal = 4.dp)
+                            .padding(horizontal = 6.dp)
                             .fillParentMaxWidth(0.3f),
                         product = product,
                         onNavigate = onNavigate,
@@ -404,20 +404,19 @@ fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProduc
             .padding(vertical = 23.dp)
             .background(Brush.linearGradient(listOf(Color(0x260055FF), Color(0x268800FF))))
     ) {
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         RecommendationSectionTitle(
             txt = "Relevant Products", modifier = Modifier
-                .height(20.dp)
+                .height(32.dp)
                 .fillMaxWidth()
                 .padding(start = 14.dp),
             onSeeAllBtnClick
         )
         Spacer(modifier = Modifier.height(8.dp))
         LazyRow(
-            modifier = Modifier.padding(start = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
-            contentPadding = PaddingValues(horizontal = 12.dp)
+            contentPadding = PaddingValues(start= 24.dp,end = 12.dp,top=8.dp,bottom=8.dp)
         ) {
 
             if (productsList.isNotEmpty()) {

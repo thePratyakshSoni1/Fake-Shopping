@@ -68,8 +68,8 @@ fun HomeScreen( navController: NavController, category:String = "All",window: Wi
 
     Log.d("CLICKED","HOME SCREEN RECOMPOSED")
     LaunchedEffect(key1 = true ) {
-        viewmodel.changeCategory(category)
         viewmodel.refreshCategories()
+        viewmodel.changeCategory(category)
         Log.d("API", "Api requests were made does that succeed ?")
     }
     Box(
@@ -87,11 +87,15 @@ fun HomeScreen( navController: NavController, category:String = "All",window: Wi
                         val delta = available.y
                         val newScrollOffset = toolBaroffsetY.value + delta
 
-                        if(homefeedScrollOffset.firstVisibleItemIndex == 0 && homefeedScrollOffset.firstVisibleItemScrollOffset <= ToolbarProperties.STATE_COLLAPSING_CONTENT_HEIGHT){
+                        if(homefeedScrollOffset.firstVisibleItemIndex == 0 && homefeedScrollOffset.firstVisibleItemScrollOffset == 0){
+                            toolBaroffsetY.value = 0f
+                            setHeaderColor(false)
+                            Log.d("TOPBAR","TOOLBAR OFFSET: ${toolBaroffsetY.value}")
+                        }else if(homefeedScrollOffset.firstVisibleItemIndex == 0 && homefeedScrollOffset.firstVisibleItemScrollOffset <= ToolbarProperties.STATE_COLLAPSING_CONTENT_HEIGHT){
                             toolBaroffsetY.value = newScrollOffset.coerceIn(-ToolbarProperties.TOOLBAR_COLLAPSED_HEIGHT , 0f)
                             setHeaderColor(false)
                             Log.d("TOPBAR","TOOLBAR OFFSET: ${toolBaroffsetY.value}")
-                        }else{
+                        }else {
                             toolBaroffsetY.value = newScrollOffset.coerceIn(-ToolbarProperties.STATE_COLLAPSING_CONTENT_HEIGHT , -ToolbarProperties.STATE_COLLAPSING_CONTENT_HEIGHT)
                             setHeaderColor(true)
                             Log.d("TOPBAR","TOOLBAR OFFSET: ${toolBaroffsetY.value}")
@@ -148,6 +152,7 @@ fun ContentSection(
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         state = listState,
+        contentPadding = PaddingValues(horizontal = 16.dp)
     ){
 
         item(span = { GridItemSpan(2) }){
@@ -287,8 +292,8 @@ fun LazyGridScope.allProductsSection(
 
         ProductsCard(
             modifier = Modifier
-                .fillMaxWidth(0.45f)
-                .padding(horizontal = 10.dp, vertical = 10.dp),
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 6.dp),
             product = product,
             onNavigate = onNavigate,
             withEleveation = true

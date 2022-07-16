@@ -21,26 +21,25 @@ import com.example.fakeshopping.ui.theme.ColorYellow
 @Composable
 fun RatingBar(modifier:Modifier,starsCount:Int,ratingOutOfFive:Int, isSmallSize:Boolean){
 
-    Box(modifier=modifier){
-        Row(Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier, verticalAlignment = Alignment.CenterVertically) {
 
             if(!isSmallSize) {
                 repeat(starsCount) {
                     if (it < ratingOutOfFive) {
                         Image(
-                            modifier=Modifier.fillMaxSize().weight(1f),
+                            modifier=Modifier.aspectRatio(1f/1f).fillMaxHeight().weight(1f),
                             imageVector = Icons.Default.Star,
                             colorFilter = ColorFilter.tint(ColorYellow),
                             contentDescription = "Rating is $ratingOutOfFive stars",
-                            contentScale = ContentScale.Fit
+                            contentScale = ContentScale.FillBounds
                         )
                     } else {
                         Image(
-                            modifier=Modifier.fillMaxSize().weight(1f),
+                            modifier=Modifier.fillMaxHeight().aspectRatio(1f/1f).weight(1f),
                             imageVector = Icons.Default.Star,
                             colorFilter = ColorFilter.tint(ColorWhiteVariant),
                             contentDescription = "Rating is $ratingOutOfFive stars",
-                            contentScale = ContentScale.Fit
+                            contentScale = ContentScale.FillBounds
                         )
                     }
                 }
@@ -53,9 +52,6 @@ fun RatingBar(modifier:Modifier,starsCount:Int,ratingOutOfFive:Int, isSmallSize:
                 )
             }
         }
-    }
-
-
 }
 
 @Preview(showBackground = true)
