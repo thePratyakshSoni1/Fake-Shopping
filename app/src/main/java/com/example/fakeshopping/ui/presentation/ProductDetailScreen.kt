@@ -1,13 +1,16 @@
 package com.example.fakeshopping.ui.presentation
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -121,6 +124,53 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
 
         }
     }
+
+}
+
+
+@Composable
+fun ProductDetailsSection(
+    modifier: Modifier,
+    product: ShopApiProductsResponse,
+    currentImageIndex: MutableState<Int>
+) {
+
+    val currentProductPrevSlideState = rememberLazyListState()
+    val productImagesUrl = arrayOf(product.image, product.image)
+
+    Column(modifier = modifier) {
+
+        ProductPreviewSection(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(243.dp),
+            currentImageIndex = currentImageIndex,
+            listState = currentProductPrevSlideState,
+            product.image,product.image
+        )
+
+        Spacer(Modifier.height(18.dp))
+
+        ProductTextDetails(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.5f),
+            product = product
+        )
+
+    }
+
+    LaunchedEffect(key1 = currentImageIndex.value) {
+
+        if (currentImageIndex.value < (productImagesUrl.size) && currentImageIndex.value >= 0) {
+            currentProductPrevSlideState.animateScrollToItem(currentImageIndex.value)
+            Log.i("SWIPE", "Scrolled to: ${currentImageIndex.value}")
+        } else {
+            Log.i("SWIPE", "ActionUp: NONE CONDITION MET !")
+        }
+
+    }
+
 
 }
 

@@ -1,0 +1,127 @@
+{
+
+  ConstraintSets: {
+
+    start: {
+
+      collapsingContent: {
+        width: 'spread',
+        start: ['box','start'],
+        end: ['box', 'end'],
+        top: ['box', 'top'],
+      },
+
+      searchbar: {
+        width: 'spread',
+        start: ['box', 'start', 14],
+        end: ['box', 'end', 14],
+        top: ['collapsingContent', 'bottom', 12]
+      },
+
+      searchbarMenuButtons: {
+
+        end: ['searchbar', 'end', 12],
+        top: ['searchbar', 'top'],
+        bottom: ['searchbar', 'bottom'],
+
+      },
+
+      category: {
+
+        width: 'spread',
+        start: ['box','start'],
+        end: ['box', 'end'],
+        top: ['searchbar', 'bottom', 20]
+
+      },
+
+      box: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom', -18]
+      }
+
+    },
+
+    end: {
+
+      searchbar: {
+        width: 'spread',
+        start: ['box', 'start', 14],
+        end: ['box', 'end', 14],
+        top: ['collapsingContent', 'bottom', 0]
+      },
+
+      collapsingContent: {
+        width: 'spread',
+        height: 0,
+        start: ['box','start'],
+        end: ['box', 'end'],
+        top: ['box', 'top', 16]
+      },
+
+      searchbarMenuButtons: {
+
+        end: ['searchbar', 'end', 12],
+        top: ['searchbar', 'top'],
+        bottom: ['searchbar', 'bottom'],
+
+      },
+
+      category: {
+
+        width: 'spread',
+        start: ['box','start'],
+        end: ['box', 'end'],
+        top: ['searchbar', 'bottom', 20]
+
+      },
+
+      box: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom', -18]
+      }
+
+    }
+
+  },
+
+  Transitions: {
+    default: {
+      from: 'start',
+      to: 'end',
+      pathMotionArc: 'startHorizontal',
+
+      KeyFrame: {
+        KeyAttributes: [
+
+          {
+            target: ['collapsingContent'],
+            frames: [0, 100]
+          },
+
+          {
+            target: ['searchbar'],
+            frames: [0, 50, 100],
+          },
+
+          {
+            target: ['category'],
+            frames: [0, 100]
+          }
+
+        ],
+
+      }
+
+    }
+  }
+
+}

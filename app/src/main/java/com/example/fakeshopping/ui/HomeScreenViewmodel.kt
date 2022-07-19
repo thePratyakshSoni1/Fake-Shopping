@@ -10,12 +10,13 @@ import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
+import com.example.fakeshopping.data.test_data.TestApiService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenViewmodel @Inject constructor(private val repository: ShopApiRepository) :
+class HomeScreenViewmodel @Inject constructor(private val repository: TestDataRepo) :
     ViewModel() {
 
     private val _products = mutableStateListOf<ShopApiProductsResponse>()
@@ -78,5 +79,7 @@ class HomeScreenViewmodel @Inject constructor(private val repository: ShopApiRep
             Log.d("CATEGORY_CHANGE","CATEGORY: ${selectedCategory.value}\n\t\t${products.toList()}")
         }
     }
+
+
 
 }

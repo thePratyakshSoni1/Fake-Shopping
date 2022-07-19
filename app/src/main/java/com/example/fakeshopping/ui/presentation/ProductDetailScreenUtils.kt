@@ -36,53 +36,6 @@ import com.example.fakeshopping.ui.presentation.components.LoadingView
 import com.example.fakeshopping.ui.presentation.components.RatingBar
 import kotlin.math.roundToInt
 
-@Composable
-fun ProductDetailsSection(
-    modifier: Modifier,
-    product: ShopApiProductsResponse,
-    currentImageIndex: MutableState<Int>
-) {
-
-    val currentProductPrevSlideState = rememberLazyListState()
-    val productImagesUrl = arrayOf(product.image, product.image)
-
-    Column(modifier = modifier) {
-
-        ProductPreviewSection(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(243.dp),
-            currentImageIndex = currentImageIndex,
-            listState = currentProductPrevSlideState,
-            product.image,product.image
-        )
-
-        Spacer(Modifier.height(18.dp))
-
-        ProductTextDetails(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.5f),
-            product = product
-        )
-
-    }
-
-    LaunchedEffect(key1 = currentImageIndex.value) {
-
-        if (currentImageIndex.value < (productImagesUrl.size) && currentImageIndex.value >= 0) {
-            currentProductPrevSlideState.animateScrollToItem(currentImageIndex.value)
-            Log.i("SWIPE", "Scrolled to: ${currentImageIndex.value}")
-        } else {
-            Log.i("SWIPE", "ActionUp: NONE CONDITION MET !")
-        }
-
-    }
-
-
-}
-
-
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProductPreviewSection(

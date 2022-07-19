@@ -24,19 +24,24 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.ui.HomeScreenViewmodel
 import com.example.fakeshopping.ui.theme.ColorWhiteVariant
+import com.example.fakeshopping.ui.utils.AccountDialog
+import com.example.fakeshopping.ui.utils.menuItems
 import com.example.fakeshopping.utils.Routes
 import com.example.fakeshopping.utils.ToolbarProperties
 import com.example.fakeshopping.utils.ToolbarProperties.CollapsedToolbarColor
 import com.example.fakeshopping.utils.ToolbarProperties.inDp
+import kotlin.math.roundToInt
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -47,6 +52,13 @@ fun HomeScreen( navController: NavController, category:String = "All",window: Wi
     val toolBaroffsetY:MutableState<Float> = remember{ mutableStateOf(0f) }
     val homefeedScrollOffset = rememberLazyGridState()
     val toolbarColor = remember { mutableStateOf(ToolbarProperties.ExpandedToolbarColor) }
+    val showAccountDialog = remember{ mutableStateOf(false) }
+
+    val context = LocalContext.current
+
+    val toolbarMotionScene = remember{
+        context.resources.openRawResource(R.raw.topappbar_motion_scene).readBytes().decodeToString()
+    }
 
     val searchBarColor = remember {
         mutableStateOf(ColorWhiteVariant)
@@ -54,7 +66,7 @@ fun HomeScreen( navController: NavController, category:String = "All",window: Wi
 
     fun setHeaderColor(isCollapsed:Boolean){
         if(isCollapsed){
-            toolbarColor.value = ToolbarProperties.CollapsedToolbarColor
+            toolbarColor.value = CollapsedToolbarColor
             searchBarColor.value = Color.White
             window.statusBarColor = Color.Blue.toArgb()
         }else{
@@ -77,35 +89,31 @@ fun HomeScreen( navController: NavController, category:String = "All",window: Wi
     ){
 
         Column(
-            modifier= Modifier.nestedScroll(
-
-                object :NestedScrollConnection {
-
-                    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-
-                        Log.d("TOPBAR","${available.y}")
-                        val delta = available.y
-                        val newScrollOffset = toolBaroffsetY.value + delta
-
-                        if(homefeedScrollOffset.firstVisibleItemIndex == 0 && homefeedScrollOffset.firstVisibleItemScrollOffset == 0){
-                            toolBaroffsetY.value = 0f
-                            setHeaderColor(false)
-                            Log.d("TOPBAR","TOOLBAR OFFSET: ${toolBaroffsetY.value}")
-                        }else if(homefeedScrollOffset.firstVisibleItemIndex == 0 && homefeedScrollOffset.firstVisibleItemScrollOffset <= ToolbarProperties.STATE_COLLAPSING_CONTENT_HEIGHT){
-                            toolBaroffsetY.value = newScrollOffset.coerceIn(-ToolbarProperties.TOOLBAR_COLLAPSED_HEIGHT , 0f)
-                            setHeaderColor(false)
-                            Log.d("TOPBAR","TOOLBAR OFFSET: ${toolBaroffsetY.value}")
-                        }else {
-                            toolBaroffsetY.value = newScrollOffset.coerceIn(-ToolbarProperties.STATE_COLLAPSING_CONTENT_HEIGHT , -ToolbarProperties.STATE_COLLAPSING_CONTENT_HEIGHT)
+            modifier= Modifier
+                .fillMaxSize()
+                .nestedScroll(object : NestedScrollConnection {
+                    override fun onPostScroll(
+                        consumed: Offset,
+                        available: Offset,
+                        source: NestedScrollSource
+                    ): Offset {
+                        if (homefeedScrollOffset.firstVisibleItemIndex == 0) {
+                            toolBaroffsetY.value =
+                                (homefeedScrollOffset.firstVisibleItemScrollOffset / 100f).coerceIn(
+                                    0f,
+                                    1f
+                                )
+                            if (toolBaroffsetY.value == 1f) setHeaderColor(true) else setHeaderColor(
+                                false
+                            )
+                            Log.d("FLING SCROLL", "VISIBLE: VISIBLE ")
+                        } else {
                             setHeaderColor(true)
-                            Log.d("TOPBAR","TOOLBAR OFFSET: ${toolBaroffsetY.value}")
+                            toolBaroffsetY.value = 1f
                         }
-
                         return Offset.Zero
                     }
-
-                }
-            )
+                })
         ){
             ContentSection(
                 navController,
@@ -116,25 +124,26 @@ fun HomeScreen( navController: NavController, category:String = "All",window: Wi
             )
         }
 
-        HeaderSection(
-
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset {
-                    IntOffset(x = 0, y = toolBaroffsetY.value.toInt())
-                },
-            viewmodel.searchBoxText, //73 dp
+        CollapsingTopAppBar(
+            motionScene = toolbarMotionScene,
+            progress = toolBaroffsetY,
+            toolbarBackground = toolbarColor,
+            searchbarColor = animateSearchBarColor,
+            searchText = viewmodel.searchBoxText,
             categories = viewmodel.categories,
             selectedCategory = viewmodel.selectedCategory,
             onCategoryChange = {
-                Log.d("CLICKED","Category Header Section")
-                viewmodel.changeCategory(it)
+                toolBaroffsetY.value = 0f
+                viewmodel.changeCategory( it )
             },
-            offsetReq = toolBaroffsetY,
-            toolbarColor = toolbarColor,
-            searchbarColor = animateSearchBarColor
-
+            showDialog= showAccountDialog
         )
+
+
+        if(showAccountDialog.value){
+            AccountDialog(menuItems = menuItems, showAccountDialog)
+        }
+
     }
 
 }
@@ -151,16 +160,11 @@ fun ContentSection(
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        state = listState,
-        contentPadding = PaddingValues(horizontal = 16.dp)
+        state = listState
     ){
 
         item(span = { GridItemSpan(2) }){
-            Spacer(Modifier.height(ToolbarProperties.TOOLBAR_EXPANDED_HEIGHT.inDp() - ToolbarProperties.TOOLBAR_COLLAPSED_HEIGHT.inDp()))
-        }
-
-        item(span = { GridItemSpan(2) }){
-            Spacer(Modifier.height(ToolbarProperties.TOOLBAR_COLLAPSED_HEIGHT.inDp()))
+            Spacer(Modifier.height(ToolbarProperties.TOOLBAR_EXPANDED_HEIGHT.inDp() + 24.dp))
         }
 
         item( span= { GridItemSpan(2) } ){
@@ -183,89 +187,6 @@ fun ContentSection(
 
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-fun HeaderSection(
-    modifier: Modifier = Modifier.fillMaxWidth(),
-    searchText: MutableState<String>,
-    categories: List<String>,
-    selectedCategory: MutableState<String>,
-    onCategoryChange: (String) -> Unit,
-    offsetReq: MutableState<Float>,
-    toolbarColor: MutableState<Brush>,
-    searchbarColor: State<Color>
-) {
-
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(toolbarColor.value)
-    ) {
-
-        Column() {
-
-            //HeaderTitle
-            Text(
-                text = "Hello Pratyaksh",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp, top = 16.dp),
-                fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black,
-                textAlign = TextAlign.Center
-            )
-            //HeaderSearchBar
-            TextField(
-                value = searchText.value,
-                onValueChange = {
-                    searchText.value = it
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = searchbarColor.value,
-                    textColor = Color.Black,
-                    cursorColor = Color.Blue,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-                ),
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .offset(x = 0.dp, y = -offsetReq.value.inDp()),
-                shape = RoundedCornerShape(10.dp),
-                textStyle = TextStyle(
-                    fontSize = 16.sp,
-                ),
-                placeholder = { Text("Search Products ...") }
-
-            )
-
-
-        }
-
-        Spacer(Modifier.height(12.dp))
-
-        //category selection section
-        Box(modifier = Modifier.fillMaxWidth()) {
-
-            LazyRow(contentPadding = PaddingValues(horizontal = 16.dp)) {
-                items(categories) { item ->
-
-                    HeaderSectionCategoryListItem(
-                        isSelected = (item == selectedCategory.value),
-                        categoryName = item,
-                        onCategoryClick = onCategoryChange,
-                        chipColor = searchbarColor
-                    )
-
-                }
-            }
-        }
-
-        Spacer(Modifier.height(8.dp))
-    }
-
-}
-
 @Composable
 fun BannerSection(
     modifier: Modifier = Modifier.fillMaxWidth(),
@@ -273,13 +194,11 @@ fun BannerSection(
     userInteracted: MutableState<Boolean>
 ) {
 
-    Box(modifier = modifier) {
         BannerSlides(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier,
             bannersResource = bannerResource,
             userInteracted
         )
-    }
 
 
 }
@@ -288,15 +207,21 @@ fun LazyGridScope.allProductsSection(
     products: List<ShopApiProductsResponse>,
     onNavigate: (product: ShopApiProductsResponse) -> Unit
 ) {
-    items(products) { product ->
+    items(products.size) { index ->
 
         ProductsCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 6.dp),
-            product = product,
+                .padding(
+                    top = 6.dp,
+                    bottom = 6.dp,
+                    start = if (index % 2 == 0) 18.dp else 6.dp,
+                    end = if (index % 2 == 0) 6.dp else 18.dp,
+                ),
+            product = products[index],
             onNavigate = onNavigate,
-            withEleveation = true
+            withEleveation = true,
+            borderColor = if(products[index].rating.rate.roundToInt() == 5) CollapsedToolbarColor else Brush.linearGradient(listOf(Color.DarkGray,Color.DarkGray))
         )
 
     }

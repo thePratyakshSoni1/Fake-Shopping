@@ -1,0 +1,108 @@
+{
+
+  ConstraintSets: {
+
+    start: {
+
+      username: {
+        width: 'spread',
+        start: ['box','start'],
+        end: ['box', 'end'],
+        top: ['box', 'top', 16],
+      },
+
+      searchbar: {
+        width: 'spread',
+        start: ['box', 'start', 12],
+        end: ['box', 'end', 12],
+        top: ['username', 'bottom', 12]
+      },
+
+      category: {
+        width: 'spread',
+        start: ['box','start'],
+        end: ['box', 'end'],
+        top: ['searchbar', 'bottom', 8]
+      },
+
+      box: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom', -16]
+      }
+
+    },
+
+    end: {
+
+      searchbar: {
+        width: 'spread',
+        start: ['box', 'start', 12],
+        end: ['box', 'end', 12],
+        top: ['username', 'bottom', 0]
+      },
+
+      category: {
+        width: 'spread',
+        start: ['box','start'],
+        end: ['box', 'end'],
+        top: ['searchbar', 'bottom', 8]
+      },
+
+
+      username: {
+        width: 'spread',
+        height: 0,
+        start: ['box','start'],
+        end: ['box', 'end'],
+        top: ['box', 'top', 16]
+      },
+
+      box: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom', -16]
+      }
+
+    }
+
+  },
+
+  Transitions: {
+    default: {
+      from: 'start',
+      to: 'end',
+      pathMotionArc: 'startHorizontal',
+
+      KeyFrame: {
+        KeyAttributes: [
+
+          {
+            target: ['username'],
+            frames: [0, 100]
+          },
+
+          {
+            target: ['searchbar'],
+            frames: [0, 50, 100],
+          },
+
+          {
+            target: ['category'],
+            frames: [0, 100]
+          }
+
+        ],
+
+      }
+
+    }
+  }
+
+}
