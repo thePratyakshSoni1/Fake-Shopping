@@ -12,7 +12,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -34,6 +33,7 @@ import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.ui.presentation.components.LoadingView
 import com.example.fakeshopping.ui.presentation.components.RatingBar
+import com.example.fakeshopping.ui.presentation.components.ProductsCard
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalComposeUiApi::class)

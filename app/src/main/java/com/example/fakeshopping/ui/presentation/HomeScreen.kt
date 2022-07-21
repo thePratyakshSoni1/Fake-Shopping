@@ -4,15 +4,14 @@ import android.util.Log
 import android.view.Window
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.*
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -25,9 +24,6 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -35,8 +31,10 @@ import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.ui.HomeScreenViewmodel
 import com.example.fakeshopping.ui.theme.ColorWhiteVariant
-import com.example.fakeshopping.ui.utils.AccountDialog
-import com.example.fakeshopping.ui.utils.menuItems
+import com.example.fakeshopping.ui.presentation.components.AccountDialog
+import com.example.fakeshopping.ui.presentation.components.MenuItemData
+import com.example.fakeshopping.ui.presentation.components.ProductsCard
+import com.example.fakeshopping.ui.presentation.components.menuItems
 import com.example.fakeshopping.utils.Routes
 import com.example.fakeshopping.utils.ToolbarProperties
 import com.example.fakeshopping.utils.ToolbarProperties.CollapsedToolbarColor
@@ -46,13 +44,26 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen( navController: NavController, category:String = "All",window: Window){
+fun HomeScreen( navController: NavController, category:String = "All",window: Window ){
 
     val viewmodel:HomeScreenViewmodel = hiltViewModel()
     val toolBaroffsetY:MutableState<Float> = remember{ mutableStateOf(0f) }
     val homefeedScrollOffset = rememberLazyGridState()
     val toolbarColor = remember { mutableStateOf(ToolbarProperties.ExpandedToolbarColor) }
     val showAccountDialog = remember{ mutableStateOf(false) }
+
+    val accountMenuItems = menuItems + MenuItemData(
+        "Your Cart",
+        Icons.Outlined.ShoppingCart,
+    ) {
+        navController.navigate(Routes.shoppingCartScreen)
+    } + MenuItemData(
+        "Favourites",
+        Icons.Rounded.FavoriteBorder
+    ) {
+        navController.navigate(Routes.favouritesScreen)
+    }
+
 
     val context = LocalContext.current
 
@@ -136,12 +147,15 @@ fun HomeScreen( navController: NavController, category:String = "All",window: Wi
                 toolBaroffsetY.value = 0f
                 viewmodel.changeCategory( it )
             },
-            showDialog= showAccountDialog
+            showDialog= showAccountDialog,
+            onCartIconClick = {
+                navController.navigate(Routes.shoppingCartScreen)
+            }
         )
 
 
         if(showAccountDialog.value){
-            AccountDialog(menuItems = menuItems, showAccountDialog)
+            AccountDialog(menuItems = accountMenuItems, showAccountDialog)
         }
 
     }

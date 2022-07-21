@@ -71,7 +71,8 @@ fun CollapsingTopAppBar(
     categories:SnapshotStateList<String>,
     selectedCategory:MutableState<String>,
     onCategoryChange: (String) -> Unit,
-    showDialog:MutableState<Boolean>
+    showDialog:MutableState<Boolean>,
+    onCartIconClick:()->Unit
 ){
 
     MotionLayout(motionScene= MotionScene(content = motionScene), progress = progress.value,modifier=Modifier.fillMaxWidth()){
@@ -126,7 +127,7 @@ fun CollapsingTopAppBar(
             Image(
                 modifier= Modifier
                     .clip(CircleShape)
-                    .clickable { }
+                    .clickable { onCartIconClick() }
                     .padding(2.dp),
                 imageVector = Icons.Default.ShoppingCart,
                 contentDescription = "Your Cart"
@@ -310,94 +311,6 @@ fun BannerViewItem(modifier: Modifier, bannerImage: Painter, contentDescription:
 
 }
 
-@Composable
-fun ProductsCard(
-    modifier: Modifier,
-    product: ShopApiProductsResponse,
-    onNavigate: (ShopApiProductsResponse) -> Unit,
-    withEleveation:Boolean,
-    borderColor:Brush = Brush.linearGradient(listOf(Color.DarkGray,Color.DarkGray))
-) {
-
-    val imageFromUrl = rememberAsyncImagePainter(
-        model = product.image,
-        contentScale = ContentScale.FillWidth,
-        placeholder = painterResource(id = R.drawable.test_product_placeholder),
-    )
-
-
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .border(width = if(withEleveation) 1.dp else 0.dp, shape = RoundedCornerShape(12.dp), brush = borderColor)
-            .clickable { onNavigate(product) },
-        contentAlignment = Alignment.Center
-    ) {
-
-        Card(
-            shape = RoundedCornerShape(12.dp),
-            elevation = 0.dp,
-            backgroundColor = Color.Transparent,
-            modifier= Modifier
-                .padding(vertical = 8.dp)
-        ) {
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Transparent)) {
-                Card(
-                    backgroundColor=Color.White,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp)
-                        .aspectRatio(1f / 1f),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = 0.dp
-                ) {
-                    Image(
-                        painter = imageFromUrl,
-                        contentDescription = "image of ${product.title}",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Fit,
-                    )
-                }
-
-                Spacer(Modifier.height(4.dp))
-
-                Text(
-                    text = product.title,
-                    overflow = TextOverflow.Clip,
-                    fontFamily = FontFamily.SansSerif,
-                    fontSize = 14.sp,
-                    maxLines = 2,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-
-                Spacer(Modifier.height(6.dp))
-
-                Text(
-                    text = "$${product.price}",
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily.SansSerif,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-                Spacer(Modifier.height(8.dp))
-                RatingBar(
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .fillMaxWidth(0.8f),
-                    starsCount = 5,
-                    ratingOutOfFive = product.rating.rate.roundToInt(),
-                    false
-                )
-                Spacer(Modifier.height(6.dp))
-
-            }
-
-        }
-    }
-}
 
 fun swipeLeft(
     currentDisplayBannerIndex: MutableState<Int>,
