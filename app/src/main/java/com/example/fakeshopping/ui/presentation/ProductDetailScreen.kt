@@ -88,7 +88,7 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
                     ),
                     shape = RoundedCornerShape(12.dp),
                     border = BorderStroke(3.dp, ColorYellow),
-                    elevation = ButtonDefaults.elevation(0.dp)
+                    elevation = ButtonDefaults.elevation(pressedElevation = 0.4.dp, defaultElevation = 0.dp, focusedElevation = 0.dp)
                 ) {
                     Text(
                         "ADD TO CART",

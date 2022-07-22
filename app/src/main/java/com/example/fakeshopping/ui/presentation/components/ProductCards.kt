@@ -20,6 +20,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -242,16 +243,18 @@ fun NormalHorizontalProductCard(
                     }else{
 
                         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.Center) {
-                            Icon(
-                                imageVector = Icons.Outlined.Delete,
-                                contentDescription = "remove item ${product.title}",
-                                Modifier
-                                    .padding(end=16.dp,start=8.dp)
-                                    .clip(CircleShape)
-                                    .clickable { onRemoveBtnClick() },
-                                tint = Color.Red
+                           Box(
+                                modifier= Modifier
+                                    .padding(end = 16.dp, start = 8.dp)
+                                    .clip(CircleShape) ) {
+                                IconButton(
+                                    icon = Icons.Outlined.Delete,
+                                    onClick = onRemoveBtnClick,
+                                    contentDescription = "remove item ${product.title}",
+                                    iconTint = Color.Red
+                                )
+                            }
 
-                            )
                         }
                     }
 
@@ -296,15 +299,21 @@ fun QuantityMeter(){
             )
             ,
     ) {
-            Column(Modifier.width(40.dp).height(100.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                Modifier
+                    .width(40.dp)
+                    .height(100.dp), horizontalAlignment = Alignment.CenterHorizontally) {
 
                 Spacer(Modifier.height(4.dp))
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowUp,
-                    contentDescription = "Increment Quantity",
-                    tint = Color.DarkGray,
-                    modifier=Modifier.weight(1f)
-                )
+
+                Box(Modifier.weight(1f)) {
+                    IconButton(
+                        icon = Icons.Default.KeyboardArrowUp,
+                        onClick = { /*TODO*/ },
+                        contentDescription = "Decrease Quantity",
+                        iconTint = Color.DarkGray
+                    )
+                }
 
                 Spacer(Modifier.height(4.dp))
                 Text(
@@ -312,17 +321,21 @@ fun QuantityMeter(){
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
                         fontFamily = FontFamily.SansSerif,
-                    modifier = Modifier.fillMaxWidth().weight(1f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
                     )
 
                 Spacer(Modifier.height(4.dp))
 
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowDown,
-                    contentDescription = "Increment Quantity",
-                    tint = Color.DarkGray,
-                    modifier=Modifier.weight(1f)
-                )
+                Box(Modifier.weight(1f)) {
+                    IconButton(
+                        icon = Icons.Default.KeyboardArrowDown,
+                        onClick = { /*TODO*/ },
+                        contentDescription = "Increase Quantity",
+                        iconTint = Color.DarkGray
+                    )
+                }
                 Spacer(Modifier.height(4.dp))
 
             }
@@ -336,8 +349,7 @@ fun ProductsCard(
     modifier: Modifier,
     product: ShopApiProductsResponse,
     onNavigate: (ShopApiProductsResponse) -> Unit,
-    withEleveation:Boolean,
-    borderColor: Brush = Brush.linearGradient(listOf(Color.DarkGray, Color.DarkGray))
+    withEleveation:Boolean
 ) {
 
     val imageFromUrl = rememberAsyncImagePainter(
@@ -350,11 +362,6 @@ fun ProductsCard(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .border(
-                brush = borderColor,
-                width = if (withEleveation) 1.dp else 0.dp,
-                shape = RoundedCornerShape(12.dp)
-            )
             .clickable { onNavigate(product) },
         contentAlignment = Alignment.Center
     ) {
@@ -364,7 +371,7 @@ fun ProductsCard(
             elevation = 0.dp,
             backgroundColor = Color.Transparent,
             modifier= Modifier
-                .padding(vertical = 8.dp)
+                .padding(bottom = 8.dp)
         ) {
             Column(modifier = Modifier
                 .fillMaxSize()
@@ -373,7 +380,6 @@ fun ProductsCard(
                     backgroundColor= Color.White,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(4.dp)
                         .aspectRatio(1f / 1f),
                     shape = RoundedCornerShape(12.dp),
                     elevation = 0.dp

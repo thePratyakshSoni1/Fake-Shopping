@@ -34,6 +34,7 @@ import androidx.navigation.NavController
 import com.example.fakeshopping.data.ProductRating
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.ui.presentation.components.HorizontalProductCard
+import com.example.fakeshopping.ui.presentation.components.IconButton
 import com.example.fakeshopping.ui.theme.ColorYellow
 import com.example.fakeshopping.ui.theme.ColorYellowVarient
 import com.example.fakeshopping.utils.Routes
@@ -94,17 +95,17 @@ fun FavouritesScreen(navController: NavController){
 
                                 onTap = { _ ->
 
-                                    if(isSelectionMode.value){
+                                    if (isSelectionMode.value) {
 
-                                        if (selectedProductsList.contains(it+1)) {
-                                            selectedProductsList.remove(it+1)
+                                        if (selectedProductsList.contains(it + 1)) {
+                                            selectedProductsList.remove(it + 1)
 
-                                        } else{
-                                            selectedProductsList.add(it+1)
+                                        } else {
+                                            selectedProductsList.add(it + 1)
                                         }
 
-                                    }else{
-                                        navController.navigate(Routes.productDetailScreen + "/${it+1}")
+                                    } else {
+                                        navController.navigate(Routes.productDetailScreen + "/${it + 1}")
                                     }
 
                                 }
@@ -157,17 +158,15 @@ private fun FavouritesTopBar(){
                     fontSize = 23.sp
                 )
             },
+
             navigationIcon = {
 
-                Icon(
-                    modifier = Modifier
-                        .clickable {
-
-                        }
-                        .clip(CircleShape),
-                    imageVector = Icons.Default.ArrowBack,
+                IconButton(
+                    icon =Icons.Default.ArrowBack ,
+                    onClick = {  },
                     contentDescription = "Go back"
                 )
+
             },
         )
     }
@@ -180,34 +179,44 @@ private fun FavouritesBottomBar(){
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp)
-            .background(Color.White),
-        horizontalArrangement = Arrangement.Center
-    ){
+            .background(Color.White)
+            .padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
 
         Button(
             onClick = { /*TODO*/ },
-            modifier= Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = ColorYellow,
                 disabledBackgroundColor = ColorYellowVarient
             )
         ) {
-            Text("Move to Cart", fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Medium)
+            Text(
+                "Move to Cart",
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.Medium
+            )
         }
 
         Button(
             onClick = { /*TODO*/ },
-            modifier= Modifier.padding(horizontal = 12.dp, vertical = 12.dp).border(width= 2.dp,shape= RoundedCornerShape(8.dp),color= ColorYellow),
+            modifier = Modifier.border(width = 2.dp, shape = RoundedCornerShape(12.dp), color = ColorYellow),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent,
-                contentColor = ColorYellow,
                 disabledContentColor = ColorYellowVarient,
-            )
+            ),
+            elevation = ButtonDefaults.elevation(pressedElevation = 0.4.dp, defaultElevation = 0.dp, focusedElevation = 0.dp)
         ) {
-            Text("Move to Cart", fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Medium)
+            Text(
+                modifier= Modifier.padding(horizontal = 12.dp, vertical=4.dp),
+                text="Move to Cart",
+                fontFamily = FontFamily.SansSerif,
+                fontWeight = FontWeight.Medium,
+                color=Color.Yellow
+            )
         }
 
 

@@ -51,6 +51,7 @@ import androidx.constraintlayout.compose.MotionScene
 import coil.compose.rememberAsyncImagePainter
 import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.ui.presentation.components.IconButton
 import com.example.fakeshopping.ui.presentation.components.RatingBar
 import com.example.fakeshopping.ui.theme.ColorWhiteVariant
 import com.example.fakeshopping.ui.theme.ColorYellow
@@ -124,23 +125,29 @@ fun CollapsingTopAppBar(
 
         Row(modifier=Modifier.layoutId("searchbarMenuButtons")){
 
-            Image(
-                modifier= Modifier
-                    .clip(CircleShape)
-                    .clickable { onCartIconClick() }
-                    .padding(2.dp),
-                imageVector = Icons.Default.ShoppingCart,
+
+            IconButton(
+                icon = Icons.Default.ShoppingCart,
+                onClick = onCartIconClick,
                 contentDescription = "Your Cart"
             )
 
-            Image(
-                modifier= Modifier
-                    .clip(CircleShape)
-                    .clickable { showDialog.value = true }
-                    .padding(2.dp),
-                imageVector = Icons.Default.AccountCircle,
+//            Image(
+//                modifier= Modifier
+//                    .clip(CircleShape)
+//                    .clickable { onCartIconClick() }
+//                    .padding(2.dp),
+//                imageVector = Icons.Default.ShoppingCart,
+//                contentDescription = "Your Cart"
+//            )
+
+            IconButton(
+                icon = Icons.Default.AccountCircle,
+                onClick = { showDialog.value = true },
                 contentDescription = "Your Account"
             )
+
+
         }
 
         LazyRow(modifier=Modifier.layoutId("category"),contentPadding = PaddingValues(horizontal = 16.dp)) {

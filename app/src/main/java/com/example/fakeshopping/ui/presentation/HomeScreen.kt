@@ -6,6 +6,8 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -16,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -223,7 +226,9 @@ fun LazyGridScope.allProductsSection(
 ) {
     items(products.size) { index ->
 
-        ProductsCard(
+        Card(
+            shape = RoundedCornerShape(12.dp),
+            elevation = 4.dp,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
@@ -231,12 +236,16 @@ fun LazyGridScope.allProductsSection(
                     bottom = 6.dp,
                     start = if (index % 2 == 0) 18.dp else 6.dp,
                     end = if (index % 2 == 0) 6.dp else 18.dp,
-                ),
-            product = products[index],
-            onNavigate = onNavigate,
-            withEleveation = true,
-            borderColor = if(products[index].rating.rate.roundToInt() == 5) CollapsedToolbarColor else Brush.linearGradient(listOf(Color.DarkGray,Color.DarkGray))
-        )
+                )
+        ) {
+            ProductsCard(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                product = products[index],
+                onNavigate = onNavigate,
+                withEleveation = true,
+            )
+        }
 
     }
 }

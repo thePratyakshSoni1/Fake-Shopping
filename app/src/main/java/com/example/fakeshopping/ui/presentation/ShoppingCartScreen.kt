@@ -33,6 +33,7 @@ import androidx.navigation.NavController
 import com.example.fakeshopping.data.ProductRating
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.ui.presentation.components.HorizontalProductCard
+import com.example.fakeshopping.ui.presentation.components.IconButton
 import com.example.fakeshopping.ui.theme.ColorYellow
 import com.example.fakeshopping.ui.theme.ColorYellowVarient
 import com.example.fakeshopping.utils.Routes
@@ -147,25 +148,24 @@ private fun ShoppingCartTopBar(){
 
 
     SmallTopAppBar(
+        modifier = Modifier.padding(start=12.dp),
         title = {
             Text(
                 "Your Cart",
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold,
-                fontSize = 23.sp
+                fontSize = 21.sp,
+                modifier=Modifier.padding(start=12.dp)
             )
         },
         navigationIcon = {
 
-            Icon(
-                modifier = Modifier
-                    .clickable {
-
-                    }
-                    .clip(CircleShape),
-                imageVector = Icons.Default.ArrowBack,
+            IconButton(
+                icon =Icons.Default.ArrowBack ,
+                onClick = {  },
                 contentDescription = "Go back"
             )
+
         },
     )
 
@@ -178,14 +178,13 @@ private fun ShoppingCartBottomBar() {
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp)
-                .background(Color.White),
-            horizontalArrangement = Arrangement.Center
+                .background(Color.White)
+                .padding(vertical = 18.dp),
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
 
             Button(
                 onClick = { /*TODO*/ },
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = ColorYellow,
@@ -194,6 +193,7 @@ private fun ShoppingCartBottomBar() {
             ) {
                 Text(
                     "Move to Cart",
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                     fontFamily = FontFamily.SansSerif,
                     fontWeight = FontWeight.Medium
                 )
@@ -201,19 +201,20 @@ private fun ShoppingCartBottomBar() {
 
             Button(
                 onClick = { /*TODO*/ },
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp)
-                    .border(width = 2.dp, shape = RoundedCornerShape(8.dp), color = ColorYellow),
+                modifier = Modifier.border(width = 2.dp, shape = RoundedCornerShape(12.dp), color = ColorYellow),
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color.Transparent,
-                    contentColor = ColorYellow,
                     disabledContentColor = ColorYellowVarient,
-                )
+                ),
+                elevation = ButtonDefaults.elevation(pressedElevation = 0.4.dp, defaultElevation = 0.dp, focusedElevation = 0.dp)
             ) {
                 Text(
-                    "Move to Cart",
+                    modifier= Modifier.padding(horizontal = 12.dp, vertical=4.dp),
+                    text="Move to Cart",
                     fontFamily = FontFamily.SansSerif,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color=Color.Yellow
                 )
             }
 
