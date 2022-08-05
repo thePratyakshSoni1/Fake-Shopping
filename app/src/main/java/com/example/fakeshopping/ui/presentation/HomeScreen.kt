@@ -2,250 +2,234 @@ package com.example.fakeshopping.ui.presentation
 
 import android.util.Log
 import android.view.Window
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Icon
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.fakeshopping.R
-import com.example.fakeshopping.data.ShopApiProductsResponse
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.fakeshopping.ui.HomeScreenViewmodel
-import com.example.fakeshopping.ui.theme.ColorWhiteVariant
-import com.example.fakeshopping.ui.presentation.components.AccountDialog
-import com.example.fakeshopping.ui.presentation.components.MenuItemData
-import com.example.fakeshopping.ui.presentation.components.ProductsCard
-import com.example.fakeshopping.ui.presentation.components.menuItems
+import com.example.fakeshopping.ui.presentation.homscreen_fragments.HomeScreenMainFragment
+import com.example.fakeshopping.ui.presentation.homscreen_fragments.HomeScreenSearchResultsFragment
+import com.example.fakeshopping.ui.presentation.homscreen_fragments.HomeScreenSearchSuggestionFragment
+import com.example.fakeshopping.utils.HomeScreenFragmentRoutes
 import com.example.fakeshopping.utils.Routes
-import com.example.fakeshopping.utils.ToolbarProperties
-import com.example.fakeshopping.utils.ToolbarProperties.CollapsedToolbarColor
-import com.example.fakeshopping.utils.ToolbarProperties.inDp
-import kotlin.math.roundToInt
 
-
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun HomeScreen( navController: NavController, category:String = "All",window: Window ){
+fun HomeScreen(rootNavController: NavController, window: Window, category: String = "All") {
 
-    val viewmodel:HomeScreenViewmodel = hiltViewModel()
-    val toolBaroffsetY:MutableState<Float> = remember{ mutableStateOf(0f) }
-    val homefeedScrollOffset = rememberLazyGridState()
-    val toolbarColor = remember { mutableStateOf(ToolbarProperties.ExpandedToolbarColor) }
-    val showAccountDialog = remember{ mutableStateOf(false) }
+    val fragmentNavController = rememberNavController()
+    val viewmodel: HomeScreenViewmodel = hiltViewModel()
 
-    val accountMenuItems = menuItems + MenuItemData(
-        "Your Cart",
-        Icons.Outlined.ShoppingCart,
-    ) {
-        navController.navigate(Routes.shoppingCartScreen)
-    } + MenuItemData(
-        "Favourites",
-        Icons.Rounded.FavoriteBorder
-    ) {
-        navController.navigate(Routes.favouritesScreen)
-    }
+    Column(modifier = Modifier.fillMaxSize()) {
 
-
-    val context = LocalContext.current
-
-    val toolbarMotionScene = remember{
-        context.resources.openRawResource(R.raw.topappbar_motion_scene).readBytes().decodeToString()
-    }
-
-    val searchBarColor = remember {
-        mutableStateOf(ColorWhiteVariant)
-    }
-
-    fun setHeaderColor(isCollapsed:Boolean){
-        if(isCollapsed){
-            toolbarColor.value = CollapsedToolbarColor
-            searchBarColor.value = Color.White
-            window.statusBarColor = Color.Blue.toArgb()
-        }else{
-            toolbarColor.value = ToolbarProperties.ExpandedToolbarColor
-            searchBarColor.value = ColorWhiteVariant
-            window.statusBarColor = Color.White.toArgb()
-        }
-    }
-
-    val animateSearchBarColor = animateColorAsState(targetValue = searchBarColor.value)
-
-    Log.d("CLICKED","HOME SCREEN RECOMPOSED")
-    LaunchedEffect(key1 = true ) {
-        viewmodel.refreshCategories()
-        viewmodel.changeCategory(category)
-        Log.d("API", "Api requests were made does that succeed ?")
-    }
-    Box(
-        modifier= Modifier.fillMaxSize()
-    ){
-
-        Column(
-            modifier= Modifier
-                .fillMaxSize()
-                .nestedScroll(object : NestedScrollConnection {
-                    override fun onPostScroll(
-                        consumed: Offset,
-                        available: Offset,
-                        source: NestedScrollSource
-                    ): Offset {
-                        if (homefeedScrollOffset.firstVisibleItemIndex == 0) {
-                            toolBaroffsetY.value =
-                                (homefeedScrollOffset.firstVisibleItemScrollOffset / 100f).coerceIn(
-                                    0f,
-                                    1f
-                                )
-                            if (toolBaroffsetY.value == 1f) setHeaderColor(true) else setHeaderColor(
-                                false
-                            )
-                            Log.d("FLING SCROLL", "VISIBLE: VISIBLE ")
-                        } else {
-                            setHeaderColor(true)
-                            toolBaroffsetY.value = 1f
-                        }
-                        return Offset.Zero
-                    }
-                })
-        ){
-            ContentSection(
-                navController,
-                viewmodel.bannerResources,
-                viewmodel.userInteractedWithBanners,
-                homefeedScrollOffset,
-                viewmodel.products
+        Box(modifier = Modifier.fillMaxSize()) {
+            HomeScreenNavigation(
+                rootNavController = rootNavController, window = window,
+                fragmentNavController = fragmentNavController,
+                homeScreenViewModel = viewmodel,
+                category = category,
             )
         }
 
-        CollapsingTopAppBar(
-            motionScene = toolbarMotionScene,
-            progress = toolBaroffsetY,
-            toolbarBackground = toolbarColor,
-            searchbarColor = animateSearchBarColor,
-            searchText = viewmodel.searchBoxText,
-            categories = viewmodel.categories,
-            selectedCategory = viewmodel.selectedCategory,
-            onCategoryChange = {
-                toolBaroffsetY.value = 0f
-                viewmodel.changeCategory( it )
-            },
-            showDialog= showAccountDialog,
-            onCartIconClick = {
-                navController.navigate(Routes.shoppingCartScreen)
-            }
-        )
-
-
-        if(showAccountDialog.value){
-            AccountDialog(menuItems = accountMenuItems, showAccountDialog)
-        }
-
     }
+
 
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ContentSection(
-    navController:NavController,
-    bannerResource: SnapshotStateMap<String, Int>,
-    userInteracted: MutableState<Boolean>,
-    listState: LazyGridState,
-    products: SnapshotStateList<ShopApiProductsResponse>
-){
+fun HomeScreenNavigation(
+    homeScreenViewModel: HomeScreenViewmodel,
+    rootNavController: NavController,
+    window: Window,
+    category: String = "All",
+    fragmentNavController: NavHostController,
+) {
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        state = listState
-    ){
+    NavHost(
+        fragmentNavController,
+        startDestination = HomeScreenFragmentRoutes.mainFragment,
+    ) {
 
-        item(span = { GridItemSpan(2) }){
-            Spacer(Modifier.height(ToolbarProperties.TOOLBAR_EXPANDED_HEIGHT.inDp() + 24.dp))
-        }
-
-        item( span= { GridItemSpan(2) } ){
-
-            BannerSection(
-                Modifier.padding(bottom=22.dp,top=36.dp),
-                bannerResource,
-                userInteracted
-
+        composable(HomeScreenFragmentRoutes.mainFragment) {
+            HomeScreenMainFragment(
+                rootNavController = rootNavController,
+                window = window,
+                category = category,
+                homeScreenviewmodel = homeScreenViewModel,
+                onSearchbarClick = {
+                    fragmentNavController.navigate(HomeScreenFragmentRoutes.searchSuggestionFragment)
+                }
             )
         }
 
-        allProductsSection(
-            products
-        ) { product ->
-            navController.navigate("${Routes.productDetailScreen}/${product.id}")
-        }
-
-    }
-
-}
-
-@Composable
-fun BannerSection(
-    modifier: Modifier = Modifier.fillMaxWidth(),
-    bannerResource: SnapshotStateMap<String, Int>,
-    userInteracted: MutableState<Boolean>
-) {
-
-        BannerSlides(
-            modifier = modifier,
-            bannersResource = bannerResource,
-            userInteracted
-        )
-
-
-}
-
-fun LazyGridScope.allProductsSection(
-    products: List<ShopApiProductsResponse>,
-    onNavigate: (product: ShopApiProductsResponse) -> Unit
-) {
-    items(products.size) { index ->
-
-        Card(
-            shape = RoundedCornerShape(12.dp),
-            elevation = 4.dp,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = 6.dp,
-                    bottom = 6.dp,
-                    start = if (index % 2 == 0) 18.dp else 6.dp,
-                    end = if (index % 2 == 0) 6.dp else 18.dp,
-                )
+        composable(
+            HomeScreenFragmentRoutes.searchSuggestionFragment+"?queryString={queryString}",
+            arguments= listOf(
+                navArgument(name="queryString"){
+                    type = NavType.StringType
+                    nullable = true
+                }
+            )
         ) {
-            ProductsCard(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                product = products[index],
-                onNavigate = onNavigate,
-                withEleveation = true,
+
+            HomeScreenSearchSuggestionFragment(
+                previousQueryString = it.arguments?.getString("queryString"),
+                searchProduct = { searchText ->
+                    fragmentNavController.popBackStack()
+                    fragmentNavController.navigate("${HomeScreenFragmentRoutes.searchResultsFragment}/$searchText")
+                },
+                goToPreviousFragment = { fragmentNavController.popBackStack() }
             )
+
         }
 
+        composable(
+            HomeScreenFragmentRoutes.searchResultsFragment + "/{searchString}",
+            arguments = listOf(
+                navArgument(name="searchString"){
+                    type = NavType.StringType
+                }
+            )
+        ) {
+
+            HomeScreenSearchResultsFragment(
+                onProductClick = { productId ->
+                    rootNavController.navigate("${Routes.productDetailScreen}/$productId")
+                },
+                searchTxt = it.arguments?.getString("searchString")!!,
+                onBackBtnClick = {
+                    fragmentNavController.popBackStack(HomeScreenFragmentRoutes.mainFragment,false)
+                },
+                onSearchClear = {
+                    fragmentNavController.navigate(HomeScreenFragmentRoutes.searchSuggestionFragment) {
+                        popUpTo(HomeScreenFragmentRoutes.searchSuggestionFragment) {
+                            inclusive = true
+                        }
+                    }
+                                },
+                onSearchTextClick = { searchTxt ->
+                    fragmentNavController.navigate("${HomeScreenFragmentRoutes.searchSuggestionFragment}?queryString=$searchTxt")
+                },
+                onBackPress = {
+                    fragmentNavController.popBackStack()
+                }
+            )
+
+        }
+
+
+    }
+
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun HomeScreenSearchBar(
+    searchbarTxt:TextFieldValue,
+    onSearchTextValueChange:(TextFieldValue)->Unit,
+    focusRequester: FocusRequester,
+    searchProducts:(String)->Unit,
+    onBackPress: () -> Unit,
+) {
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(true) {
+        Log.d("TOOLBAR", "Hi i am Toolbar Composable here")
+    }
+
+    TopAppBar(
+        elevation = 2.dp,
+        modifier = Modifier
+            .fillMaxWidth(),
+        contentPadding = PaddingValues(vertical = 4.dp),
+        backgroundColor = Color.White
+    ) {
+
+        Icon(
+            imageVector = Icons.Default.ArrowBack,
+            contentDescription = "Go Back",
+            modifier = Modifier
+                .padding(start = 12.dp, top = 8.dp, bottom = 8.dp)
+                .clip(CircleShape)
+                .clickable {
+                    keyboardController?.hide()
+                    onBackPress()
+                }
+                .padding(6.dp),
+            tint = Color.DarkGray
+        )
+
+        TextField(
+            value = searchbarTxt,
+            onValueChange = { onSearchTextValueChange(it) },
+            modifier = Modifier
+                .height(TextFieldDefaults.MinHeight)
+                .weight(1f)
+                .focusRequester(focusRequester),
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = Color.DarkGray,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                backgroundColor = Color.Transparent,
+                cursorColor = Color.DarkGray,
+            ),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Search,
+                autoCorrect = false
+            ),
+            keyboardActions = KeyboardActions {
+                keyboardController?.hide()
+                searchProducts(searchbarTxt.text)
+            },
+            maxLines = 1
+        )
+
+        if (searchbarTxt.text.isNotEmpty()) {
+            Icon(
+                imageVector = Icons.Default.Clear,
+                contentDescription = "Clear",
+                modifier = Modifier
+                    .padding(end = 12.dp, top = 8.dp, bottom = 8.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        onSearchTextValueChange(TextFieldValue(""))
+                        keyboardController?.show()
+                    }
+                    .padding(6.dp),
+                tint = Color.DarkGray
+            )
+        }
     }
 }
+
+

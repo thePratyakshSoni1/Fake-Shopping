@@ -13,18 +13,3 @@ data class MenuItemData(
     val onClickListener: () -> Unit
 )
 
-val menuItems:List<MenuItemData> = listOf<MenuItemData>(
-
-
-    MenuItemData(
-        "Orders",
-        Icons.Default.Send
-    ) { },
-
-    MenuItemData(
-        "Settings",
-        Icons.Default.Settings
-    ) { },
-
-
-)

@@ -20,6 +20,7 @@ import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -30,7 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.fakeshopping.data.ProductRating
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.ui.presentation.components.HorizontalProductCard
 import com.example.fakeshopping.ui.presentation.components.IconButton
@@ -66,7 +66,7 @@ fun ShopingCartScreen(navController:NavController){
                     "all",
                     "Product Desc ;)",
                     "#xyz",
-                    ProductRating(
+                    ShopApiProductsResponse.ProductRating(
                         rate = 3.5f,
                         count = 150
                     )
@@ -93,17 +93,17 @@ fun ShopingCartScreen(navController:NavController){
 
                                 onTap = { _ ->
 
-                                    if(isSelectionMode.value){
+                                    if (isSelectionMode.value) {
 
-                                        if (selectedProductsList.contains(it+1)) {
-                                            selectedProductsList.remove(it+1)
+                                        if (selectedProductsList.contains(it + 1)) {
+                                            selectedProductsList.remove(it + 1)
 
-                                        } else{
-                                            selectedProductsList.add(it+1)
+                                        } else {
+                                            selectedProductsList.add(it + 1)
                                         }
 
-                                    }else{
-                                        navController.navigate(Routes.productDetailScreen + "/${it+1}")
+                                    } else {
+                                        navController.navigate(Routes.productDetailScreen + "/${it + 1}")
                                     }
 
                                 }
@@ -130,7 +130,8 @@ fun ShopingCartScreen(navController:NavController){
                         },
                         onRemoveBtnClick = {
 
-                        }
+                        },
+                    remember { mutableStateOf(1) }
                     )
                 }
 

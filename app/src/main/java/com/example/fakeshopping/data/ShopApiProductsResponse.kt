@@ -8,12 +8,14 @@ data class ShopApiProductsResponse(
     val category: String,
     val description: String,
     val image: String,
-    val rating:ProductRating
+    val rating:ProductRating,
 
-)
+){
 
-data class ProductRating(
-    val rate: Float,
-    val count: Int
-)
+    data class ProductRating(
+        val rate: Float,
+        val count: Int
+    )
+
+}
 

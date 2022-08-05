@@ -16,7 +16,7 @@ fun LoadingView(modifier: Modifier, circleSize: Dp){
 
     Box(modifier= modifier, contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
-            color = Color.Blue,
+            color = Color(0xFF2D0081),
             modifier = Modifier.size(circleSize).padding(6.dp)
         )
     }

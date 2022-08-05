@@ -18,16 +18,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.fakeshopping.ui.theme.ColorExtraDarkGray
 
 @Composable
-fun AccountDialog(menuItems:List<MenuItemData>, showDialogValue: MutableState<Boolean>){
+fun AccountDialog(menuItems:List<MenuItemData>, showDialogValue: MutableState<Boolean>, userProfile:Painter){
 
     Dialog(onDismissRequest = { showDialogValue.value = false }) {
 
@@ -48,26 +51,22 @@ fun AccountDialog(menuItems:List<MenuItemData>, showDialogValue: MutableState<Bo
                     ) {
 
                         Image(
-                            imageVector = Icons.Default.Face,
+                            painter = userProfile,
                             contentDescription = "Profile Picture",
-                            modifier = Modifier.size(63.dp)
+                            modifier = Modifier.size(63.dp),
+                            contentScale= ContentScale.FillHeight
                         )
                         Spacer(Modifier.width(12.dp))
-                        Text(text = "Username", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(text = "Username", fontSize = 14.sp, fontWeight = FontWeight.Bold, color= ColorExtraDarkGray)
 
                     }
 
-                    Box(modifier=Modifier.matchParentSize().padding(end = 14.dp, top=14.dp, bottom = 8.dp),contentAlignment = Alignment.TopEnd){
+                    Box(modifier= Modifier
+                        .matchParentSize()
+                        .padding(end = 14.dp, top = 14.dp, bottom = 8.dp),contentAlignment = Alignment.TopEnd){
 
-                        Icon(
-                            modifier = Modifier
-                                .clickable {
-                                    showDialogValue.value = false
-                                }
-                                .clip(CircleShape),
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close Menu"
-                        )
+
+                        IconButton(icon = Icons.Default.Close, onClick = { showDialogValue.value = false }, contentDescription = "Close Menu")
 
                     }
 
@@ -110,7 +109,7 @@ fun AccountDialogitem(icon:ImageVector, text:String, onClick:() -> Unit){
 
     Row(modifier= Modifier
         .clickable { onClick() }
-        .padding(top=12.dp,bottom=12.dp,start=21.dp)
+        .padding(top = 12.dp, bottom = 12.dp, start = 21.dp)
         .fillMaxWidth()) {
 
         Icon(imageVector = icon, contentDescription = text)
@@ -120,7 +119,8 @@ fun AccountDialogitem(icon:ImageVector, text:String, onClick:() -> Unit){
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             fontFamily = FontFamily.SansSerif,
-            textAlign = TextAlign.Start
+            textAlign = TextAlign.Start,
+            color= ColorExtraDarkGray
         )
 
     }

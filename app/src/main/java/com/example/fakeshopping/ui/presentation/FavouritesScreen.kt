@@ -31,7 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.fakeshopping.data.ProductRating
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.ui.presentation.components.HorizontalProductCard
 import com.example.fakeshopping.ui.presentation.components.IconButton
@@ -68,7 +67,7 @@ fun FavouritesScreen(navController: NavController){
                     "all",
                     "Product Desc ;)",
                     "#xyz",
-                    ProductRating(
+                    ShopApiProductsResponse.ProductRating(
                         rate = 3.5f,
                         count = 150
                     )
@@ -132,7 +131,8 @@ fun FavouritesScreen(navController: NavController){
                         },
                         onRemoveBtnClick = {
 
-                        }
+                        },
+                        remember { mutableStateOf(1) }
                     )
                 }
 

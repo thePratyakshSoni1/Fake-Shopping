@@ -8,21 +8,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -31,12 +22,16 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -51,14 +46,15 @@ import androidx.constraintlayout.compose.MotionScene
 import coil.compose.rememberAsyncImagePainter
 import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.ui.presentation.components.HorizontalProductCard
 import com.example.fakeshopping.ui.presentation.components.IconButton
+import com.example.fakeshopping.ui.presentation.components.NormalHorizontalProductCard
 import com.example.fakeshopping.ui.presentation.components.RatingBar
 import com.example.fakeshopping.ui.theme.ColorWhiteVariant
 import com.example.fakeshopping.ui.theme.ColorYellow
+import com.example.fakeshopping.utils.ToolbarProperties.TOOLBAR_EXPANDED_HEIGHT
 import com.example.fakeshopping.utils.ToolbarProperties.inDp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMotionApi::class)
@@ -68,12 +64,12 @@ fun CollapsingTopAppBar(
     progress:MutableState<Float>,
     toolbarBackground:MutableState<Brush>,
     searchbarColor:State<Color>,
-    searchText:MutableState<String>,
     categories:SnapshotStateList<String>,
     selectedCategory:MutableState<String>,
-    onCategoryChange: (String) -> Unit,
     showDialog:MutableState<Boolean>,
-    onCartIconClick:()->Unit
+    onCategoryChange: (String) -> Unit,
+    onCartIconClick:()->Unit,
+    onSearchBarClick:()->Unit
 ){
 
     MotionLayout(motionScene= MotionScene(content = motionScene), progress = progress.value,modifier=Modifier.fillMaxWidth()){
@@ -101,27 +97,58 @@ fun CollapsingTopAppBar(
 
         }
 
-        TextField(
-            value = searchText.value,
-            onValueChange = {
-                searchText.value = it
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = searchbarColor.value,
-                textColor = Color.Black,
-                cursorColor = Color.Blue,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
-            ),
-            modifier = Modifier
-                .layoutId("searchbar"),
-            shape = RoundedCornerShape(10.dp),
-            textStyle = TextStyle(
-                fontSize = 16.sp,
-            ),
-            placeholder = { Text("Search Products ...") }
+        Box(
+            modifier=Modifier
+                .height(TextFieldDefaults.MinHeight).fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .clickable{ onSearchBarClick() }
+                .background(searchbarColor.value)
+                .layoutId("searchbar")
+        ){
 
-        )
+            var hintText by remember{ mutableStateOf("") }
+            var ishintLoopRunning = true
+            DisposableEffect(key1 = LocalLifecycleOwner.current){
+
+                val hintCategories = listOf("Mens Fashion","Women's Fashion","Kid's toys","Households","Jewellery")
+                    var currentHintIndex = 0
+                CoroutineScope(Dispatchers.IO).launch{
+                    while (ishintLoopRunning){
+                        Log.d("TOOLBAR","I'M stilll on work !")
+                        hintText= hintCategories[currentHintIndex]
+                        if(currentHintIndex >= hintCategories.size -1) currentHintIndex = 0 else currentHintIndex++
+                        delay(1200L)
+
+                    }
+                }
+
+                onDispose {
+                    ishintLoopRunning =false
+                }
+
+            }
+
+            Row(modifier=Modifier.fillMaxHeight(),verticalAlignment = Alignment.CenterVertically){
+
+                Spacer(Modifier.width(8.dp))
+                Icon(
+                    imageVector= Icons.Default.Search,
+                    tint = Color.LightGray,
+                    contentDescription = "Search Products here"
+                )
+
+                Text("Search $hintText",
+                    color = if(searchbarColor.value == ColorWhiteVariant) Color(0xFFA7A7A7) else Color.LightGray,
+                    modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp),
+                    fontSize = 16.sp
+                )
+
+            }
+
+
+        }
 
         Row(modifier=Modifier.layoutId("searchbarMenuButtons")){
 
@@ -131,15 +158,6 @@ fun CollapsingTopAppBar(
                 onClick = onCartIconClick,
                 contentDescription = "Your Cart"
             )
-
-//            Image(
-//                modifier= Modifier
-//                    .clip(CircleShape)
-//                    .clickable { onCartIconClick() }
-//                    .padding(2.dp),
-//                imageVector = Icons.Default.ShoppingCart,
-//                contentDescription = "Your Cart"
-//            )
 
             IconButton(
                 icon = Icons.Default.AccountCircle,
@@ -302,7 +320,7 @@ fun BannerSlides(
 }
 
 @Composable
-fun BannerViewItem(modifier: Modifier, bannerImage: Painter, contentDescription: String? = null) {
+private fun BannerViewItem(modifier: Modifier, bannerImage: Painter, contentDescription: String? = null) {
 
     Card(
         shape = RoundedCornerShape(12.dp), elevation = 8.dp,
@@ -319,7 +337,7 @@ fun BannerViewItem(modifier: Modifier, bannerImage: Painter, contentDescription:
 }
 
 
-fun swipeLeft(
+private fun swipeLeft(
     currentDisplayBannerIndex: MutableState<Int>,
     scrollCoroutine: CoroutineScope,
     bannerSlidesListState: LazyListState
@@ -330,7 +348,7 @@ fun swipeLeft(
     }
 }
 
-fun swipeRight(
+private fun swipeRight(
     currentDisplayBannerIndex: MutableState<Int>,
     scrollCoroutine: CoroutineScope,
     bannerSlidesListState: LazyListState
@@ -344,7 +362,7 @@ fun swipeRight(
 }
 
 @Composable
-fun HeaderSectionCategoryListItem(
+private fun HeaderSectionCategoryListItem(
     isSelected: Boolean,
     categoryName: String,
     onCategoryClick: (String) -> Unit,

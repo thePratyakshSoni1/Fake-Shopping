@@ -17,6 +17,8 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,84 +37,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.fakeshopping.R
-import com.example.fakeshopping.data.ProductRating
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.utils.ToolbarProperties
 import kotlin.math.roundToInt
 
-
-
-@Preview(showBackground = true)
-@Composable
-fun ItemPreviewFunc(){
-
-    Surface(Modifier.fillMaxSize(), color = Color.Yellow) {
-
-        LazyColumn(contentPadding = PaddingValues(start=12.dp)) {
-
-            items(12){ it ->
-
-                if(it%2 == 0){
-                    Box(Modifier.fillMaxWidth(0.97f)){
-
-                        NormalHorizontalProductCard(
-                            modifier = Modifier
-                                .height(133.dp)
-                                .fillMaxWidth(0.98f),
-                            product = ShopApiProductsResponse(
-                                2,"Product Name X","$69", "electronic", "xyz","www.google.com",
-                                ProductRating(3f, 155)
-                            ),
-                            onNavigate = {  },
-                            withQuantityMeter = true,
-                            onRemoveBtnClick = {  },
-                            8.dp
-                        )
-
-                        HorizontalProductCardButtonsLayer()
-
-                    }
-                }else{
-
-                    Box(Modifier.fillMaxWidth(0.97f)){
-
-                        NormalHorizontalProductCard(
-                            modifier = Modifier
-                                .height(133.dp)
-                                .fillMaxWidth(),
-                            product = ShopApiProductsResponse(
-                                2,"Product Name X","$69", "electronic", "xyz","www.google.com",
-                                ProductRating(3f, 155)
-                            ),
-                            onNavigate = {  },
-                            withQuantityMeter = false,
-                            onRemoveBtnClick = {  },
-                            2.dp
-                        )
-
-                    }
-
-                }
-                Spacer(Modifier.height(12.dp))
-
-            }
-
-        }
-
-    } }
 
 @Composable
 fun HorizontalProductCard(
     product:ShopApiProductsResponse,
     isSelected: Boolean,
     onClick: () -> Unit,
-    onRemoveBtnClick: () -> Unit
-){
+    onRemoveBtnClick: () -> Unit,
+    itemQuantity: MutableState<Int>
+) {
 
-    if( isSelected ) {
+    if (isSelected) {
         Box(Modifier.fillMaxWidth(0.97f)) {
 
-            NormalHorizontalProductCard(
+            NormalHorizontalProductCardWithActionButtons(
                 modifier = Modifier
                     .padding(top = 10.dp)
                     .height(126.dp)
@@ -121,17 +63,19 @@ fun HorizontalProductCard(
                 onNavigate = { onClick() },
                 withQuantityMeter = true,
                 onRemoveBtnClick = { onRemoveBtnClick() },
-                elevation= 8.dp
+                elevation = 8.dp,
+                itemQuantity = itemQuantity,
+                hasRemoveButton = true
             )
 
             HorizontalProductCardButtonsLayer()
 
         }
-    }else{
+    } else {
 
-        Box(Modifier.fillMaxWidth(0.97f)){
+        Box(Modifier.fillMaxWidth(0.97f)) {
 
-            NormalHorizontalProductCard(
+            NormalHorizontalProductCardWithActionButtons(
                 modifier = Modifier
                     .height(126.dp)
                     .fillMaxWidth(),
@@ -139,7 +83,9 @@ fun HorizontalProductCard(
                 onNavigate = { onClick() },
                 withQuantityMeter = false,
                 onRemoveBtnClick = { onRemoveBtnClick() },
-                elevation= 2.dp
+                elevation = 2.dp,
+                itemQuantity = itemQuantity,
+                hasRemoveButton = true
             )
 
         }
@@ -149,20 +95,22 @@ fun HorizontalProductCard(
 
 
 @Composable
-fun NormalHorizontalProductCard(
+private fun NormalHorizontalProductCardWithActionButtons(
     modifier: Modifier,
     product: ShopApiProductsResponse,
     onNavigate: () -> Unit,
     withQuantityMeter:Boolean,
     onRemoveBtnClick:()->Unit,
-    elevation: Dp
+    elevation: Dp,
+    itemQuantity:MutableState<Int>,
+    hasRemoveButton:Boolean
 ) {
 
-//    val imageFromUrl = rememberAsyncImagePainter(
-//        model = product.image,
-//        contentScale = ContentScale.FillWidth,
-//        placeholder = painterResource(id = R.drawable.test_product_placeholder),
-//    )
+    val imageFromUrl = rememberAsyncImagePainter(
+        model = product.image,
+        contentScale = ContentScale.FillWidth,
+        placeholder = painterResource(id = R.drawable.test_product_placeholder),
+    )
 
     Box(modifier = modifier.padding(vertical = 4.dp)) {
         Card(
@@ -181,7 +129,7 @@ fun NormalHorizontalProductCard(
                     elevation = 0.dp
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.test_product_placeholder),
+                        painter = imageFromUrl,
                         contentDescription = "image of ${product.title}",
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Fit,
@@ -218,7 +166,7 @@ fun NormalHorizontalProductCard(
                         Spacer(Modifier.height(6.dp))
 
                         Text(
-                            text = "${product.price}",
+                            text = product.price,
                             fontSize = 14.sp,
                             fontFamily = FontFamily.SansSerif,
                             fontWeight = FontWeight.Medium,
@@ -237,16 +185,21 @@ fun NormalHorizontalProductCard(
 
                     }
 
-                    if(withQuantityMeter) {
+                    if (withQuantityMeter) {
                         Spacer(Modifier.width(16.dp))
-                        QuantityMeter()
-                    }else{
+                        QuantityMeter(itemQuantity)
+                    } else if (hasRemoveButton) {
 
-                        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.Center) {
-                           Box(
-                                modifier= Modifier
+                        Column(
+                            Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.End,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Box(
+                                modifier = Modifier
                                     .padding(end = 16.dp, start = 8.dp)
-                                    .clip(CircleShape) ) {
+                                    .clip(CircleShape)
+                            ) {
                                 IconButton(
                                     icon = Icons.Outlined.Delete,
                                     onClick = onRemoveBtnClick,
@@ -267,38 +220,124 @@ fun NormalHorizontalProductCard(
 
 
 @Composable
-private fun HorizontalProductCardButtonsLayer(  ){
+fun NormalHorizontalProductCard(
+    modifier: Modifier,
+    product: ShopApiProductsResponse,
+    onNavigate: () -> Unit,
+) {
 
-    Box(Modifier.fillMaxSize()){
+    /** User Must Define Height And Width of Card using the modifier parameter **/
 
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd){
+    val imageFromUrl = rememberAsyncImagePainter(
+        model = product.image,
+        contentScale = ContentScale.FillWidth,
+        placeholder = painterResource(id = R.drawable.test_product_placeholder),
+    )
+
+    Box(modifier = modifier.padding(vertical = 4.dp)) {
+        Card(
+            modifier = Modifier.fillMaxSize().clickable { onNavigate() },
+            shape = RoundedCornerShape(12.dp),
+            elevation = 2.dp
+        ) {
+
+            Row {
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .aspectRatio(1f / 1f),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = 0.dp
+                ) {
+                    Image(
+                        painter = imageFromUrl,
+                        contentDescription = "image of ${product.title}",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Fit,
+                    )
+
+                }
+
+                Spacer(Modifier.width(8.dp))
+                Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 12.dp)) {
+
+                    Text(
+                        text = product.title,
+                        overflow = TextOverflow.Clip,
+                        fontFamily = FontFamily.SansSerif,
+                        fontSize = 14.sp,
+                        maxLines = 2,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    )
+
+                    Spacer(Modifier.height(6.dp))
+
+                    Text(
+                        text = product.price,
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily.SansSerif,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .fillMaxWidth(0.8f)
+                    )
+                    RatingBar(
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .fillMaxWidth(0.5f),
+                        starsCount = 5,
+                        ratingOutOfFive = product.rating.rate.roundToInt(),
+                        false
+                    )
+
+                }
+
+            }
+        }
+    }
+}
 
 
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = "Increment Quantity",
-                tint = Color.DarkGray
-            )
+
+
+    @Composable
+    private fun HorizontalProductCardButtonsLayer(  ){
+
+        Box(Modifier.fillMaxSize()){
+
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd){
+
+
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = "Increment Quantity",
+                    tint = Color.DarkGray
+                )
+
+            }
+
 
         }
 
-
     }
 
-}
 
-@Composable
-fun QuantityMeter(){
 
-    Box(
-        Modifier
-            .border(
-                width = 2.5.dp,
-                shape = RoundedCornerShape(10.dp),
-                brush = ToolbarProperties.CollapsedToolbarColor
-            )
+
+    @Composable
+    private fun QuantityMeter(currentQuantity:MutableState<Int>){
+
+        Box(
+            Modifier
+                .border(
+                    width = 2.5.dp,
+                    shape = RoundedCornerShape(10.dp),
+                    brush = ToolbarProperties.CollapsedToolbarColorBrush
+                )
             ,
-    ) {
+        ) {
             Column(
                 Modifier
                     .width(40.dp)
@@ -309,7 +348,7 @@ fun QuantityMeter(){
                 Box(Modifier.weight(1f)) {
                     IconButton(
                         icon = Icons.Default.KeyboardArrowUp,
-                        onClick = { /*TODO*/ },
+                        onClick = { currentQuantity.value++ },
                         contentDescription = "Decrease Quantity",
                         iconTint = Color.DarkGray
                     )
@@ -317,21 +356,21 @@ fun QuantityMeter(){
 
                 Spacer(Modifier.height(4.dp))
                 Text(
-                        text = "1",
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.SansSerif,
+                    text = currentQuantity.value.toString(),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.SansSerif,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                    )
+                )
 
                 Spacer(Modifier.height(4.dp))
 
                 Box(Modifier.weight(1f)) {
                     IconButton(
                         icon = Icons.Default.KeyboardArrowDown,
-                        onClick = { /*TODO*/ },
+                        onClick = { if(currentQuantity.value > 1) currentQuantity.value-- else Unit },
                         contentDescription = "Increase Quantity",
                         iconTint = Color.DarkGray
                     )
@@ -340,8 +379,8 @@ fun QuantityMeter(){
 
             }
 
+        }
     }
-}
 
 
 @Composable

@@ -1,19 +1,19 @@
 package com.example.fakeshopping
 
+import android.content.res.Resources
 import android.view.Window
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.fakeshopping.ui.presentation.FavouritesScreen
-import com.example.fakeshopping.ui.presentation.HomeScreen
-import com.example.fakeshopping.ui.presentation.ProductDetailScreen
-import com.example.fakeshopping.ui.presentation.ShopingCartScreen
+import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.ui.presentation.*
 import com.example.fakeshopping.utils.Routes
 
 @Composable
@@ -32,13 +32,14 @@ fun Navigation(window: Window) {
                 }
             )
         ) { backStackEntry ->
-            window.statusBarColor = Color.White.toArgb()
-            HomeScreen(navController, backStackEntry.arguments?.getString("category")!!,window)
+
+            window.statusBarColor = Color(0xFFE9E9E9).toArgb()
+            HomeScreen(rootNavController = navController, category = backStackEntry.arguments?.getString("category")!!,window=window)
         }
 
         composable(
             route = Routes.productDetailScreen + "/{productId}",
-            arguments = kotlin.collections.listOf(
+            arguments = listOf(
                 navArgument("productId") { type = NavType.IntType }
             )
         ) { backStackEntry ->

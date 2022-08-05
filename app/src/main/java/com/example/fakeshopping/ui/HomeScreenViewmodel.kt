@@ -1,6 +1,7 @@
 package com.example.fakeshopping.ui
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -12,7 +13,10 @@ import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.test_data.TestApiService
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,11 +27,12 @@ class HomeScreenViewmodel @Inject constructor(private val repository: TestDataRe
     private val _categories = mutableStateListOf<String>()
     private val _bannerResources = mutableStateMapOf<String, Int>()
 
+    var searchbarText: MutableState<String> = mutableStateOf("")
+
     val products get() = _products
     val categories get() = _categories
     val bannerResources get() = _bannerResources
 
-    val searchBoxText = mutableStateOf("")
     val selectedCategory = mutableStateOf("All")
 
     val userInteractedWithBanners = mutableStateOf(false)
@@ -47,7 +52,6 @@ class HomeScreenViewmodel @Inject constructor(private val repository: TestDataRe
             Log.i("API", "Categories Updated")
         }
     }
-
 
     fun generateBannerSlidesResouuce() {
 

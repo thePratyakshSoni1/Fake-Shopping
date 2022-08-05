@@ -8,8 +8,8 @@ import androidx.compose.ui.unit.Dp
 
 object ToolbarProperties {
 
-    val CollapsedToolbarColor:Brush = Brush.linearGradient(listOf(Color.Blue,Color(0xFF9500FF)))
-    val ExpandedToolbarColor:Brush = Brush.linearGradient(listOf(Color.White,Color.White))
+    val CollapsedToolbarColorBrush:Brush = Brush.linearGradient(listOf(Color.Blue,Color(0xFF9500FF)))
+    val ExpandedToolbarColorBrush:Brush = Brush.linearGradient(listOf(Color.White,Color.White))
 
     val STATE_COLLAPSING_CONTENT_HEIGHT = 93f
     val STATE_STATIC_CONSTENT_HEIGHT = 206f
