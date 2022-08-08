@@ -1,5 +1,6 @@
 package com.example.fakeshopping.ui.presentation.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -17,15 +18,17 @@ fun IconButton(
     icon:ImageVector,
     iconTint: Color = ColorExtraDarkGray,
     onClick:() -> Unit,
-    contentDescription: String?
+    contentDescription: String?,
+    backgoundColor:Color=Color.Transparent
 ) {
     Icon(
         modifier= Modifier
             .clip(CircleShape)
+            .background(backgoundColor)
             .clickable { onClick() }
             .padding(6.dp),
         imageVector = icon,
         contentDescription = contentDescription,
-        tint = iconTint
+        tint = iconTint,
     )
 }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -15,16 +16,17 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
@@ -38,59 +40,116 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.utils.Routes
 import com.example.fakeshopping.utils.ToolbarProperties
 import kotlin.math.roundToInt
 
+@Composable
+fun SelectableHorizontalProductCard(
+    product: ShopApiProductsResponse,
+    isSelectionMode: State<Boolean>,
+    toggleSelectionMode:(Boolean)->Unit,
+    isSelectedItemListEmpty:()->Boolean,
+    addNewSelectedItem:()->Unit,
+    removeSelectedItem:(Int)->Unit,
+    checkSelectedItemAvailability:()->Boolean,
+    onNavigate: () -> Unit,
+    onFavouriteButtonClick:()->Unit,
+    alwaysVisibleQuantityMeter: Boolean,
+    isFavourite: Boolean?
+){
+    Box(
+        Modifier
+            .padding(start = 12.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = { _ ->
+                        if (!isSelectionMode.value) {
+                            toggleSelectionMode(true)
+                            addNewSelectedItem()
+                        } else {
+                            if (checkSelectedItemAvailability()) {
+                                removeSelectedItem((product.id))
+                                if (isSelectedItemListEmpty()) {
+                                    toggleSelectionMode(false)
+                                }
+                            } else {
+                                addNewSelectedItem()
+                            }
+                        }
+                    },
+
+                    onTap = { _ ->
+
+                        if (isSelectionMode.value) {
+
+                            if (checkSelectedItemAvailability()) {
+                                removeSelectedItem(product.id)
+                                if (isSelectedItemListEmpty()) {
+                                    toggleSelectionMode(false)
+                                }
+                            } else {
+                                addNewSelectedItem()
+                            }
+
+                        } else {
+                            onNavigate()
+                        }
+
+                    }
+
+                )
+            }
+    ) {
+        HorizontalProductCard(
+            product = product,
+            isSelected = checkSelectedItemAvailability(),
+            onClick = { Unit },
+            onFavouriteButtonClick = {
+                onFavouriteButtonClick()
+            },
+            alwaysVisibleQuantityMeter = alwaysVisibleQuantityMeter,
+            itemQuantity = remember { mutableStateOf(1) },
+            hasFavouriteButton = !isSelectionMode.value,
+            isFavourite = isFavourite
+        )
+    }
+}
 
 @Composable
 fun HorizontalProductCard(
     product:ShopApiProductsResponse,
     isSelected: Boolean,
     onClick: () -> Unit,
-    onRemoveBtnClick: () -> Unit,
-    itemQuantity: MutableState<Int>
+    onFavouriteButtonClick: () -> Unit,
+    itemQuantity: MutableState<Int>,
+    alwaysVisibleQuantityMeter: Boolean,
+    hasFavouriteButton: Boolean,
+    isFavourite: Boolean?
 ) {
 
-    if (isSelected) {
         Box(Modifier.fillMaxWidth(0.97f)) {
 
             NormalHorizontalProductCardWithActionButtons(
                 modifier = Modifier
-                    .padding(top = 10.dp)
+//                    .padding(top = 10.dp)
                     .height(126.dp)
                     .fillMaxWidth(0.98f),
                 product = product,
                 onNavigate = { onClick() },
-                withQuantityMeter = true,
-                onRemoveBtnClick = { onRemoveBtnClick() },
-                elevation = 8.dp,
+                withQuantityMeter = ( alwaysVisibleQuantityMeter || isSelected ) ,
+                onFavouriteBtnClick = onFavouriteButtonClick,
+                elevation = if(isSelected) 8.dp else 2.dp,
                 itemQuantity = itemQuantity,
-                hasRemoveButton = true
+                hasFavouriteButton = hasFavouriteButton,
+                isFavourite = isFavourite
             )
 
-            HorizontalProductCardButtonsLayer()
-
-        }
-    } else {
-
-        Box(Modifier.fillMaxWidth(0.97f)) {
-
-            NormalHorizontalProductCardWithActionButtons(
-                modifier = Modifier
-                    .height(126.dp)
-                    .fillMaxWidth(),
-                product = product,
-                onNavigate = { onClick() },
-                withQuantityMeter = false,
-                onRemoveBtnClick = { onRemoveBtnClick() },
-                elevation = 2.dp,
-                itemQuantity = itemQuantity,
-                hasRemoveButton = true
-            )
-
+            if(isSelected) {
+                HorizontalProductCardButtonsLayer()
+            }
         }
 
-    }
 }
 
 
@@ -100,10 +159,11 @@ private fun NormalHorizontalProductCardWithActionButtons(
     product: ShopApiProductsResponse,
     onNavigate: () -> Unit,
     withQuantityMeter:Boolean,
-    onRemoveBtnClick:()->Unit,
+    onFavouriteBtnClick:()->Unit,
     elevation: Dp,
     itemQuantity:MutableState<Int>,
-    hasRemoveButton:Boolean
+    hasFavouriteButton:Boolean,
+    isFavourite:Boolean?
 ) {
 
     val imageFromUrl = rememberAsyncImagePainter(
@@ -128,12 +188,28 @@ private fun NormalHorizontalProductCardWithActionButtons(
                     shape = RoundedCornerShape(12.dp),
                     elevation = 0.dp
                 ) {
-                    Image(
-                        painter = imageFromUrl,
-                        contentDescription = "image of ${product.title}",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Fit,
-                    )
+
+                    Box(Modifier.fillMaxSize()){
+                        Image(
+                            painter = imageFromUrl,
+                            contentDescription = "image of ${product.title}",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Fit,
+                        )
+
+                        if(hasFavouriteButton) {
+                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
+                                IconButton(
+                                    icon = if(isFavourite!!) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                                    onClick = onFavouriteBtnClick,
+                                    contentDescription = "Favourite Button",
+                                    iconTint = if(isFavourite!!) Color(0xFFFF0059) else Color.White
+                                )
+                            }
+                        }
+
+
+                    }
 
 //                    Box(
 //                        modifier = Modifier
@@ -188,27 +264,6 @@ private fun NormalHorizontalProductCardWithActionButtons(
                     if (withQuantityMeter) {
                         Spacer(Modifier.width(16.dp))
                         QuantityMeter(itemQuantity)
-                    } else if (hasRemoveButton) {
-
-                        Column(
-                            Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.End,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .padding(end = 16.dp, start = 8.dp)
-                                    .clip(CircleShape)
-                            ) {
-                                IconButton(
-                                    icon = Icons.Outlined.Delete,
-                                    onClick = onRemoveBtnClick,
-                                    contentDescription = "remove item ${product.title}",
-                                    iconTint = Color.Red
-                                )
-                            }
-
-                        }
                     }
 
                 }
@@ -236,7 +291,9 @@ fun NormalHorizontalProductCard(
 
     Box(modifier = modifier.padding(vertical = 4.dp)) {
         Card(
-            modifier = Modifier.fillMaxSize().clickable { onNavigate() },
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable { onNavigate() },
             shape = RoundedCornerShape(12.dp),
             elevation = 2.dp
         ) {
@@ -260,7 +317,10 @@ fun NormalHorizontalProductCard(
                 }
 
                 Spacer(Modifier.width(8.dp))
-                Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 12.dp)) {
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 12.dp)) {
 
                     Text(
                         text = product.title,
@@ -313,7 +373,7 @@ fun NormalHorizontalProductCard(
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = "Increment Quantity",
-                    tint = Color.DarkGray
+                    tint = Color.Blue
                 )
 
             }
@@ -388,7 +448,8 @@ fun ProductsCard(
     modifier: Modifier,
     product: ShopApiProductsResponse,
     onNavigate: (ShopApiProductsResponse) -> Unit,
-    withEleveation:Boolean
+    withEleveation:Boolean,
+    isFavourite: Boolean?
 ) {
 
     val imageFromUrl = rememberAsyncImagePainter(
@@ -423,12 +484,27 @@ fun ProductsCard(
                     shape = RoundedCornerShape(12.dp),
                     elevation = 0.dp
                 ) {
-                    Image(
-                        painter = imageFromUrl,
-                        contentDescription = "image of ${product.title}",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Fit,
-                    )
+                    Box(Modifier.fillMaxSize()){
+
+                        Image(
+                            painter = imageFromUrl,
+                            contentDescription = "image of ${product.title}",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Fit,
+                        )
+
+                        Box(Modifier.fillMaxSize().padding(end=8.dp, top=8.dp), contentAlignment= Alignment.TopEnd){
+
+                            IconButton(
+                                icon = if(isFavourite == true) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                                onClick = { /*TODO*/ },
+                                contentDescription = if(isFavourite == true) "Remove to favourite" else "Add from favourites",
+                                iconTint = if(isFavourite == true) Color(0xFFFF0048) else Color.LightGray
+                            )
+
+                        }
+
+                    }
                 }
 
                 Spacer(Modifier.height(4.dp))

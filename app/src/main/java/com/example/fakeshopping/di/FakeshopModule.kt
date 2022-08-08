@@ -1,10 +1,15 @@
 package com.example.fakeshopping.di
 
+import android.app.Application
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.example.fakeshopping.data.BASE_URL
 import com.example.fakeshopping.data.FakeShopApi
 import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.ShopApiRepositoryImpl
 import com.example.fakeshopping.data.repository.TestDataRepo
+import com.example.fakeshopping.data.userdatabase.UserDatabase
+import com.example.fakeshopping.data.userdatabase.repository.UserRepositoryImpl
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -50,5 +55,22 @@ object FakeshopModule {
     fun provideTestDataApiService(): TestDataRepo {
         return TestDataRepo()
     }
+
+    @Provides
+    @Singleton
+    fun provideUsersDatabase(app:Application): UserDatabase{
+        return Room.databaseBuilder(
+            app,
+            UserDatabase::class.java,
+            "users_db"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUsersRepository(db: UserDatabase): UserRepositoryImpl{
+        return UserRepositoryImpl(db.dao)
+    }
+
 
 }

@@ -1,19 +1,16 @@
 package com.example.fakeshopping
 
-import android.content.res.Resources
 import android.view.Window
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.ui.presentation.*
+import com.example.fakeshopping.ui.presentation.homscreen.HomeScreen
 import com.example.fakeshopping.utils.Routes
 
 @Composable
@@ -33,7 +30,7 @@ fun Navigation(window: Window) {
             )
         ) { backStackEntry ->
 
-            window.statusBarColor = Color(0xFFE9E9E9).toArgb()
+            window.statusBarColor = Color(0xFFF8F8F8).toArgb()
             HomeScreen(rootNavController = navController, category = backStackEntry.arguments?.getString("category")!!,window=window)
         }
 

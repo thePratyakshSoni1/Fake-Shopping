@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.fakeshopping.data.ShopApiProductsResponse
-import com.example.fakeshopping.ui.ProductsDetailScreenViewModel
+import com.example.fakeshopping.ui.model.ProductsDetailScreenViewModel
 import com.example.fakeshopping.ui.presentation.components.LoadingView
 import com.example.fakeshopping.ui.theme.ColorYellow
 import com.example.fakeshopping.utils.Routes
@@ -55,7 +55,10 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
                         .fillMaxWidth()
                         .defaultMinSize(minHeight = 180.dp),
                     product = viewModel.product.value!!,
-                    currentImageIndex = viewModel.currentProductPreviewSlide
+                    currentImageIndex = viewModel.currentProductPreviewSlide,
+                    onBackArrowPress = {
+                        navController.popBackStack()
+                    }
                 )
 
                 Spacer(Modifier.height(24.dp))
@@ -132,7 +135,8 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
 fun ProductDetailsSection(
     modifier: Modifier,
     product: ShopApiProductsResponse,
-    currentImageIndex: MutableState<Int>
+    currentImageIndex: MutableState<Int>,
+    onBackArrowPress:()->Unit
 ) {
 
     val currentProductPrevSlideState = rememberLazyListState()
@@ -146,6 +150,7 @@ fun ProductDetailsSection(
                 .height(243.dp),
             currentImageIndex = currentImageIndex,
             listState = currentProductPrevSlideState,
+            onBackArrowPress= onBackArrowPress,
             product.image,product.image
         )
 

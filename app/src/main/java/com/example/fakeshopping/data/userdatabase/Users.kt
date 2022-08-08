@@ -10,7 +10,8 @@ data class Users(
     val favourites:List<Int>,
     val cartItems:Map<Int,Int>,
     val userAddress:String?,
-    val userFullName:String,
+    val userFirstName:String,
+    val userLastName:String,
     val userOrders:List<UserOrders>
 
 

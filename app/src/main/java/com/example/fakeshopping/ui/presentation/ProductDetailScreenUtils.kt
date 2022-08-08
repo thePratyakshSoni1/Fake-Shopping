@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -31,9 +32,11 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.ui.presentation.components.IconButton
 import com.example.fakeshopping.ui.presentation.components.LoadingView
 import com.example.fakeshopping.ui.presentation.components.RatingBar
 import com.example.fakeshopping.ui.presentation.components.ProductsCard
+import com.example.fakeshopping.ui.theme.ColorYellow
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -42,6 +45,7 @@ fun ProductPreviewSection(
     modifier: Modifier,
     currentImageIndex: MutableState<Int>,
     listState: LazyListState,
+    onBackArrowPress:()->Unit,
     vararg productImagesUrl: String,
 ) {
 
@@ -102,6 +106,17 @@ fun ProductPreviewSection(
                     productImagesUrl.size,
                     Modifier.fillMaxSize()
                 )
+            Box(modifier=Modifier.fillMaxSize().padding(top= 12.dp, start=12.dp), contentAlignment = Alignment.TopStart ){
+
+                IconButton(
+                    icon = Icons.Default.ArrowBack,
+                    onClick = onBackArrowPress,
+                    contentDescription = "go back",
+                    iconTint = Color.Black,
+                    backgoundColor= ColorYellow
+                )
+
+            }
             Spacer(Modifier.height(21.dp))
         }
     }
@@ -256,9 +271,12 @@ fun RecommendationSectionTitle(
         )
         
         Box(
-            modifier=Modifier
-            .clip(CircleShape)
-            .fillMaxHeight().fillMaxWidth().aspectRatio(1f/1f).clickable { onArrowClick() },
+            modifier= Modifier
+                .clip(CircleShape)
+                .fillMaxHeight()
+                .fillMaxWidth()
+                .aspectRatio(1f / 1f)
+                .clickable { onArrowClick() },
             contentAlignment= Alignment.CenterEnd
         ){
             
@@ -326,7 +344,8 @@ fun OtherProductRecommendations(
                             .fillParentMaxWidth(0.3f),
                         product = product,
                         onNavigate = onNavigate,
-                        withEleveation = false
+                        withEleveation = false,
+                        isFavourite = product.id % 2 ==0
                     )
                 }
             } else {
@@ -381,7 +400,8 @@ fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProduc
                             .fillParentMaxWidth(0.3f),
                         product = product,
                         onNavigate = onNavigate,
-                        withEleveation = false
+                        withEleveation = false,
+                        isFavourite = product.id % 2 ==0
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }

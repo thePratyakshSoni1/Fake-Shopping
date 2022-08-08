@@ -1,24 +1,33 @@
 package com.example.fakeshopping.data.userdatabase.dao
 
+import androidx.room.*
+import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.data.userdatabase.UserOrders
 import com.example.fakeshopping.data.userdatabase.Users
+import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface UserDao {
 
-    suspend fun getUserByPhone(phoneNumber:Long): Users
-
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addUser(user: Users)
 
-    suspend fun removeUser(user: Users)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateUser(user:Users)
 
-    suspend fun updateUserProfile(oldPhonenumber:Long, newPhoneNumber:Long, userAddress:String, userName:String)
+    @Query("SELECT * FROM Users WHERE userPhoneNumer = :phoneNumber")
+    suspend fun getUserByPhone(phoneNumber:Long): Users?
 
-    suspend fun updateUserFavourites(newFavouriteItems:List<Int>)
-    suspend fun addUserFavourites(vararg newItems:Int)
-    suspend fun removeUserFavourites(vararg items:Int)
+    @Query("SELECT favourites FROM Users WHERE userPhoneNumer = :phoneNumber ")
+    suspend fun getUserFavourites(phoneNumber:Long): Flow<List<Int>>
 
-    suspend fun updateUserCart(newCartItems:Map<Int,Int>)
-    suspend fun addUserCartItems(vararg newItems:Map<Int,Int>)
-    suspend fun updateUserCartItemsQuantity(itemId:Int, newQuantity:Int)
-    suspend fun removeUserCartItems(vararg items:Int )
+    @Query("SELECT userOrders FROM Users WHERE userPhoneNumer = :phoneNumber ")
+    suspend fun getUserOrders(phoneNumber:Long): Flow<List<UserOrders>>
+
+    @Query("SELECT cartItems FROM Users WHERE userPhoneNumer = :phoneNumber ")
+    suspend fun getUserCartItems(phoneNumber:Long): Flow<Map<Int,Int>>
+
+    @Delete()
+    suspend fun removeUser(phoneNumber: Long)
 
 }
