@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.fakeshopping.ui.presentation.*
 import com.example.fakeshopping.ui.presentation.homscreen.HomeScreen
+import com.example.fakeshopping.ui.presentation.login.LoginScreenNavigation
 import com.example.fakeshopping.utils.Routes
 
 @Composable
@@ -18,7 +19,15 @@ fun Navigation(window: Window) {
 
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Routes.homeScreen+"?category={category}") {
+//    NavHost(navController = navController, startDestination = Routes.homeScreen+"?category={category}") {
+    NavHost(navController = navController, startDestination = Routes.loginSignupScreen) {
+
+        composable(
+            route = Routes.loginSignupScreen,
+        ){
+            window.statusBarColor = Color(0xFF350099).toArgb()
+            LoginScreenNavigation(rootnavController = navController)
+        }
 
         composable(
             route = Routes.homeScreen+"?category={category}",

@@ -14,13 +14,13 @@ interface UserRepository {
 
     suspend fun getUserByPhone(phoneNumber:Long): Users?
 
-    suspend fun getUserFavourites(phoneNumber:Long): Flow<List<Int>>
+//    suspend fun getUserFavourites(phoneNumber:Long): Flow<List<Int>>
+//
+//    suspend fun getUserOrders(phoneNumber:Long): Flow<List<UserOrders>>
+//
+//    suspend fun getUserCartItems(phoneNumber:Long): Flow<Map<Int, Int>>
 
-    suspend fun getUserOrders(phoneNumber:Long): Flow<List<UserOrders>>
-
-    suspend fun getUserCartItems(phoneNumber:Long): Flow<Map<Int, Int>>
-
-    suspend fun removeUser(phoneNumber: Long)
+//    suspend fun removeUser(phoneNumber: Long)
 
 
 

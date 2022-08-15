@@ -18,16 +18,16 @@ interface UserDao {
     @Query("SELECT * FROM Users WHERE userPhoneNumer = :phoneNumber")
     suspend fun getUserByPhone(phoneNumber:Long): Users?
 
-    @Query("SELECT favourites FROM Users WHERE userPhoneNumer = :phoneNumber ")
-    suspend fun getUserFavourites(phoneNumber:Long): Flow<List<Int>>
-
-    @Query("SELECT userOrders FROM Users WHERE userPhoneNumer = :phoneNumber ")
-    suspend fun getUserOrders(phoneNumber:Long): Flow<List<UserOrders>>
-
-    @Query("SELECT cartItems FROM Users WHERE userPhoneNumer = :phoneNumber ")
-    suspend fun getUserCartItems(phoneNumber:Long): Flow<Map<Int,Int>>
-
-    @Delete()
-    suspend fun removeUser(phoneNumber: Long)
+//    @Query("SELECT favourites FROM Users WHERE userPhoneNumer = :phoneNumber ")
+//    suspend fun getUserFavourites(phoneNumber:Long): List<Int>
+//
+//    @Query("SELECT userOrders FROM Users WHERE userPhoneNumer = :phoneNumber ")
+//    suspend fun getUserOrders(phoneNumber:Long): List<UserOrders>
+//
+//    @Query("SELECT cartItems FROM Users WHERE userPhoneNumer = :phoneNumber ")
+//    suspend fun getUserCartItems(phoneNumber:Long): Map<Int,Int>
+//
+//    @Delete()
+//    suspend fun removeUser(phoneNumber: Long)
 
 }

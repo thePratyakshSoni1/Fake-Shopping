@@ -6,7 +6,8 @@ import androidx.room.PrimaryKey
 @Entity
 data class Users(
 
-    @PrimaryKey val userPhoneNumer:Long?,
+    @PrimaryKey val userPhoneNumer:Long,
+    val password:String,
     val favourites:List<Int>,
     val cartItems:Map<Int,Int>,
     val userAddress:String?,

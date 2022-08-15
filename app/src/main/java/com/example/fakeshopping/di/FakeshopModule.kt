@@ -9,6 +9,7 @@ import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.ShopApiRepositoryImpl
 import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.userdatabase.UserDatabase
+import com.example.fakeshopping.data.userdatabase.repository.UserRepository
 import com.example.fakeshopping.data.userdatabase.repository.UserRepositoryImpl
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -68,7 +69,7 @@ object FakeshopModule {
 
     @Provides
     @Singleton
-    fun provideUsersRepository(db: UserDatabase): UserRepositoryImpl{
+    fun provideUsersRepository(db: UserDatabase): UserRepository {
         return UserRepositoryImpl(db.dao)
     }
 

@@ -19,20 +19,20 @@ class UserRepositoryImpl( private val userDao: UserDao): UserRepository {
         return userDao.getUserByPhone(phoneNumber)
     }
 
-    override suspend fun getUserFavourites(phoneNumber: Long): Flow<List<Int>> {
-        return userDao.getUserFavourites(phoneNumber)
-    }
+//    override suspend fun getUserFavourites(phoneNumber: Long): Flow<List<Int>> {
+//        return userDao.getUserFavourites(phoneNumber)
+//    }
+//
+//    override suspend fun getUserOrders(phoneNumber: Long): Flow<List<UserOrders>> {
+//        return userDao.getUserOrders(phoneNumber)
+//    }
+//
+//    override suspend fun getUserCartItems(phoneNumber: Long): Flow<Map<Int, Int>> {
+//        return userDao.getUserCartItems(phoneNumber)
+//    }
 
-    override suspend fun getUserOrders(phoneNumber: Long): Flow<List<UserOrders>> {
-        return userDao.getUserOrders(phoneNumber)
-    }
-
-    override suspend fun getUserCartItems(phoneNumber: Long): Flow<Map<Int, Int>> {
-        return userDao.getUserCartItems(phoneNumber)
-    }
-
-    override suspend fun removeUser(phoneNumber: Long) {
-        return userDao.removeUser(phoneNumber)
-    }
+//    override suspend fun removeUser(phoneNumber: Long) {
+//        return userDao.removeUser(phoneNumber)
+//    }
 
 }
