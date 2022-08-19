@@ -8,12 +8,12 @@ data class Users(
 
     @PrimaryKey val userPhoneNumer:Long,
     val password:String,
-    val favourites:List<Int>,
-    val cartItems:Map<Int,Int>,
+    val favourites:MutableList<Int>,
+    val cartItems:MutableMap<Int,Int>,
     val userAddress:String?,
     val userFirstName:String,
     val userLastName:String,
-    val userOrders:List<UserOrders>
+    val userOrders:MutableList<UserOrders>
 
 
 )

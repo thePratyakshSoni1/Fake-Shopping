@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fakeshopping.data.SelectedProduct
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.data.repository.TestDataRepo
+import com.example.fakeshopping.data.userdatabase.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +18,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FavouriteScreenViewmodel @Inject constructor() : ViewModel(){
+class FavouriteScreenViewmodel @Inject constructor( private val userRepo:UserRepository, private val shopRepo:TestDataRepo ) : ViewModel(){
+
+    private lateinit var _currentUserId:String
+    val currentUserId get() = _currentUserId
 
     private val _favouriteProducts = mutableStateMapOf<Int,ShopApiProductsResponse>()
     val favouriteProducts = _favouriteProducts as Map<Int, ShopApiProductsResponse>
@@ -27,28 +32,19 @@ class FavouriteScreenViewmodel @Inject constructor() : ViewModel(){
     private val _isSelectionMode =  mutableStateOf(false)
     val isSelectionMode =  _isSelectionMode as State<Boolean>
 
-    init {
-        //get afvourite product data from databse
-        for (items in 1..20) {
-
-            _favouriteProducts[items] = ShopApiProductsResponse(
-                id = (items),
-                "Product Name $items is here",
-                "$79",
-                "all",
-                "Product Desc ;)",
-                "#xyz",
-                ShopApiProductsResponse.ProductRating(
-                    rate = 3.5f,
-                    count = items
-                )
-            )
-
-        }
-    }
-
     val changeSelectionModeTo:(Boolean)->Unit = {
         _isSelectionMode.value = it
+    }
+
+    fun setCurrentUserAndFavs(id:String){
+
+        _currentUserId = id
+        viewModelScope.launch {
+            for (items in userRepo.getUserFavourites(currentUserId.toLong()) ){
+                _favouriteProducts[items] = shopRepo.getProductbyId(items)
+            }
+        }
+
     }
 
     fun addNewSelectedItem(itemId:Int, quantity:Int= 1):Boolean{
@@ -95,8 +91,21 @@ class FavouriteScreenViewmodel @Inject constructor() : ViewModel(){
     }
 
     fun toggleFavourite(itemId:Int){
-        if(_favouriteProducts.containsKey(itemId)){
-            _favouriteProducts.remove(itemId)
+        viewModelScope.launch {
+            if(_favouriteProducts.contains(itemId)){
+                userRepo.removeItemFromFavourites(currentUserId.toLong(), itemId)
+                _favouriteProducts.remove(itemId)
+            }else{
+                userRepo.addItemToFavourites(currentUserId.toLong(), itemId)
+                _favouriteProducts[itemId] = shopRepo.getProductbyId(itemId)
+            }
+            val tempFavs = mutableMapOf<Int,ShopApiProductsResponse>()
+            for(items in userRepo.getUserFavourites(currentUserId.toLong())){
+                tempFavs[items] = shopRepo.getProductbyId(items)
+                Log.d("FAV_ACTION", "Refreshing actionId: $itemId")
+            }
+            _favouriteProducts.clear()
+            _favouriteProducts.putAll(tempFavs)
         }
     }
 
@@ -116,6 +125,27 @@ class FavouriteScreenViewmodel @Inject constructor() : ViewModel(){
                 _selectedProducts[productId] = itemList[productId]!!
             }
         }
+    }
+
+    fun moveToCart(){
+
+        viewModelScope.launch {
+            val user = userRepo.getUserByPhone(currentUserId.toLong())!!
+            for(items in selectedProducts){
+
+                if(user.cartItems.contains(items.key)){
+                    val updatedQuantity = user.cartItems[items.key]!! + items.value
+                    user.cartItems[items.key] = updatedQuantity
+                }else{
+                    user.cartItems[items.key] = items.value
+                }
+
+            }
+            userRepo.updateUser(user)
+            _selectedProducts.clear()
+            _isSelectionMode.value = false
+        }
+
     }
 
 }

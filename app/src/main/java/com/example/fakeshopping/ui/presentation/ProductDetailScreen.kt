@@ -40,7 +40,7 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
     } else {
 
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().statusBarsPadding(),
         ) {
 
             Column(

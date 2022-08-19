@@ -48,16 +48,17 @@ import com.example.fakeshopping.utils.Routes
 
 
 @Composable
-fun FavouritesScreen(navController: NavController){
+fun FavouritesScreen(navController: NavController, currentUser:String){
 
     val viewModel:FavouriteScreenViewmodel = hiltViewModel()
 
     BackHandler(enabled = viewModel.selectedProducts.isNotEmpty()) {
-
         viewModel.removeAllSelectedFromFavourites()
-
-
     }
+
+    LaunchedEffect(key1 = true, block = {
+        viewModel.setCurrentUserAndFavs(currentUser)
+    })
 
     Scaffold(
         topBar = {
@@ -78,9 +79,17 @@ fun FavouritesScreen(navController: NavController){
         },
         bottomBar = {
             if(viewModel.isSelectionMode.value){
-                FavouritesBottomBar()
+                FavouritesBottomBar(
+                    onMovieToCart = {
+                    viewModel.moveToCart()
+                                    },
+                    onCheckout = {
+                        navController.navigate(Routes.checkOutOverviewScreen)
+                    }
+                )
             }
-        }
+        },
+        modifier=Modifier.statusBarsPadding()
     ) {
 
         LazyColumn(contentPadding = PaddingValues(top = 18.dp, bottom = 18.dp)){
@@ -185,7 +194,7 @@ private fun FavouritesTopBar(isSelectionMode: State<Boolean>, onCancelSelection:
 }
 
 @Composable
-private fun FavouritesBottomBar(){
+private fun FavouritesBottomBar(onMovieToCart:()->Unit, onCheckout:()->Unit){
 
     Box(
         Modifier
@@ -199,7 +208,7 @@ private fun FavouritesBottomBar(){
                 .padding(vertical = 12.dp, horizontal = 8.dp)){
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { onMovieToCart() },
                     modifier = Modifier.border(width = 2.5.dp, shape = RoundedCornerShape(12.dp), color = ColorYellow),
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(

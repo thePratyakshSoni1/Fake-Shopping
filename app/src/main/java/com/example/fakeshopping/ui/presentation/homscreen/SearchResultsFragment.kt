@@ -26,20 +26,22 @@ import com.example.fakeshopping.ui.model.homescreenViewmodels.SearchResultFragme
 import com.example.fakeshopping.ui.presentation.components.NormalHorizontalProductCard
 
 @Composable
-fun HomeScreenSearchResultsFragment(onProductClick:(Int)->Unit, searchTxt: String, onSearchClear:()->Unit, onBackBtnClick:()->Unit, onSearchTextClick:(String)->Unit, onBackPress:()->Unit){
+fun HomeScreenSearchResultsFragment(currentUserId:String, onProductClick:(Int)->Unit, searchTxt: String, onSearchClear:()->Unit, onBackBtnClick:()->Unit, onSearchTextClick:(String)->Unit, onBackPress:()->Unit){
 
     val searchResultViewModel: SearchResultFragmentViewModel = hiltViewModel()
-    searchResultViewModel.changeSearchText( TextFieldValue(searchTxt) )
+
+    LaunchedEffect(key1 = true) {
+        Log.d("FRAGMENT", "I'm: Results")
+        searchResultViewModel.setCurrentUserAndFavs(currentUserId)
+        searchResultViewModel.changeSearchText( TextFieldValue(searchTxt) )
+    }
 
     BackHandler() {
         onBackPress()
     }
 
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment= Alignment.TopCenter) {
+    Box(modifier = Modifier.fillMaxSize().statusBarsPadding(), contentAlignment= Alignment.TopCenter) {
 
-        LaunchedEffect(key1 = true) {
-            Log.d("FRAGMENT", "I'm: Results")
-        }
 
             LazyColumn(
                 modifier = Modifier
@@ -56,6 +58,10 @@ fun HomeScreenSearchResultsFragment(onProductClick:(Int)->Unit, searchTxt: Strin
                         product = product,
                         onNavigate = {
                             onProductClick(product.id)
+                        },
+                        isFavourite = searchResultViewModel.userFavs.contains(product.id),
+                        onFavouriteButtonClick = {
+                            searchResultViewModel.toggleUserFav(it)
                         }
                     )
                 }

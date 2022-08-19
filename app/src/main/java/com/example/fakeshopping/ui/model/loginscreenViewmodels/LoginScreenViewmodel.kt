@@ -30,21 +30,21 @@ class LoginScreenViewmodel @Inject constructor(val usersRepo: UserRepository): V
 
     fun verifyLogin():LoginSignupStatus {
 
-        if (_phoneNumberTxt.value.isEmpty() || _passwordTxt.value.isEmpty()){
-            return LoginSignupStatus.STATUS_INVALID_DETAILS
-        }
+        return if (_phoneNumberTxt.value.isEmpty() || _passwordTxt.value.isEmpty()){
+            LoginSignupStatus.STATUS_INVALID_DETAILS
+        }else {
+            var user: Users?
+            runBlocking {
+                user = usersRepo.getUserByPhone(phoneNumberTxt.value.toLong())
+            }
 
-        var user: Users?
-        runBlocking {
-            user = usersRepo.getUserByPhone(phoneNumberTxt.value.toLong())
-        }
-
-        return if (user == null) {
-            LoginSignupStatus.STATUS_LOGIN_NO_USER
-        } else if (user!!.password != passwordTxt.value) {
-            LoginSignupStatus.STATUS_LOGIN_WRONG_PASSWORD
-        } else {
-            LoginSignupStatus.STATUS_LOGIN_SUCCESS
+            if (user == null) {
+                LoginSignupStatus.STATUS_LOGIN_NO_USER
+            } else if (user!!.password != passwordTxt.value) {
+                LoginSignupStatus.STATUS_LOGIN_WRONG_PASSWORD
+            } else {
+                LoginSignupStatus.STATUS_LOGIN_SUCCESS
+            }
         }
 
     }

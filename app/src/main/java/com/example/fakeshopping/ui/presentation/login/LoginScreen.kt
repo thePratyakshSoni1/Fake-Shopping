@@ -10,7 +10,7 @@ import com.example.fakeshopping.utils.LoginScreenRoutes
 import com.example.fakeshopping.utils.Routes
 
 @Composable
-fun LoginScreenNavigation(rootnavController:NavHostController){
+fun LoginScreenNavigation(rootnavController:NavHostController, onLoggedStateChanged:(userId:String)->Unit){
 
     val loginFragsNavController = rememberNavController()
     NavHost(startDestination = LoginScreenRoutes.loginFragment, navController = loginFragsNavController ){
@@ -20,6 +20,7 @@ fun LoginScreenNavigation(rootnavController:NavHostController){
             LoginFragment(
                 loginFragsNavController,
                 onLoginSuccess = {
+                    onLoggedStateChanged(it)
                     rootnavController.popBackStack()
                     rootnavController.navigate(Routes.homeScreen+"?category={category}")
                 }
@@ -31,23 +32,12 @@ fun LoginScreenNavigation(rootnavController:NavHostController){
 
             SignupFragment(
                 loginFragsNavController,
-            )
-
-        }
-
-        composable( route = LoginScreenRoutes.numberVerificationFragment ){
-
-            NumberVericationFragment(
-                loginFragsNavController,
-                onSuccessVerification = {
-                    loginFragsNavController.popBackStack()
-                    loginFragsNavController.popBackStack()
-                    loginFragsNavController.popBackStack()
-                    rootnavController.navigate(Routes.homeScreen+"?category={category}")
+                onSuccessVerification = { userId ->
+                    onLoggedStateChanged(userId)
+                    loginFragsNavController.backQueue.clear()
+                    rootnavController.navigate("${Routes.homeScreen}?category={category}")
                 }
             )
-
-
 
         }
 

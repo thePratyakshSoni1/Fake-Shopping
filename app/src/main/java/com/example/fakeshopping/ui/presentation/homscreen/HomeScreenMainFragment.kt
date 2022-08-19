@@ -32,7 +32,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
-import com.example.fakeshopping.ui.model.homescreenViewmodels.HomeScreenViewmodel
+import com.example.fakeshopping.ui.model.homescreenViewmodels.HomeScreenFragmentViewmodel
 import com.example.fakeshopping.ui.presentation.components.AccountDialog
 import com.example.fakeshopping.ui.presentation.components.MenuItemData
 import com.example.fakeshopping.ui.presentation.components.ProductsCard
@@ -47,14 +47,16 @@ fun HomeScreenMainFragment(
     rootNavController: NavController,
     onSearchbarClick:()->Unit,
     category:String,
-    window: Window
+    window: Window,
+    userId:String
 ){
 
-    val homeScreenviewmodel: HomeScreenViewmodel = hiltViewModel()
+    val homeScreenviewmodelFragment: HomeScreenFragmentViewmodel = hiltViewModel()
 
     LaunchedEffect(key1 = true ){
         Log.d("FRAGMENT","IM here: Suggestion")
-        homeScreenviewmodel.changeCategory(category)
+        homeScreenviewmodelFragment.setUserId(userId)
+        homeScreenviewmodelFragment.changeCategory(category)
     }
 
     val toolBaroffsetY: MutableState<Float> = remember{ mutableStateOf(0f) }
@@ -89,7 +91,7 @@ fun HomeScreenMainFragment(
     Log.d("CLICKED","HOME SCREEN RECOMPOSED")
 
     Box(
-        modifier= Modifier.fillMaxSize()
+        modifier= Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding()
     ){
 
         Column(
@@ -121,10 +123,20 @@ fun HomeScreenMainFragment(
         ){
             ContentSection(
                     rootNavController,
-                    homeScreenviewmodel.bannerResources,
-                    homeScreenviewmodel.userInteractedWithBanners,
+                    homeScreenviewmodelFragment.bannerResources,
+                    homeScreenviewmodelFragment.userInteractedWithBanners,
                     homefeedScrollOffset,
-                    homeScreenviewmodel.products
+                    homeScreenviewmodelFragment.products,
+                    onFavouriteButtonClick= {
+                        if (homeScreenviewmodelFragment.userFavs.contains(it)) {
+                            homeScreenviewmodelFragment.removeFromFavourites(it)
+                        }else{
+                            homeScreenviewmodelFragment.addProductToFavourites(it)
+                        }
+                    },
+                    isFavouriteProduct = {
+                        homeScreenviewmodelFragment.userFavs.contains(it)
+                    }
                 )
         }
     }
@@ -134,11 +146,11 @@ fun HomeScreenMainFragment(
             progress = toolBaroffsetY,
             toolbarBackground = toolbarColor,
             searchbarColor = animateSearchBarColor,
-            categories = homeScreenviewmodel.categories,
-            selectedCategory = homeScreenviewmodel.selectedCategory,
+            categories = homeScreenviewmodelFragment.categories,
+            selectedCategory = homeScreenviewmodelFragment.selectedCategory,
             onCategoryChange = {
                 toolBaroffsetY.value = 0f
-                homeScreenviewmodel.changeCategory( it )
+                homeScreenviewmodelFragment.changeCategory( it )
             },
             showDialog= showAccountDialog,
             onCartIconClick = {
@@ -148,7 +160,7 @@ fun HomeScreenMainFragment(
         )
 
         if(showAccountDialog.value){
-            AccountDialog(menuItems = generateMenuItems(rootNavController), showAccountDialog, painterResource(id = R.drawable.test_product_placeholder))
+            AccountDialog(userName = homeScreenviewmodelFragment.getCurrentUserName(), menuItems = generateMenuItems(rootNavController), showAccountDialog, painterResource(id = R.drawable.test_product_placeholder))
         }
 
 }
@@ -160,7 +172,9 @@ fun ContentSection(
     bannerResource: SnapshotStateMap<String, Int>,
     userInteracted: MutableState<Boolean>,
     listState: LazyGridState,
-    products: SnapshotStateList<ShopApiProductsResponse>
+    products: SnapshotStateList<ShopApiProductsResponse>,
+    onFavouriteButtonClick: (Int) -> Unit,
+    isFavouriteProduct:(Int)->Boolean
 ){
 
     LazyVerticalGrid(
@@ -178,12 +192,14 @@ fun ContentSection(
                 Modifier.padding(bottom=22.dp,top=36.dp),
                 bannerResource,
                 userInteracted
-
             )
+
         }
 
         allProductsSection(
-            products
+            products,
+            onFavouriteButtonClick = onFavouriteButtonClick,
+            isFavouriteProduct = isFavouriteProduct
         ) { product ->
             rootNavController.navigate("${Routes.productDetailScreen}/${product.id}")
         }
@@ -210,6 +226,8 @@ fun BannerSection(
 
 fun LazyGridScope.allProductsSection(
     products: List<ShopApiProductsResponse>,
+    onFavouriteButtonClick:(Int)->Unit,
+    isFavouriteProduct:(Int)->Boolean,
     onNavigate: (product: ShopApiProductsResponse) -> Unit
 ) {
     items(products.size) { index ->
@@ -231,8 +249,8 @@ fun LazyGridScope.allProductsSection(
                     .fillMaxWidth(),
                 product = products[index],
                 onNavigate = onNavigate,
-                withEleveation = true,
-                isFavourite = products[index].id % 2 == 0
+                onFavouriteButtonClick= onFavouriteButtonClick,
+                isFavourite = isFavouriteProduct(products[index].id)
             )
         }
 

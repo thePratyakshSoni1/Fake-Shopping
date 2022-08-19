@@ -41,6 +41,7 @@ fun OtpTextField(codeText: State<String>, onOtpFieldClick:()->Unit) {
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
         modifier = Modifier
+            .fillMaxWidth()
             .clickable(
                 interactionSource = MutableInteractionSource(),
                 indication = null
@@ -48,17 +49,13 @@ fun OtpTextField(codeText: State<String>, onOtpFieldClick:()->Unit) {
                 onOtpFieldClick()
             }
     ){
-        OtpTextFieldBox(
-            text = if (codeText.value.isNotEmpty() ) codeText.value[0].toString() else "")
+        OtpTextFieldBox(text = if (codeText.value.isNotEmpty() ) codeText.value[0].toString() else "")
 
-        OtpTextFieldBox(
-            text = if (codeText.value.isNotEmpty() && codeText.value.length >= 2) codeText.value[1].toString() else "")
+        OtpTextFieldBox(text = if (codeText.value.isNotEmpty() && codeText.value.length >= 2) codeText.value[1].toString() else "")
 
-        OtpTextFieldBox(
-            text = if (codeText.value.isNotEmpty() && codeText.value.length >= 3) codeText.value[2].toString() else "")
+        OtpTextFieldBox(text = if (codeText.value.isNotEmpty() && codeText.value.length >= 3) codeText.value[2].toString() else "")
 
-        OtpTextFieldBox(
-            text = if (codeText.value.isNotEmpty() && codeText.value.length >= 4) codeText.value[3].toString() else "")
+        OtpTextFieldBox(text = if (codeText.value.isNotEmpty() && codeText.value.length >= 4) codeText.value[3].toString() else "")
 
     }
 

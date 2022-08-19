@@ -344,8 +344,10 @@ fun OtherProductRecommendations(
                             .fillParentMaxWidth(0.3f),
                         product = product,
                         onNavigate = onNavigate,
-                        withEleveation = false,
-                        isFavourite = product.id % 2 ==0
+                        isFavourite = product.id % 2 ==0,
+                        onFavouriteButtonClick = {
+
+                        }
                     )
                 }
             } else {
@@ -400,8 +402,10 @@ fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProduc
                             .fillParentMaxWidth(0.3f),
                         product = product,
                         onNavigate = onNavigate,
-                        withEleveation = false,
-                        isFavourite = product.id % 2 ==0
+                        isFavourite = product.id % 2 ==0,
+                        onFavouriteButtonClick = {
+
+                        }
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                 }

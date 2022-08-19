@@ -19,20 +19,68 @@ class UserRepositoryImpl( private val userDao: UserDao): UserRepository {
         return userDao.getUserByPhone(phoneNumber)
     }
 
-//    override suspend fun getUserFavourites(phoneNumber: Long): Flow<List<Int>> {
-//        return userDao.getUserFavourites(phoneNumber)
-//    }
-//
-//    override suspend fun getUserOrders(phoneNumber: Long): Flow<List<UserOrders>> {
-//        return userDao.getUserOrders(phoneNumber)
-//    }
-//
-//    override suspend fun getUserCartItems(phoneNumber: Long): Flow<Map<Int, Int>> {
-//        return userDao.getUserCartItems(phoneNumber)
-//    }
+    override suspend fun getUserFavourites(phoneNumber: Long): List<Int> {
+        val user = userDao.getUserByPhone(phoneNumber)!!
+        return user.favourites
+    }
 
-//    override suspend fun removeUser(phoneNumber: Long) {
-//        return userDao.removeUser(phoneNumber)
-//    }
+    override suspend fun getUserOrders(phoneNumber: Long): List<UserOrders> {
+        val user = userDao.getUserByPhone(phoneNumber)!!
+        return user.userOrders
+    }
+
+    override suspend fun getUserCartItems(phoneNumber: Long): Map<Int, Int> {
+        val user = userDao.getUserByPhone(phoneNumber)!!
+        return user.cartItems
+    }
+
+    override suspend fun removeUser(phoneNumber: Long) {
+        val target = userDao.getUserByPhone(phoneNumber)!!
+        userDao.removeUser(target)
+    }
+
+    override suspend fun addItemToFavourites(phone: Long, itemId: Int) {
+        val user = userDao.getUserByPhone(phone)!!
+        user.favourites.add(itemId)
+        userDao.updateUser(user)
+    }
+
+    override suspend fun addItemToCart(phone: Long, itemId: Int, quantity: Int) {
+
+        val user = userDao.getUserByPhone(phone)!!
+        user.cartItems[itemId] = quantity
+        userDao.updateUser(user)
+
+    }
+
+    override suspend fun removeItemFromFavourites(phone: Long, itemId: Int) {
+
+        val user = userDao.getUserByPhone(phone)!!
+        user.favourites.remove(itemId)
+        userDao.updateUser(user)
+    }
+
+    override suspend fun removeItemFromCart(phone: Long, itemId: Int) {
+        val user = userDao.getUserByPhone(phone)!!
+        user.cartItems.remove(itemId)
+        userDao.updateUser(user)
+
+    }
+
+    override suspend fun increseCartItemQuantity(phone: Long, itemId: Int, incrementBy: Int) {
+
+        val user = userDao.getUserByPhone(phone)!!
+        user.cartItems[itemId] = user.cartItems[itemId]!! + incrementBy
+        userDao.updateUser(user)
+
+    }
+
+    override suspend fun decreaseCartItemQuantity(phone: Long, itemId: Int, decreaseBy: Int) {
+        val user = userDao.getUserByPhone(phone)!!
+        if(user.cartItems[itemId]!! - decreaseBy >= 1){
+            user.cartItems[itemId] = user.cartItems[itemId]!! - decreaseBy
+            userDao.updateUser(user)
+        }
+    }
 
 }

@@ -38,7 +38,8 @@ fun ProductCheckoutScreen() {
         topBar = { CheckoutTopBar() },
         bottomBar = {
             CheckoutScreenBottomBar()
-        }
+        },
+        modifier=Modifier.statusBarsPadding()
     ) {
 
         val itemList = mutableListOf<ShopApiProductsResponse>()

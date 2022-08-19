@@ -12,6 +12,7 @@ import com.example.fakeshopping.data.userdatabase.repository.UserRepository
 import com.example.fakeshopping.utils.LoginSignupStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,19 +22,39 @@ class SignupFragmentViewModel @Inject constructor(val usersRepo: UserRepository)
         Log.d("SIGNUP","Now on signup screen viewModel initializing")
     }
 
+    private val _code = mutableStateOf("")
     private val _password = mutableStateOf("")
     private val _lastName = mutableStateOf("")
     private val _confirmPassword = mutableStateOf("")
     private val _firstName = mutableStateOf("")
     private val _phone = mutableStateOf("")
     private val _dob = mutableStateOf("")
+    private val _isOtpStep = mutableStateOf(false)
 
+    val isOtpStep get() = _isOtpStep as State<Boolean>
     val firstName =_firstName as State<String>
+    val code = _code as State<String>
     val lastName = _lastName as State<String>
     val phone = _phone as State<String>
     val dob = _dob as State<String>
     val password = _password as  State<String>
     val confirmPassword = _confirmPassword as  State<String>
+
+    fun toggleSignupStep(isVericationStep:Boolean){
+        _isOtpStep.value = isVericationStep
+    }
+
+    fun clearCode(){
+        _code.value = ""
+    }
+
+    fun onCodechange(newtxt:String){
+
+        if(_code.value.length <= 4){
+            _code.value = newtxt
+        }
+
+    }
 
     fun onFirstNameTxtChange (newTxt:String){
         _firstName.value = newTxt
@@ -75,11 +96,12 @@ class SignupFragmentViewModel @Inject constructor(val usersRepo: UserRepository)
 
     }
 
+
     fun addUser():LoginSignupStatus{
 
         if(verifySignUpDetails() == LoginSignupStatus.STATUS_SIGNUP_SUCCESS){
 
-            viewModelScope.launch {
+            runBlocking {
                 usersRepo.addUser(
                     Users(
                         userPhoneNumer = phone.value.toLong(),
@@ -101,6 +123,4 @@ class SignupFragmentViewModel @Inject constructor(val usersRepo: UserRepository)
         }
 
     }
-
-
 }

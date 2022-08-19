@@ -60,7 +60,7 @@ fun HomeScreenSearchSuggestionFragment(
         searchSuggestionViewModel.querySuggestions()
     })
 
-    Column{
+    Column(modifier=Modifier.statusBarsPadding()){
         HomeScreenSearchBar(
             searchbarTxt= searchSuggestionViewModel.searchString.value,
             focusRequester = searchBarFocusRequester,

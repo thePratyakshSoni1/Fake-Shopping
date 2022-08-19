@@ -45,6 +45,113 @@ import com.example.fakeshopping.utils.ToolbarProperties
 import kotlin.math.roundToInt
 
 @Composable
+fun ProductsCard(
+    modifier: Modifier,
+    product: ShopApiProductsResponse,
+    onNavigate: (ShopApiProductsResponse) -> Unit,
+    isFavourite: Boolean?,
+    onFavouriteButtonClick: (productId:Int) -> Unit
+
+) {
+
+    val imageFromUrl = rememberAsyncImagePainter(
+        model = product.image,
+        contentScale = ContentScale.FillWidth,
+        placeholder = painterResource(id = R.drawable.test_product_placeholder),
+    )
+
+
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .clickable { onNavigate(product) },
+        contentAlignment = Alignment.Center
+    ) {
+
+        Card(
+            shape = RoundedCornerShape(12.dp),
+            elevation = 0.dp,
+            backgroundColor = Color.Transparent,
+            modifier= Modifier
+                .padding(bottom = 8.dp)
+        ) {
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Transparent)) {
+                Card(
+                    backgroundColor= Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f / 1f),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = 0.dp
+                ) {
+                    Box(Modifier.fillMaxSize()){
+
+                        Image(
+                            painter = imageFromUrl,
+                            contentDescription = "image of ${product.title}",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Fit,
+                        )
+
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .padding(end = 8.dp, top = 8.dp), contentAlignment= Alignment.TopEnd){
+
+                            IconButton(
+                                icon = if(isFavourite == true) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                                onClick = { onFavouriteButtonClick(product.id) },
+                                contentDescription = if(isFavourite == true) "Remove to favourite" else "Add from favourites",
+                                iconTint = if(isFavourite == true) Color(0xFFFF0048) else Color.LightGray
+                            )
+
+                        }
+
+                    }
+                }
+
+                Spacer(Modifier.height(4.dp))
+
+                Text(
+                    text = product.title,
+                    overflow = TextOverflow.Clip,
+                    fontFamily = FontFamily.SansSerif,
+                    fontSize = 14.sp,
+                    maxLines = 2,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+
+                Spacer(Modifier.height(6.dp))
+
+                Text(
+                    text = "$${product.price}",
+                    fontSize = 14.sp,
+                    fontFamily = FontFamily.SansSerif,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+                Spacer(Modifier.height(8.dp))
+                RatingBar(
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .fillMaxWidth(0.8f),
+                    starsCount = 5,
+                    ratingOutOfFive = product.rating.rate.roundToInt(),
+                    false
+                )
+                Spacer(Modifier.height(6.dp))
+
+            }
+
+        }
+    }
+}
+
+
+@Composable
 fun SelectableHorizontalProductCard(
     product: ShopApiProductsResponse,
     isSelectionMode: State<Boolean>,
@@ -279,6 +386,8 @@ fun NormalHorizontalProductCard(
     modifier: Modifier,
     product: ShopApiProductsResponse,
     onNavigate: () -> Unit,
+    isFavourite: Boolean,
+    onFavouriteButtonClick: (Int) -> Unit
 ) {
 
     /** User Must Define Height And Width of Card using the modifier parameter **/
@@ -307,12 +416,25 @@ fun NormalHorizontalProductCard(
                     shape = RoundedCornerShape(12.dp),
                     elevation = 0.dp
                 ) {
-                    Image(
-                        painter = imageFromUrl,
-                        contentDescription = "image of ${product.title}",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Fit,
-                    )
+                    Box(modifier=Modifier.fillMaxSize()){
+
+                        Image(
+                            painter = imageFromUrl,
+                            contentDescription = "image of ${product.title}",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Fit,
+                        )
+
+                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
+                            IconButton(
+                                icon = if(isFavourite!!) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                                onClick = { onFavouriteButtonClick(product.id) },
+                                contentDescription = "Favourite Button",
+                                iconTint = if(isFavourite!!) Color(0xFFFF0059) else Color.White
+                            )
+                        }
+
+                    }
 
                 }
 
@@ -442,106 +564,4 @@ fun NormalHorizontalProductCard(
         }
     }
 
-
-@Composable
-fun ProductsCard(
-    modifier: Modifier,
-    product: ShopApiProductsResponse,
-    onNavigate: (ShopApiProductsResponse) -> Unit,
-    withEleveation:Boolean,
-    isFavourite: Boolean?
-) {
-
-    val imageFromUrl = rememberAsyncImagePainter(
-        model = product.image,
-        contentScale = ContentScale.FillWidth,
-        placeholder = painterResource(id = R.drawable.test_product_placeholder),
-    )
-
-
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .clickable { onNavigate(product) },
-        contentAlignment = Alignment.Center
-    ) {
-
-        Card(
-            shape = RoundedCornerShape(12.dp),
-            elevation = 0.dp,
-            backgroundColor = Color.Transparent,
-            modifier= Modifier
-                .padding(bottom = 8.dp)
-        ) {
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Transparent)) {
-                Card(
-                    backgroundColor= Color.White,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f / 1f),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = 0.dp
-                ) {
-                    Box(Modifier.fillMaxSize()){
-
-                        Image(
-                            painter = imageFromUrl,
-                            contentDescription = "image of ${product.title}",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Fit,
-                        )
-
-                        Box(Modifier.fillMaxSize().padding(end=8.dp, top=8.dp), contentAlignment= Alignment.TopEnd){
-
-                            IconButton(
-                                icon = if(isFavourite == true) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                                onClick = { /*TODO*/ },
-                                contentDescription = if(isFavourite == true) "Remove to favourite" else "Add from favourites",
-                                iconTint = if(isFavourite == true) Color(0xFFFF0048) else Color.LightGray
-                            )
-
-                        }
-
-                    }
-                }
-
-                Spacer(Modifier.height(4.dp))
-
-                Text(
-                    text = product.title,
-                    overflow = TextOverflow.Clip,
-                    fontFamily = FontFamily.SansSerif,
-                    fontSize = 14.sp,
-                    maxLines = 2,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-
-                Spacer(Modifier.height(6.dp))
-
-                Text(
-                    text = "$${product.price}",
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily.SansSerif,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-                Spacer(Modifier.height(8.dp))
-                RatingBar(
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .fillMaxWidth(0.8f),
-                    starsCount = 5,
-                    ratingOutOfFive = product.rating.rate.roundToInt(),
-                    false
-                )
-                Spacer(Modifier.height(6.dp))
-
-            }
-
-        }
-    }
-}
 

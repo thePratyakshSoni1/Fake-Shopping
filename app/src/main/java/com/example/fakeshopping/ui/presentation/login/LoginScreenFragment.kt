@@ -34,7 +34,7 @@ import com.example.fakeshopping.utils.LoginScreenRoutes
 import com.example.fakeshopping.utils.LoginSignupStatus
 
 @Composable
-fun LoginFragment(loginFragmentNavController: NavHostController, onLoginSuccess:()->Unit){
+fun LoginFragment(loginFragmentNavController: NavHostController, onLoginSuccess:(userId:String)->Unit){
 
     val viewModel:LoginScreenViewmodel = hiltViewModel()
     val context = LocalContext.current
@@ -186,12 +186,12 @@ fun LoginFragment(loginFragmentNavController: NavHostController, onLoginSuccess:
 
                             when(viewModel.verifyLogin()){
                                 LoginSignupStatus.STATUS_INVALID_DETAILS -> { Toast.makeText(context, "Please enter a valid phone number",Toast.LENGTH_SHORT).show() }
-                                LoginSignupStatus.STATUS_LOGIN_SUCCESS -> {
-                                    Toast.makeText(context, "Logged In as ${viewModel.getUser()}",Toast.LENGTH_SHORT).show()
-                                    onLoginSuccess()
-                                }
                                 LoginSignupStatus.STATUS_LOGIN_WRONG_PASSWORD -> { Toast.makeText(context, "Wrong Password",Toast.LENGTH_SHORT).show() }
                                 LoginSignupStatus.STATUS_LOGIN_NO_USER -> { Toast.makeText(context, "No user with this number , Please Sign Up Now !",Toast.LENGTH_SHORT).show() }
+                                LoginSignupStatus.STATUS_LOGIN_SUCCESS -> {
+                                    Toast.makeText(context, "Logged In as ${viewModel.getUser()}",Toast.LENGTH_SHORT).show()
+                                    onLoginSuccess(viewModel.phoneNumberTxt.value)
+                                }
 
                                 else -> { Toast.makeText(context, "Sorry, Something went wrong !",Toast.LENGTH_SHORT).show() }
                             }

@@ -8,14 +8,14 @@ import com.google.gson.reflect.TypeToken
 class IntListTypeConverters {
 
     @TypeConverter
-    fun intListToJson(list:List<Int>):String{
+    fun intListToJson(list:MutableList<Int>):String{
         return Gson().toJson(list)
     }
 
     @TypeConverter
-    fun jsonToIntList(jsonString:String):List<Int>{
-        val type = object: TypeToken<List<Int>>(){}.type
-        val list:List<Int> = Gson().fromJson(jsonString, type )
+    fun jsonToIntList(jsonString:String):MutableList<Int>{
+        val type = object: TypeToken<MutableList<Int>>(){}.type
+        val list:MutableList<Int> = Gson().fromJson(jsonString, type )
         Log.i("GSON","To IntList: $list")
         return list
     }
@@ -26,14 +26,14 @@ class IntListTypeConverters {
 class UserOrderListTypeConverters {
 
     @TypeConverter
-    fun userOrderListToJson(list:List<UserOrders>):String{
+    fun userOrderListToJson(list:MutableList<UserOrders>):String{
         return Gson().toJson(list)
     }
 
     @TypeConverter
-    fun jsonToUserOrderList(jsonString:String):List<UserOrders>{
-        val type = object: TypeToken<List<UserOrders>>(){}.type
-        val list:List<UserOrders> = Gson().fromJson(jsonString, type )
+    fun jsonToUserOrderList(jsonString:String):MutableList<UserOrders>{
+        val type = object: TypeToken<MutableList<UserOrders>>(){}.type
+        val list:MutableList<UserOrders> = Gson().fromJson(jsonString, type )
         Log.i("GSON","To IntList: $list")
         return list
     }
@@ -44,14 +44,14 @@ class UserOrderListTypeConverters {
 class MapTypeConverters{
 
     @TypeConverter
-    fun intMapToJson(map:Map<Int,Int>):String{
+    fun intMapToJson(map:MutableMap<Int,Int>):String{
         return Gson().toJson(map)
     }
 
     @TypeConverter
-    fun jsonToIntMap(jsonString:String):Map<Int,Int>{
-        val type = object: TypeToken<Map<Int,Int>>(){}.type
-        val map:Map<Int,Int> = Gson().fromJson(jsonString, type )
+    fun jsonToIntMap(jsonString:String):MutableMap<Int,Int>{
+        val type = object: TypeToken<MutableMap<Int,Int>>(){}.type
+        val map:MutableMap<Int,Int> = Gson().fromJson(jsonString, type )
         Log.i("GSON","To IntList: $map")
         return map
     }

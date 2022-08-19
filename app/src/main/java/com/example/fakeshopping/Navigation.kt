@@ -15,18 +15,21 @@ import com.example.fakeshopping.ui.presentation.login.LoginScreenNavigation
 import com.example.fakeshopping.utils.Routes
 
 @Composable
-fun Navigation(window: Window) {
+fun Navigation(window: Window, onLoggedStateChanged:(userId:String)->Unit, getCurrentLoggedUser:()->String? ) {
 
     val navController = rememberNavController()
+    val currentUser = getCurrentLoggedUser()
 
-//    NavHost(navController = navController, startDestination = Routes.homeScreen+"?category={category}") {
-    NavHost(navController = navController, startDestination = Routes.loginSignupScreen) {
+    NavHost(
+        navController = navController,
+        startDestination = if(currentUser.isNullOrEmpty()) Routes.loginSignupScreen else "${Routes.homeScreen}?category={category}"
+    ) {
 
         composable(
             route = Routes.loginSignupScreen,
         ){
             window.statusBarColor = Color(0xFF350099).toArgb()
-            LoginScreenNavigation(rootnavController = navController)
+            LoginScreenNavigation(rootnavController = navController, onLoggedStateChanged= onLoggedStateChanged)
         }
 
         composable(
@@ -36,11 +39,17 @@ fun Navigation(window: Window) {
                     type = NavType.StringType
                     defaultValue = "All"
                 }
+
             )
         ) { backStackEntry ->
 
             window.statusBarColor = Color(0xFFF8F8F8).toArgb()
-            HomeScreen(rootNavController = navController, category = backStackEntry.arguments?.getString("category")!!,window=window)
+            HomeScreen(
+                getCurrentUser = { getCurrentLoggedUser()!! },
+                rootNavController = navController,
+                category = backStackEntry.arguments?.getString("category")!!,
+                window = window
+            )
         }
 
         composable(
@@ -66,7 +75,7 @@ fun Navigation(window: Window) {
             route = Routes.favouritesScreen,
         ){
             window.statusBarColor = Color.White.toArgb()
-            FavouritesScreen(navController = navController)
+            FavouritesScreen(navController = navController, currentUser = currentUser!!)
         }
 
     }

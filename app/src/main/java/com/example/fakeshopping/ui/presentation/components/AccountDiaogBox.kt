@@ -30,7 +30,7 @@ import androidx.compose.ui.window.Dialog
 import com.example.fakeshopping.ui.theme.ColorExtraDarkGray
 
 @Composable
-fun AccountDialog(menuItems:List<MenuItemData>, showDialogValue: MutableState<Boolean>, userProfile:Painter){
+fun AccountDialog(userName:String, menuItems:List<MenuItemData>, showDialogValue: MutableState<Boolean>, userProfile:Painter){
 
     Dialog(onDismissRequest = { showDialogValue.value = false }) {
 
@@ -57,7 +57,7 @@ fun AccountDialog(menuItems:List<MenuItemData>, showDialogValue: MutableState<Bo
                             contentScale= ContentScale.FillHeight
                         )
                         Spacer(Modifier.width(12.dp))
-                        Text(text = "Username", fontSize = 14.sp, fontWeight = FontWeight.Bold, color= ColorExtraDarkGray)
+                        Text(text = userName, fontSize = 14.sp, fontWeight = FontWeight.Bold, color= ColorExtraDarkGray)
 
                     }
 

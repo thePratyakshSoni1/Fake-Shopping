@@ -53,7 +53,8 @@ fun ShopingCartScreen(navController:NavController){
             if(isSelectionMode.value){
                 ShoppingCartBottomBar()
             }
-        }
+        },
+        modifier=Modifier.statusBarsPadding()
     ) {
         LazyColumn(contentPadding = PaddingValues(top = 18.dp, bottom = 18.dp)) {
 

@@ -26,7 +26,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -34,12 +33,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.fakeshopping.ui.model.homescreenViewmodels.HomeScreenViewmodel
 import com.example.fakeshopping.utils.HomeScreenFragmentRoutes
 import com.example.fakeshopping.utils.Routes
 
 @Composable
-fun HomeScreen(rootNavController: NavController, window: Window, category: String = "All") {
+fun HomeScreen(rootNavController: NavController, window: Window, category: String = "All", getCurrentUser:()->String) {
 
     val fragmentNavController = rememberNavController()
 
@@ -50,6 +48,7 @@ fun HomeScreen(rootNavController: NavController, window: Window, category: Strin
                 rootNavController = rootNavController, window = window,
                 fragmentNavController = fragmentNavController,
                 category = category,
+                userId = getCurrentUser()
             )
         }
 
@@ -64,6 +63,7 @@ fun HomeScreenNavigation(
     window: Window,
     category: String = "All",
     fragmentNavController: NavHostController,
+    userId: String
 ) {
 
     NavHost(
@@ -80,7 +80,8 @@ fun HomeScreenNavigation(
                 category = category,
                 onSearchbarClick = {
                     fragmentNavController.navigate(HomeScreenFragmentRoutes.searchSuggestionFragment)
-                }
+                },
+                userId = userId
             )
         }
 
@@ -134,7 +135,8 @@ fun HomeScreenNavigation(
                 },
                 onBackPress = {
                     fragmentNavController.popBackStack()
-                }
+                },
+                currentUserId = userId
             )
 
         }
