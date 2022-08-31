@@ -2,7 +2,6 @@ package com.example.fakeshopping.ui.model
 
 import android.util.Log
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,7 +20,6 @@ import javax.inject.Inject
 class FavouriteScreenViewmodel @Inject constructor( private val userRepo:UserRepository, private val shopRepo:TestDataRepo ) : ViewModel(){
 
     private lateinit var _currentUserId:String
-    val currentUserId get() = _currentUserId
 
     private val _favouriteProducts = mutableStateMapOf<Int,ShopApiProductsResponse>()
     val favouriteProducts = _favouriteProducts as Map<Int, ShopApiProductsResponse>
@@ -40,7 +38,7 @@ class FavouriteScreenViewmodel @Inject constructor( private val userRepo:UserRep
 
         _currentUserId = id
         viewModelScope.launch {
-            for (items in userRepo.getUserFavourites(currentUserId.toLong()) ){
+            for (items in userRepo.getUserFavourites(_currentUserId.toLong()) ){
                 _favouriteProducts[items] = shopRepo.getProductbyId(items)
             }
         }
@@ -60,15 +58,15 @@ class FavouriteScreenViewmodel @Inject constructor( private val userRepo:UserRep
 
     }
 
-    fun deleteItemFromFavourite(id:Int){
-        viewModelScope.launch {
-            if(_selectedProducts.containsKey(id)) {
-                _selectedProducts.remove(id)
-            }
-            _favouriteProducts.remove(id)
-        }
-
-    }
+//    fun deleteItemFromFavourite(id:Int){
+//        viewModelScope.launch {
+//            if(_selectedProducts.containsKey(id)) {
+//                _selectedProducts.remove(id)
+//            }
+//            _favouriteProducts.remove(id)
+//        }
+//
+//    }
 
 
     fun onItemRemove(itemId:Int){
@@ -93,14 +91,14 @@ class FavouriteScreenViewmodel @Inject constructor( private val userRepo:UserRep
     fun toggleFavourite(itemId:Int){
         viewModelScope.launch {
             if(_favouriteProducts.contains(itemId)){
-                userRepo.removeItemFromFavourites(currentUserId.toLong(), itemId)
+                userRepo.removeItemFromFavourites(_currentUserId.toLong(), itemId)
                 _favouriteProducts.remove(itemId)
             }else{
-                userRepo.addItemToFavourites(currentUserId.toLong(), itemId)
+                userRepo.addItemToFavourites(_currentUserId.toLong(), itemId)
                 _favouriteProducts[itemId] = shopRepo.getProductbyId(itemId)
             }
             val tempFavs = mutableMapOf<Int,ShopApiProductsResponse>()
-            for(items in userRepo.getUserFavourites(currentUserId.toLong())){
+            for(items in userRepo.getUserFavourites(_currentUserId.toLong())){
                 tempFavs[items] = shopRepo.getProductbyId(items)
                 Log.d("FAV_ACTION", "Refreshing actionId: $itemId")
             }
@@ -114,23 +112,23 @@ class FavouriteScreenViewmodel @Inject constructor( private val userRepo:UserRep
         _isSelectionMode.value = false
     }
 
-    fun changeQuantity(itemId:Int, newQuantity:Int){
-        _selectedProducts[itemId] = newQuantity
-    }
-
-
-    fun addAllSelectedProducts(itemList:Map<Int,Int>){
-        for(productId in itemList.keys){
-            if(!_selectedProducts.contains(productId)){
-                _selectedProducts[productId] = itemList[productId]!!
-            }
-        }
-    }
+//    fun changeQuantity(itemId:Int, newQuantity:Int){
+//        _selectedProducts[itemId] = newQuantity
+//    }
+//
+//
+//    fun addAllSelectedProducts(itemList:Map<Int,Int>){
+//        for(productId in itemList.keys){
+//            if(!_selectedProducts.contains(productId)){
+//                _selectedProducts[productId] = itemList[productId]!!
+//            }
+//        }
+//    }
 
     fun moveToCart(){
 
         viewModelScope.launch {
-            val user = userRepo.getUserByPhone(currentUserId.toLong())!!
+            val user = userRepo.getUserByPhone(_currentUserId.toLong())!!
             for(items in selectedProducts){
 
                 if(user.cartItems.contains(items.key)){

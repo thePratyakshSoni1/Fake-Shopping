@@ -243,10 +243,8 @@ fun HorizontalProductCard(
                     .height(126.dp)
                     .fillMaxWidth(0.98f),
                 product = product,
-                onNavigate = { onClick() },
                 withQuantityMeter = ( alwaysVisibleQuantityMeter || isSelected ) ,
                 onFavouriteBtnClick = onFavouriteButtonClick,
-                elevation = if(isSelected) 8.dp else 2.dp,
                 itemQuantity = itemQuantity,
                 hasFavouriteButton = hasFavouriteButton,
                 isFavourite = isFavourite
@@ -264,10 +262,8 @@ fun HorizontalProductCard(
 private fun NormalHorizontalProductCardWithActionButtons(
     modifier: Modifier,
     product: ShopApiProductsResponse,
-    onNavigate: () -> Unit,
     withQuantityMeter:Boolean,
     onFavouriteBtnClick:()->Unit,
-    elevation: Dp,
     itemQuantity:MutableState<Int>,
     hasFavouriteButton:Boolean,
     isFavourite:Boolean?

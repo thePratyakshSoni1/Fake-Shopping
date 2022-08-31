@@ -68,7 +68,7 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String)->Unit, getCu
             route = Routes.shoppingCartScreen,
         ){
             window.statusBarColor = Color.White.toArgb()
-            ShopingCartScreen(navController = navController)
+            ShopingCartScreen(navController = navController, currentUserId = currentUser!!)
         }
 
         composable(

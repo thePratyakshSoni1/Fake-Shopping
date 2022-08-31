@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -29,8 +30,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.ui.model.ShoppingCartScreenViewModel
 import com.example.fakeshopping.ui.presentation.components.HorizontalProductCard
 import com.example.fakeshopping.ui.presentation.components.IconButton
 import com.example.fakeshopping.ui.presentation.components.SelectableHorizontalProductCard
@@ -40,17 +43,20 @@ import com.example.fakeshopping.utils.Routes
 import com.example.fakeshopping.utils.ToolbarProperties
 
 @Composable
-fun ShopingCartScreen(navController:NavController){
+fun ShopingCartScreen(navController:NavController, currentUserId:String){
 
-    val isSelectionMode = remember{ mutableStateOf(false) }
-    val selectedProductsList: SnapshotStateList<Int> = remember{ mutableStateListOf() }
+    val viewModel:ShoppingCartScreenViewModel = hiltViewModel()
+
+    LaunchedEffect(key1 = true, block = {
+        viewModel.initalizeViewModel(currentUserId)
+    })
 
     Scaffold(
         topBar = {
             ShoppingCartTopBar()
         },
         bottomBar = {
-            if(isSelectionMode.value){
+            if(viewModel.isSelectionMode.value){
                 ShoppingCartBottomBar()
             }
         },
@@ -58,28 +64,13 @@ fun ShopingCartScreen(navController:NavController){
     ) {
         LazyColumn(contentPadding = PaddingValues(top = 18.dp, bottom = 18.dp)) {
 
-            items(16) {
-
-                val tempProduct = ShopApiProductsResponse(
-                    id = (it + 1),
-                    "Product Name ${it + 1} is here",
-                    "$79",
-                    "all",
-                    "Product Desc ;)",
-                    "#xyz",
-                    ShopApiProductsResponse.ProductRating(
-                        rate = 3.5f,
-                        count = 150
-                    )
-                )
+            items( viewModel.cartItems.keys.toList(), key = { it } ) { productId ->
 
                 SelectableHorizontalProductCard(
-                    product = tempProduct,
-                    isSelectionMode = isSelectionMode,
+                    product = viewModel.getProductById(productId),
+                    isSelectionMode = viewModel.isSelectionMode,
                     alwaysVisibleQuantityMeter = true,
-                    isSelectedItemListEmpty = {
-                        false
-                    },
+                    isSelectedItemListEmpty = { viewModel.selectedProducts.isEmpty() },
                     addNewSelectedItem = {
 
                     },
@@ -87,16 +78,16 @@ fun ShopingCartScreen(navController:NavController){
 
                     },
                     checkSelectedItemAvailability = {
-                        true
+                        viewModel.selectedProducts.containsKey(productId)
                     },
                     onNavigate = {
-                        navController.navigate("${Routes.productDetailScreen}/${tempProduct.id}")
+                        navController.navigate("${Routes.productDetailScreen}/${productId}")
                     },
                     onFavouriteButtonClick = { },
                     toggleSelectionMode = {
 
                     },
-                    isFavourite = null
+                    isFavourite = false
                 )
 
             }
