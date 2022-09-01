@@ -67,7 +67,7 @@ fun ShopingCartScreen(navController:NavController, currentUserId:String){
             items( viewModel.cartItems.keys.toList(), key = { it } ) { productId ->
 
                 SelectableHorizontalProductCard(
-                    product = viewModel.getProductById(productId),
+                    product = ( viewModel.getProductById(productId) to viewModel.cartItems[productId]!!),
                     isSelectionMode = viewModel.isSelectionMode,
                     alwaysVisibleQuantityMeter = true,
                     isSelectedItemListEmpty = { viewModel.selectedProducts.isEmpty() },
@@ -87,7 +87,10 @@ fun ShopingCartScreen(navController:NavController, currentUserId:String){
                     toggleSelectionMode = {
 
                     },
-                    isFavourite = false
+                    isFavourite = false,
+                    onQuantityChange = {
+
+                    }
                 )
 
             }

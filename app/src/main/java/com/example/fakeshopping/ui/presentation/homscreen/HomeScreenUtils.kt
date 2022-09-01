@@ -52,7 +52,8 @@ fun CollapsingTopAppBar(
     showDialog:MutableState<Boolean>,
     onCategoryChange: (String) -> Unit,
     onCartIconClick:()->Unit,
-    onSearchBarClick:()->Unit
+    onSearchBarClick:()->Unit,
+    username:String
 ){
 
     MotionLayout(motionScene= MotionScene(content = motionScene), progress = progress.value,modifier=Modifier.fillMaxWidth()){
@@ -70,7 +71,7 @@ fun CollapsingTopAppBar(
             contentAlignment = Alignment.Center
         ){
                 Text(
-                    text = "Hello Pratyaksh",
+                    text = "Hello $username",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 16.dp, top = 14.dp),

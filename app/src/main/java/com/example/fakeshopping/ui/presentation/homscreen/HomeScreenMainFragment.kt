@@ -156,7 +156,8 @@ fun HomeScreenMainFragment(
             onCartIconClick = {
                 rootNavController.navigate(Routes.shoppingCartScreen)
             },
-            onSearchBarClick = onSearchbarClick
+            onSearchBarClick = onSearchbarClick,
+            username = homeScreenviewmodelFragment.currentUserId
         )
 
         if(showAccountDialog.value){

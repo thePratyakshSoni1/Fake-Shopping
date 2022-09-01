@@ -8,7 +8,7 @@
         width: 'spread',
         start: ['box','start'],
         end: ['box', 'end'],
-        top: ['box', 'top'],
+        top: ['box', 'top', 8],
       },
 
       searchbar: {

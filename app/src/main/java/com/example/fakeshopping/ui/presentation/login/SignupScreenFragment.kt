@@ -101,7 +101,7 @@ fun SignupFragment(loginFragmentNavController: NavHostController , onSuccessVeri
 
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = if (viewModel.isOtpStep.value) "Otp is send to ${viewModel.phone}" else "Sign Up",
+                        text = if (viewModel.isOtpStep.value) "Otp is send to ${viewModel.phone.value}" else "Sign Up",
                         fontFamily = FontFamily.SansSerif,
                         color = Color.Black,
                         fontSize = if (viewModel.isOtpStep.value) 18.sp else 23.sp,
@@ -491,19 +491,6 @@ private fun BottomText(onTextClick:()->Unit, isVerificationStep: State<Boolean>,
     val bottomText = buildAnnotatedString {
 
         if (isVerificationStep.value){
-            append("Already a member ? ")
-            this.addStyle(
-                SpanStyle(color = Color.LightGray, fontFamily = FontFamily.SansSerif),
-                0,
-                18
-            )
-            append("Log In")
-            this.addStyle(
-                SpanStyle(color = Color.Blue, fontFamily = FontFamily.SansSerif),
-                19,
-                25
-            )
-        }else{
             append("Didn't get code ? ")
             this.addStyle(
                 SpanStyle(color = Color.LightGray, fontFamily = FontFamily.SansSerif),
@@ -515,6 +502,19 @@ private fun BottomText(onTextClick:()->Unit, isVerificationStep: State<Boolean>,
                 SpanStyle(color = Color.Blue, fontFamily = FontFamily.SansSerif),
                 18,
                 28
+            )
+        }else{
+            append("Already a member ? ")
+            this.addStyle(
+                SpanStyle(color = Color.LightGray, fontFamily = FontFamily.SansSerif),
+                0,
+                18
+            )
+            append("Log In")
+            this.addStyle(
+                SpanStyle(color = Color.Blue, fontFamily = FontFamily.SansSerif),
+                19,
+                25
             )
         }
     }

@@ -153,7 +153,7 @@ fun ProductsCard(
 
 @Composable
 fun SelectableHorizontalProductCard(
-    product: ShopApiProductsResponse,
+    product: Pair<ShopApiProductsResponse, Int>,
     isSelectionMode: State<Boolean>,
     toggleSelectionMode:(Boolean)->Unit,
     isSelectedItemListEmpty:()->Boolean,
@@ -163,7 +163,8 @@ fun SelectableHorizontalProductCard(
     onNavigate: () -> Unit,
     onFavouriteButtonClick:()->Unit,
     alwaysVisibleQuantityMeter: Boolean,
-    isFavourite: Boolean?
+    isFavourite: Boolean?,
+    onQuantityChange:(inc:Boolean)->Unit
 ){
     Box(
         Modifier
@@ -176,7 +177,7 @@ fun SelectableHorizontalProductCard(
                             addNewSelectedItem()
                         } else {
                             if (checkSelectedItemAvailability()) {
-                                removeSelectedItem((product.id))
+                                removeSelectedItem((product.first.id))
                                 if (isSelectedItemListEmpty()) {
                                     toggleSelectionMode(false)
                                 }
@@ -191,7 +192,7 @@ fun SelectableHorizontalProductCard(
                         if (isSelectionMode.value) {
 
                             if (checkSelectedItemAvailability()) {
-                                removeSelectedItem(product.id)
+                                removeSelectedItem(product.first.id)
                                 if (isSelectedItemListEmpty()) {
                                     toggleSelectionMode(false)
                                 }
@@ -209,16 +210,17 @@ fun SelectableHorizontalProductCard(
             }
     ) {
         HorizontalProductCard(
-            product = product,
+            product = product.first,
             isSelected = checkSelectedItemAvailability(),
             onClick = { Unit },
             onFavouriteButtonClick = {
                 onFavouriteButtonClick()
             },
             alwaysVisibleQuantityMeter = alwaysVisibleQuantityMeter,
-            itemQuantity = remember { mutableStateOf(1) },
+            itemQuantity = product.second ,
             hasFavouriteButton = !isSelectionMode.value,
-            isFavourite = isFavourite
+            isFavourite = isFavourite,
+            onQuantityChange = onQuantityChange
         )
     }
 }
@@ -229,10 +231,11 @@ fun HorizontalProductCard(
     isSelected: Boolean,
     onClick: () -> Unit,
     onFavouriteButtonClick: () -> Unit,
-    itemQuantity: MutableState<Int>,
+    itemQuantity: Int,
     alwaysVisibleQuantityMeter: Boolean,
     hasFavouriteButton: Boolean,
-    isFavourite: Boolean?
+    isFavourite: Boolean?,
+    onQuantityChange: (inc: Boolean) -> Unit
 ) {
 
         Box(Modifier.fillMaxWidth(0.97f)) {
@@ -247,7 +250,8 @@ fun HorizontalProductCard(
                 onFavouriteBtnClick = onFavouriteButtonClick,
                 itemQuantity = itemQuantity,
                 hasFavouriteButton = hasFavouriteButton,
-                isFavourite = isFavourite
+                isFavourite = isFavourite,
+                onQuantityChange= onQuantityChange
             )
 
             if(isSelected) {
@@ -264,9 +268,10 @@ private fun NormalHorizontalProductCardWithActionButtons(
     product: ShopApiProductsResponse,
     withQuantityMeter:Boolean,
     onFavouriteBtnClick:()->Unit,
-    itemQuantity:MutableState<Int>,
+    itemQuantity:Int,
     hasFavouriteButton:Boolean,
-    isFavourite:Boolean?
+    isFavourite:Boolean?,
+    onQuantityChange: (inc: Boolean) -> Unit
 ) {
 
     val imageFromUrl = rememberAsyncImagePainter(
@@ -366,7 +371,7 @@ private fun NormalHorizontalProductCardWithActionButtons(
 
                     if (withQuantityMeter) {
                         Spacer(Modifier.width(16.dp))
-                        QuantityMeter(itemQuantity)
+                        QuantityMeter(itemQuantity, onQuantityChange = onQuantityChange)
                     }
 
                 }
@@ -505,7 +510,7 @@ fun NormalHorizontalProductCard(
 
 
     @Composable
-    private fun QuantityMeter(currentQuantity:MutableState<Int>){
+    private fun QuantityMeter(currentQuantity:Int, onQuantityChange: (inc: Boolean) -> Unit){
 
         Box(
             Modifier
@@ -526,7 +531,7 @@ fun NormalHorizontalProductCard(
                 Box(Modifier.weight(1f)) {
                     IconButton(
                         icon = Icons.Default.KeyboardArrowUp,
-                        onClick = { currentQuantity.value++ },
+                        onClick = { onQuantityChange(true) },
                         contentDescription = "Decrease Quantity",
                         iconTint = Color.DarkGray
                     )
@@ -534,7 +539,7 @@ fun NormalHorizontalProductCard(
 
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    text = currentQuantity.value.toString(),
+                    text = currentQuantity.toString(),
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.SansSerif,
@@ -548,7 +553,7 @@ fun NormalHorizontalProductCard(
                 Box(Modifier.weight(1f)) {
                     IconButton(
                         icon = Icons.Default.KeyboardArrowDown,
-                        onClick = { if(currentQuantity.value > 1) currentQuantity.value-- else Unit },
+                        onClick = { onQuantityChange(false) },
                         contentDescription = "Increase Quantity",
                         iconTint = Color.DarkGray
                     )

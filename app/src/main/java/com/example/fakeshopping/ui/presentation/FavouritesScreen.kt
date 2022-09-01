@@ -53,7 +53,7 @@ fun FavouritesScreen(navController: NavController, currentUser:String){
     val viewModel:FavouriteScreenViewmodel = hiltViewModel()
 
     BackHandler(enabled = viewModel.selectedProducts.isNotEmpty()) {
-        viewModel.removeAllSelectedFromFavourites()
+        viewModel.clearSelection()
     }
 
     LaunchedEffect(key1 = true, block = {
@@ -98,7 +98,7 @@ fun FavouritesScreen(navController: NavController, currentUser:String){
 
                 val context = LocalContext.current
                 SelectableHorizontalProductCard(
-                    product = product,
+                    product = ( product to (viewModel.selectedProducts[product.id] ?: 1) ),
                     isSelectionMode = viewModel.isSelectionMode,
                     alwaysVisibleQuantityMeter = false,
                     isSelectedItemListEmpty = {
@@ -123,7 +123,10 @@ fun FavouritesScreen(navController: NavController, currentUser:String){
                         viewModel.toggleFavourite(product.id)
                                              },
                     toggleSelectionMode = viewModel.changeSelectionModeTo,
-                    isFavourite = viewModel.favouriteProducts.containsKey(product.id)
+                    isFavourite = viewModel.favouriteProducts.containsKey(product.id),
+                    onQuantityChange = {
+                        viewModel.changeQuantity(it,product.id)
+                    }
                 )
 
             }

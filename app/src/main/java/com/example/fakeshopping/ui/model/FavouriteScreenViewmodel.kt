@@ -112,18 +112,16 @@ class FavouriteScreenViewmodel @Inject constructor( private val userRepo:UserRep
         _isSelectionMode.value = false
     }
 
-//    fun changeQuantity(itemId:Int, newQuantity:Int){
-//        _selectedProducts[itemId] = newQuantity
-//    }
-//
-//
-//    fun addAllSelectedProducts(itemList:Map<Int,Int>){
-//        for(productId in itemList.keys){
-//            if(!_selectedProducts.contains(productId)){
-//                _selectedProducts[productId] = itemList[productId]!!
-//            }
-//        }
-//    }
+    fun changeQuantity(inc:Boolean, itemId:Int){
+        if(inc){
+            _selectedProducts[itemId] = selectedProducts[itemId]!! + 1
+        }else{
+            if(_selectedProducts[itemId]!! > 1){
+                _selectedProducts[itemId] = selectedProducts[itemId]!! - 1
+            }
+        }
+    }
+
 
     fun moveToCart(){
 
