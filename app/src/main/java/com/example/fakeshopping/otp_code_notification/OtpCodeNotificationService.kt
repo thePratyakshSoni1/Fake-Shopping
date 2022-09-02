@@ -8,6 +8,8 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.fakeshopping.R
+import java.util.*
+import kotlin.random.Random
 
 class OtpCodeNotificationService(private val context: Context) {
 
@@ -34,7 +36,7 @@ class OtpCodeNotificationService(private val context: Context) {
             .setOngoing(false)
             .build()
 
-        notificationmanager.notify(1,  notification)
+        notificationmanager.notify(System.currentTimeMillis().toInt(),  notification)
 
     }
 

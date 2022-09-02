@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -142,7 +143,10 @@ fun LoginFragment(loginFragmentNavController: NavHostController, onLoginSuccess:
                 }
 
                 Text(text=bottomText, textAlign=TextAlign.Center, modifier= Modifier
-                    .clickable {
+                    .clickable(
+                        interactionSource = MutableInteractionSource(),
+                        indication = null
+                    ) {
                         loginFragmentNavController.navigate(LoginScreenRoutes.signupFragment)
                     }
                     .fillMaxWidth())

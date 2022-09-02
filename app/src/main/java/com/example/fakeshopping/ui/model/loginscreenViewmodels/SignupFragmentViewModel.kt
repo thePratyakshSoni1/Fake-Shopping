@@ -80,14 +80,22 @@ class SignupFragmentViewModel @Inject constructor(val usersRepo: UserRepository)
         _confirmPassword.value = newTxt
     }
 
+
+
     fun verifySignUpDetails():LoginSignupStatus{
+
+        val alphaPattern = Regex("[a-zA-Z]+")
+        val numPattern = Regex("[0-9]+")
+        val symbolPattern = Regex("""[&|“|`|´|}|{|°|>|<|:|.|;|#|'|)|(|@|_|$|"|!|?|*|=|^|-]+""")
 
         return if(_firstName.value.isEmpty()){
             LoginSignupStatus.STATUS_SIGNUP_INVALID_NAME
-//        }else if(!_lastName.value.contains(Regex("[^A-Za-z]"))){
-//            LoginSignupStatus.STATUS_SIGNUP_INVALID_NAME
-        }else if(!_phone.value.contains(Regex("[0-10]")) && _phone.value.length == 9 ){
+        }else if(_lastName.value.contains(Regex("[^A-Za-z]"))){
+            LoginSignupStatus.STATUS_SIGNUP_INVALID_NAME
+        }else if(!_phone.value.contains(Regex("[0-10]")) && _phone.value.length == 10 ){
             LoginSignupStatus.STATUS_SIGNUP_INVALID_NUMBER
+        }else if(!(_password.value.contains(alphaPattern) && _password.value.contains(numPattern) && _password.value.contains(symbolPattern))){
+            LoginSignupStatus.STATUS_SIGNUP_INVALID_PASSWORD_PATTERN
         }else if(_password.value != _confirmPassword.value){
             LoginSignupStatus.STATUS_SIGNUP_PASSWORD_UNMATCHED
         }else{

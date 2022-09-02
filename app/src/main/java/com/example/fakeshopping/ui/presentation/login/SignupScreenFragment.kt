@@ -240,6 +240,7 @@ fun BottomButtons(viewModel:SignupFragmentViewModel, onLoginBtnClick:()->Unit, o
 
                     LoginSignupStatus.STATUS_SIGNUP_INVALID_NAME -> { Toast.makeText(context, "Please enter a valid name without numbers or symbols", Toast.LENGTH_SHORT).show() }
                     LoginSignupStatus.STATUS_SIGNUP_PASSWORD_UNMATCHED -> { Toast.makeText(context, "Password didn't matched",Toast.LENGTH_SHORT).show() }
+                    LoginSignupStatus.STATUS_SIGNUP_INVALID_PASSWORD_PATTERN -> { Toast.makeText(context, "Password must be 8 digit containing a character, symbol and number",Toast.LENGTH_SHORT).show() }
                     LoginSignupStatus.STATUS_SIGNUP_INVALID_NUMBER -> { Toast.makeText(context, "Enter a valid 10 digi number",Toast.LENGTH_SHORT).show() }
                     LoginSignupStatus.STATUS_SIGNUP_FAILED -> { Toast.makeText(context, "Something went wrong !",Toast.LENGTH_SHORT).show() }
                     LoginSignupStatus.STATUS_SIGNUP_SUCCESS -> {
