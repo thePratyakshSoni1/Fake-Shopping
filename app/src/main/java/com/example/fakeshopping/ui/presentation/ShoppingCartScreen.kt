@@ -53,7 +53,7 @@ fun ShopingCartScreen(navController:NavController, currentUserId:String){
 
     Scaffold(
         topBar = {
-            ShoppingCartTopBar()
+            ShoppingCartTopBar(onBackArrowPress = { navController.popBackStack() } )
         },
         bottomBar = {
             if(viewModel.isSelectionMode.value){
@@ -68,29 +68,23 @@ fun ShopingCartScreen(navController:NavController, currentUserId:String){
 
                 SelectableHorizontalProductCard(
                     product = ( viewModel.getProductById(productId) to viewModel.cartItems[productId]!!),
-                    isSelectionMode = viewModel.isSelectionMode,
                     alwaysVisibleQuantityMeter = true,
-                    isSelectedItemListEmpty = { viewModel.selectedProducts.isEmpty() },
-                    addNewSelectedItem = {
-
-                    },
-                    removeSelectedItem = {
-
-                    },
-                    checkSelectedItemAvailability = {
-                        viewModel.selectedProducts.containsKey(productId)
-                    },
+                    isSelectedItemListEmpty = { true },
+                    addNewSelectedItem = { Unit },
+                    removeSelectedItem = { Unit },
+                    checkSelectedItemAvailability = { false },
                     onNavigate = {
                         navController.navigate("${Routes.productDetailScreen}/${productId}")
                     },
-                    onFavouriteButtonClick = { },
-                    toggleSelectionMode = {
-
+                    onFavouriteButtonClick = {
+                        viewModel.toggleFavourite(productId)
                     },
-                    isFavourite = false,
-                    onQuantityChange = {
-
-                    }
+                    toggleSelectionModeTo = { Unit },
+                    isFavourite = viewModel.userFavs.contains(productId),
+                    onQuantityChange = { isIncreasing ->
+                        viewModel.changeQuantity(isIncreasing, productId)
+                    },
+                    hasDeleteFunctionality = true
                 )
 
             }
@@ -100,7 +94,7 @@ fun ShopingCartScreen(navController:NavController, currentUserId:String){
 }
 
 @Composable
-private fun ShoppingCartTopBar(){
+private fun ShoppingCartTopBar(onBackArrowPress:()->Unit,){
 
     Box(Modifier.shadow(elevation = 4.dp)){
         TopAppBar(
@@ -119,7 +113,7 @@ private fun ShoppingCartTopBar(){
                 IconButton(
                     icon =Icons.Default.ArrowBack ,
                     onClick = {
-
+                        onBackArrowPress()
                     },
                     contentDescription = "Go back"
                 )

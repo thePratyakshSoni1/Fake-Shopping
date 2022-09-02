@@ -122,11 +122,12 @@ fun FavouritesScreen(navController: NavController, currentUser:String){
                     onFavouriteButtonClick = {
                         viewModel.toggleFavourite(product.id)
                                              },
-                    toggleSelectionMode = viewModel.changeSelectionModeTo,
+                    toggleSelectionModeTo = viewModel.changeSelectionModeTo,
                     isFavourite = viewModel.favouriteProducts.containsKey(product.id),
                     onQuantityChange = {
                         viewModel.changeQuantity(it,product.id)
-                    }
+                    },
+                    hasDeleteFunctionality = false
                 )
 
             }

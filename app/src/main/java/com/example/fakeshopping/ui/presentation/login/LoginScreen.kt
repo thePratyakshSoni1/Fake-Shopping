@@ -34,7 +34,8 @@ fun LoginScreenNavigation(rootnavController:NavHostController, onLoggedStateChan
                 loginFragsNavController,
                 onSuccessVerification = { userId ->
                     onLoggedStateChanged(userId)
-                    loginFragsNavController.backQueue.clear()
+                    loginFragsNavController.popBackStack()
+                    loginFragsNavController.popBackStack()
                     rootnavController.navigate("${Routes.homeScreen}?category={category}")
                 }
             )

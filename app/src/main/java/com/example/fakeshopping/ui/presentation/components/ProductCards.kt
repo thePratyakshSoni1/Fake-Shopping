@@ -16,6 +16,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.runtime.*
@@ -154,8 +155,8 @@ fun ProductsCard(
 @Composable
 fun SelectableHorizontalProductCard(
     product: Pair<ShopApiProductsResponse, Int>,
-    isSelectionMode: State<Boolean>,
-    toggleSelectionMode:(Boolean)->Unit,
+    isSelectionMode: State<Boolean> = mutableStateOf(false),
+    toggleSelectionModeTo:(selectionMode:Boolean)->Unit,
     isSelectedItemListEmpty:()->Boolean,
     addNewSelectedItem:()->Unit,
     removeSelectedItem:(Int)->Unit,
@@ -164,7 +165,8 @@ fun SelectableHorizontalProductCard(
     onFavouriteButtonClick:()->Unit,
     alwaysVisibleQuantityMeter: Boolean,
     isFavourite: Boolean?,
-    onQuantityChange:(inc:Boolean)->Unit
+    onQuantityChange:(inc:Boolean)->Unit,
+    hasDeleteFunctionality: Boolean
 ){
     Box(
         Modifier
@@ -173,13 +175,13 @@ fun SelectableHorizontalProductCard(
                 detectTapGestures(
                     onLongPress = { _ ->
                         if (!isSelectionMode.value) {
-                            toggleSelectionMode(true)
+                            toggleSelectionModeTo(true)
                             addNewSelectedItem()
                         } else {
                             if (checkSelectedItemAvailability()) {
                                 removeSelectedItem((product.first.id))
                                 if (isSelectedItemListEmpty()) {
-                                    toggleSelectionMode(false)
+                                    toggleSelectionModeTo(false)
                                 }
                             } else {
                                 addNewSelectedItem()
@@ -194,7 +196,7 @@ fun SelectableHorizontalProductCard(
                             if (checkSelectedItemAvailability()) {
                                 removeSelectedItem(product.first.id)
                                 if (isSelectedItemListEmpty()) {
-                                    toggleSelectionMode(false)
+                                    toggleSelectionModeTo(false)
                                 }
                             } else {
                                 addNewSelectedItem()
@@ -220,7 +222,8 @@ fun SelectableHorizontalProductCard(
             itemQuantity = product.second ,
             hasFavouriteButton = !isSelectionMode.value,
             isFavourite = isFavourite,
-            onQuantityChange = onQuantityChange
+            onQuantityChange = onQuantityChange,
+            hasDeleteFunctionality = hasDeleteFunctionality
         )
     }
 }
@@ -235,7 +238,8 @@ fun HorizontalProductCard(
     alwaysVisibleQuantityMeter: Boolean,
     hasFavouriteButton: Boolean,
     isFavourite: Boolean?,
-    onQuantityChange: (inc: Boolean) -> Unit
+    onQuantityChange: (inc: Boolean) -> Unit,
+    hasDeleteFunctionality: Boolean
 ) {
 
         Box(Modifier.fillMaxWidth(0.97f)) {
@@ -251,7 +255,8 @@ fun HorizontalProductCard(
                 itemQuantity = itemQuantity,
                 hasFavouriteButton = hasFavouriteButton,
                 isFavourite = isFavourite,
-                onQuantityChange= onQuantityChange
+                onQuantityChange= onQuantityChange,
+                hasDeleteFunctionality= hasDeleteFunctionality
             )
 
             if(isSelected) {
@@ -271,7 +276,8 @@ private fun NormalHorizontalProductCardWithActionButtons(
     itemQuantity:Int,
     hasFavouriteButton:Boolean,
     isFavourite:Boolean?,
-    onQuantityChange: (inc: Boolean) -> Unit
+    onQuantityChange: (inc: Boolean) -> Unit,
+    hasDeleteFunctionality: Boolean
 ) {
 
     val imageFromUrl = rememberAsyncImagePainter(
@@ -371,7 +377,7 @@ private fun NormalHorizontalProductCardWithActionButtons(
 
                     if (withQuantityMeter) {
                         Spacer(Modifier.width(16.dp))
-                        QuantityMeter(itemQuantity, onQuantityChange = onQuantityChange)
+                        QuantityMeter(itemQuantity, onQuantityChange = onQuantityChange, hasDeleteFunctionality = hasDeleteFunctionality)
                     }
 
                 }
@@ -510,7 +516,7 @@ fun NormalHorizontalProductCard(
 
 
     @Composable
-    private fun QuantityMeter(currentQuantity:Int, onQuantityChange: (inc: Boolean) -> Unit){
+    private fun QuantityMeter(currentQuantity:Int, onQuantityChange: (inc: Boolean) -> Unit, hasDeleteFunctionality:Boolean){
 
         Box(
             Modifier
@@ -552,10 +558,10 @@ fun NormalHorizontalProductCard(
 
                 Box(Modifier.weight(1f)) {
                     IconButton(
-                        icon = Icons.Default.KeyboardArrowDown,
+                        icon = if( hasDeleteFunctionality && currentQuantity == 1) Icons.Rounded.Delete else Icons.Default.KeyboardArrowDown,
                         onClick = { onQuantityChange(false) },
                         contentDescription = "Increase Quantity",
-                        iconTint = Color.DarkGray
+                        iconTint = if( hasDeleteFunctionality && currentQuantity == 1) Color.Red else Color.DarkGray
                     )
                 }
                 Spacer(Modifier.height(4.dp))
@@ -564,5 +570,7 @@ fun NormalHorizontalProductCard(
 
         }
     }
+
+
 
 

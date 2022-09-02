@@ -130,26 +130,24 @@ class HomeScreenFragmentViewmodel @Inject constructor(private val repository: Te
 
     fun addProductToFavourites(productId:Int){
 
+        _userFavs.add(productId)
+
         viewModelScope.launch {
             val user = userRepo.getUserByPhone(currentUserId.toLong())!!
             user.favourites.add(productId)
             userRepo.addUser(user)
-
-            _userFavs.clear()
-            _userFavs.addAll(userRepo.getUserByPhone(currentUserId.toLong())!!.favourites)
         }
 
     }
 
     fun removeFromFavourites(productId:Int){
 
+        _userFavs.remove(productId)
+
         viewModelScope.launch {
             val user = userRepo.getUserByPhone(currentUserId.toLong())!!
             user.favourites.remove(productId)
             userRepo.addUser(user)
-
-            _userFavs.clear()
-            _userFavs.addAll(userRepo.getUserByPhone(currentUserId.toLong())!!.favourites)
         }
 
     }
