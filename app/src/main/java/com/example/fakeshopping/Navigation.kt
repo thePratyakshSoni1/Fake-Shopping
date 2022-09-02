@@ -18,7 +18,7 @@ import com.example.fakeshopping.utils.Routes
 fun Navigation(window: Window, onLoggedStateChanged:(userId:String)->Unit, getCurrentLoggedUser:()->String? ) {
 
     val navController = rememberNavController()
-    val currentUser = getCurrentLoggedUser()
+    var currentUser = getCurrentLoggedUser()
 
     NavHost(
         navController = navController,
@@ -44,6 +44,7 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String)->Unit, getCu
         ) { backStackEntry ->
 
             window.statusBarColor = Color(0xFFF8F8F8).toArgb()
+            currentUser = getCurrentLoggedUser()
             HomeScreen(
                 getCurrentUser = { getCurrentLoggedUser()!! },
                 rootNavController = navController,

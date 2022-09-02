@@ -3,9 +3,7 @@ package com.example.fakeshopping.ui.presentation.login
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -90,11 +88,12 @@ fun SignupFragment(loginFragmentNavController: NavHostController , onSuccessVeri
         ) {
 
             Box(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f), contentAlignment= Alignment.Center
             ) {
 
                 Column(
                     modifier = Modifier
+                        .verticalScroll( rememberScrollState(), true)
                         .fillMaxSize()
                         .padding(end = 24.dp, start = 24.dp, top = 33.dp)
                 ) {
@@ -245,6 +244,8 @@ fun BottomButtons(viewModel:SignupFragmentViewModel, onLoginBtnClick:()->Unit, o
                     LoginSignupStatus.STATUS_SIGNUP_FAILED -> { Toast.makeText(context, "Something went wrong !",Toast.LENGTH_SHORT).show() }
                     LoginSignupStatus.STATUS_SIGNUP_SUCCESS -> {
                         viewModel.toggleSignupStep(true)
+                        OtpCode.generateNewCode()
+                        OtpCodeNotificationService(context).sendOtpCode(OtpCode.code.toString())
                     }
 
                     else -> { Toast.makeText(context, "Something went wrong !",Toast.LENGTH_SHORT).show() }
@@ -292,11 +293,11 @@ private fun OtpStepBottomActionButtons(onVerifyClick: () -> Unit, onLoginClick:(
             Icon(
                 modifier = Modifier.padding(start = 8.dp),
                 imageVector = Icons.Default.KeyboardArrowLeft,
-                contentDescription = "Login ?"
+                contentDescription = "go back ?"
             )
             Spacer(Modifier.width(6.dp))
             Text(
-                "Login",
+                "Back",
                 fontSize = 16.sp,
                 modifier = Modifier.padding(end = 6.dp, top = 6.dp, bottom = 6.dp)
             )
@@ -338,7 +339,7 @@ private fun OtpStepBottomActionButtons(onVerifyClick: () -> Unit, onLoginClick:(
 @Composable
 private fun SignUpDetailStepBottomActionButtons( onSignUpBtnClick:()->Unit, onLogInBtnClick:()->Unit ){
 
-    Row(modifier=Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
+    Row(modifier=Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 8.dp), horizontalArrangement = Arrangement.SpaceAround){
 
         Button(
             onClick = {

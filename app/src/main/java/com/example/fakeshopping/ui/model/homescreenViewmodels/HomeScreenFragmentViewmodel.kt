@@ -1,10 +1,7 @@
 package com.example.fakeshopping.ui.model.homescreenViewmodels
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fakeshopping.R
@@ -30,6 +27,7 @@ class HomeScreenFragmentViewmodel @Inject constructor(private val repository: Te
     }
 
     private val _products = mutableStateListOf<ShopApiProductsResponse>()
+    private val _currentUserName = mutableStateOf<String>("")
     private val _categories = mutableStateListOf<String>()
     private val _bannerResources = mutableStateMapOf<String, Int>()
     private var _currentUserId:String= ""
@@ -37,6 +35,7 @@ class HomeScreenFragmentViewmodel @Inject constructor(private val repository: Te
     val userFavs get() = _userFavs as List<Int>
 
     val products get() = _products
+    val currentUserName get() = _currentUserName as State<String>
     val currentUserId get() = _currentUserId
     val categories get() = _categories
     val bannerResources get() = _bannerResources
@@ -109,9 +108,14 @@ class HomeScreenFragmentViewmodel @Inject constructor(private val repository: Te
 
     fun setUserId(id:String){
         _currentUserId = id
+        _currentUserName.value = getCurrentUserName()
         viewModelScope.launch {
+
+            val tempUser= userRepo.getUserByPhone(currentUserId.toLong())!!
+            _currentUserName.value = "${tempUser.userFirstName} ${tempUser.userLastName}"
+
             _userFavs.clear()
-            _userFavs.addAll(userRepo.getUserByPhone(currentUserId.toLong())!!.favourites)
+            _userFavs.addAll(tempUser.favourites)
         }
     }
 

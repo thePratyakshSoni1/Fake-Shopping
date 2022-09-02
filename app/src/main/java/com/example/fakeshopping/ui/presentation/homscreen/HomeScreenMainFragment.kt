@@ -157,11 +157,11 @@ fun HomeScreenMainFragment(
                 rootNavController.navigate(Routes.shoppingCartScreen)
             },
             onSearchBarClick = onSearchbarClick,
-            username = homeScreenviewmodelFragment.currentUserId
+            username = homeScreenviewmodelFragment.currentUserName.value.split(" ").first()
         )
 
         if(showAccountDialog.value){
-            AccountDialog(userName = homeScreenviewmodelFragment.getCurrentUserName(), menuItems = generateMenuItems(rootNavController), showAccountDialog, painterResource(id = R.drawable.test_product_placeholder))
+            AccountDialog(userName = homeScreenviewmodelFragment.currentUserName.value, menuItems = generateMenuItems(rootNavController), showAccountDialog, painterResource(id = R.drawable.test_product_placeholder))
         }
 
 }
