@@ -26,12 +26,11 @@ class ShoppingCartScreenViewModel @Inject constructor(private val userRepo: User
     private val _userFavs = mutableStateListOf<Int>()
     val userFavs get() = _userFavs
 
-    private val _isSelectionMode =  mutableStateOf(false)
-    val isSelectionMode =  _isSelectionMode as State<Boolean>
-
     private val _cartItems = mutableStateMapOf<Int,Int>()
     val cartItems get() = _cartItems as Map<Int,Int>
 
+    private val _totalCost = mutableStateOf(0f)
+    val totalCost get() = _totalCost as State<Float>
 
     fun initalizeViewModel(currentUserId:String){
 
@@ -41,6 +40,7 @@ class ShoppingCartScreenViewModel @Inject constructor(private val userRepo: User
             _cartItems.clear()
             _userFavs.addAll(userRepo.getUserFavourites(_currentUserId.toLong()))
             _cartItems.putAll(userRepo.getUserCartItems(currentUserId.toLong()))
+            recalculateTotalCost()
 
         }
 
@@ -70,14 +70,47 @@ class ShoppingCartScreenViewModel @Inject constructor(private val userRepo: User
 
         if(inc){
             _cartItems[productId] = _cartItems[productId]!! + 1
+            viewModelScope.launch {
+                _totalCost.value += shopRepo.getProductbyId(productId).price.toFloat()
+                val tempUser = userRepo.getUserByPhone(_currentUserId.toLong())!!
+                tempUser.cartItems[productId] = _cartItems[productId]!!
+                userRepo.updateUser(tempUser)
+            }
         }else{
 
             if(_cartItems[productId] == 1){
                 _cartItems.remove(productId)
+                viewModelScope.launch {
+                    val tempUser = userRepo.getUserByPhone(_currentUserId.toLong())!!
+                    tempUser.cartItems.remove(productId)
+                    userRepo.updateUser(tempUser)
+                }
             }else{
                 _cartItems[productId] = _cartItems[productId]!! - 1
+                viewModelScope.launch {
+                    val tempUser = userRepo.getUserByPhone(_currentUserId.toLong())!!
+                    tempUser.cartItems[productId] = _cartItems[productId]!!
+                    userRepo.updateUser(tempUser)
+                }
             }
 
+            viewModelScope.launch {
+                _totalCost.value -= shopRepo.getProductbyId(productId).price.toFloat()
+            }
+
+        }
+
+    }
+
+    fun recalculateTotalCost(){
+
+        var tempTotal = 0f
+        viewModelScope.launch {
+            for( products in cartItems ){
+                tempTotal += shopRepo.getProductbyId(products.key).price.toFloat() * products.value
+            }
+
+            _totalCost.value = tempTotal
         }
 
     }

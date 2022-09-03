@@ -55,39 +55,45 @@ fun ShopingCartScreen(navController:NavController, currentUserId:String){
         topBar = {
             ShoppingCartTopBar(onBackArrowPress = { navController.popBackStack() } )
         },
-        bottomBar = {
-            if(viewModel.isSelectionMode.value){
-                ShoppingCartBottomBar()
-            }
-        },
         modifier=Modifier.statusBarsPadding()
     ) {
-        LazyColumn(contentPadding = PaddingValues(top = 18.dp, bottom = 18.dp)) {
+        Column{
 
-            items( viewModel.cartItems.keys.toList(), key = { it } ) { productId ->
+            LazyColumn(contentPadding = PaddingValues(top = 18.dp, bottom = 18.dp), modifier=Modifier.weight(1f)) {
 
-                SelectableHorizontalProductCard(
-                    product = ( viewModel.getProductById(productId) to viewModel.cartItems[productId]!!),
-                    alwaysVisibleQuantityMeter = true,
-                    isSelectedItemListEmpty = { true },
-                    addNewSelectedItem = { Unit },
-                    removeSelectedItem = { Unit },
-                    checkSelectedItemAvailability = { false },
-                    onNavigate = {
-                        navController.navigate("${Routes.productDetailScreen}/${productId}")
-                    },
-                    onFavouriteButtonClick = {
-                        viewModel.toggleFavourite(productId)
-                    },
-                    toggleSelectionModeTo = { Unit },
-                    isFavourite = viewModel.userFavs.contains(productId),
-                    onQuantityChange = { isIncreasing ->
-                        viewModel.changeQuantity(isIncreasing, productId)
-                    },
-                    hasDeleteFunctionality = true
-                )
+                items( viewModel.cartItems.keys.toList(), key = { it } ) { productId ->
+
+                    SelectableHorizontalProductCard(
+                        product = ( viewModel.getProductById(productId) to viewModel.cartItems[productId]!!),
+                        alwaysVisibleQuantityMeter = true,
+                        isSelectedItemListEmpty = { true },
+                        addNewSelectedItem = { Unit },
+                        removeSelectedItem = { Unit },
+                        checkSelectedItemAvailability = { false },
+                        onNavigate = {
+                            navController.navigate("${Routes.productDetailScreen}/${productId}")
+                        },
+                        onFavouriteButtonClick = {
+                            viewModel.toggleFavourite(productId)
+                        },
+                        toggleSelectionModeTo = { Unit },
+                        isFavourite = viewModel.userFavs.contains(productId),
+                        onQuantityChange = { isIncreasing ->
+                            viewModel.changeQuantity(isIncreasing, productId)
+                        },
+                        hasDeleteFunctionality = true
+                    )
+
+                }
 
             }
+
+            ShoppingCartBottomBar(
+                onCheckOut = { navController.navigate( Routes.checkOutOverviewScreen ) },
+                totalItems = viewModel.cartItems.size,
+                totalCost = viewModel.totalCost.value,
+                isDisabled = viewModel.cartItems.isEmpty()
+            )
 
         }
     }
@@ -101,7 +107,7 @@ private fun ShoppingCartTopBar(onBackArrowPress:()->Unit,){
             backgroundColor=Color.White,
             title = {
                 Text(
-                    "Your Cart",
+                    "Cart",
                     fontFamily = FontFamily.SansSerif,
                     fontWeight = FontWeight.Bold,
                     fontSize = 21.sp,
@@ -126,62 +132,46 @@ private fun ShoppingCartTopBar(onBackArrowPress:()->Unit,){
 }
 
 @Composable
-private fun ShoppingCartBottomBar() {
+private fun ShoppingCartBottomBar( onCheckOut:()->Unit, totalItems:Int, totalCost:Float, isDisabled:Boolean ) {
 
-    Box(Modifier.shadow(elevation = 4.dp)){
-        BottomAppBar(
-            backgroundColor = Color.White,
+    Box(Modifier.shadow(elevation = 8.dp)){
+        Column(
             modifier = Modifier
+                .background(Color.White)
                 .wrapContentHeight()
                 .background(Color.White)
-                .padding(vertical = 18.dp),
+                .padding(top = 18.dp),
         ) {
-            Row(horizontalArrangement = Arrangement.Center, modifier=Modifier.fillMaxSize()){
+            Column(modifier=Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp) ){
 
-                Button(
-                    onClick = { /*TODO*/ },
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = ColorYellow,
-                        disabledBackgroundColor = ColorYellowVarient
-                    )
-                ) {
-                    Text(
-                        "Move to Cart",
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                        fontFamily = FontFamily.SansSerif,
-                        fontWeight = FontWeight.Medium
-                    )
+                Spacer(Modifier.height(12.dp))
+                Text(text = "$totalItems Items", fontSize = 12.sp, color=Color.LightGray, modifier = Modifier.padding(start= 12.dp))
+                Spacer(Modifier.height(8.dp))
+                Text( text= "$ $totalCost", fontSize = 16.sp, color= Color.Black, fontWeight = FontWeight.Bold , modifier = Modifier.padding(start= 12.dp))
+                Spacer(Modifier.height(12.dp))
+
+                Row(horizontalArrangement = Arrangement.Center, modifier=Modifier.fillMaxWidth()){
+
+                    Button(
+                        onClick = { onCheckOut() },
+                        shape = RoundedCornerShape(8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = ColorYellow,
+                            disabledBackgroundColor = ColorYellowVarient
+                        ),
+                        enabled = !isDisabled,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            "Checkout",
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                            fontFamily = FontFamily.SansSerif,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+
+
                 }
-
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.border(
-                        width = 2.dp,
-                        shape = RoundedCornerShape(12.dp),
-                        color = ColorYellow
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Transparent,
-                        disabledContentColor = ColorYellowVarient,
-                    ),
-                    elevation = ButtonDefaults.elevation(
-                        pressedElevation = 0.4.dp,
-                        defaultElevation = 0.dp,
-                        focusedElevation = 0.dp
-                    )
-                ) {
-                    Text(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                        text = "Move to Cart",
-                        fontFamily = FontFamily.SansSerif,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.Yellow
-                    )
-                }
-
-
             }
 
         }
