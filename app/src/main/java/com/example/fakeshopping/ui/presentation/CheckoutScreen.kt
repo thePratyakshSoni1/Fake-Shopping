@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,43 +27,42 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.ui.model.CheckoutScreenViewModel
 import com.example.fakeshopping.ui.theme.ColorYellow
 
-@Preview(showBackground = true)
 @Composable
-fun ProductCheckoutScreen() {
+fun ProductCheckoutScreen( navController:NavHostController, currentUser:String) {
+
+    val viewModel:CheckoutScreenViewModel = hiltViewModel()
+
+    LaunchedEffect(key1 = true, block = {
+        viewModel.setCurrentUser(currentUser)
+    })
 
     Scaffold(
-        topBar = { CheckoutTopBar() },
+        topBar = { CheckoutTopBar( onBackArrowClick = { navController.popBackStack() } ) },
         bottomBar = {
-            CheckoutScreenBottomBar()
+            CheckoutScreenBottomBar( onProceedClick = { Unit }, onCancel = { navController.popBackStack() } )
         },
         modifier=Modifier.statusBarsPadding()
     ) {
-
-        val itemList = mutableListOf<ShopApiProductsResponse>()
-
-        repeat(8){
-            itemList.add(
-                ShopApiProductsResponse(
-                    id = (it+1),
-                    title = "Product Name Goes here with respect",
-                    "${it}9",
-                    "electronics",
-                    "Very well re-furbished but best product ever",
-                    "#xyz",
-                    ShopApiProductsResponse.ProductRating(3.8f,150)
-                )
-            )
-        }
 
         Box(modifier= Modifier
             .fillMaxSize()
             .padding(top = 64.dp), contentAlignment = Alignment.TopCenter){
 
-            PriceDetailsCard(checkoutProductList = itemList)
+            PriceDetailsCard(
+                numberOfItems = viewModel.cartItems.size,
+                itemsCost = viewModel.itemsCost.value,
+                totalTax = viewModel.tax.value,
+                totalDeliveryCharge = viewModel.deliveryCharge.value,
+                discount = viewModel.discount.value,
+                totalAmount = viewModel.totalCost.value
+            )
 
         }
 
@@ -71,7 +71,7 @@ fun ProductCheckoutScreen() {
 }
 
 @Composable
-private fun CheckoutTopBar(){
+private fun CheckoutTopBar( onBackArrowClick:()->Unit ){
 
     SmallTopAppBar(
         modifier = Modifier.padding(start=12.dp),
@@ -100,7 +100,7 @@ private fun CheckoutTopBar(){
 
 
 @Composable
-private fun CheckoutScreenBottomBar(){
+private fun CheckoutScreenBottomBar( onProceedClick:()->Unit, onCancel:()->Unit ){
 
     Row(modifier= Modifier
         .fillMaxWidth(1f)
@@ -110,7 +110,7 @@ private fun CheckoutScreenBottomBar(){
     ){
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { onCancel() },
             modifier=Modifier.weight(0.16f),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent
@@ -126,7 +126,7 @@ private fun CheckoutScreenBottomBar(){
 
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowLeft,
-                        contentDescription = "Proceed to Payment ?",
+                        contentDescription = "cancel",
                     )
                 }
             }
@@ -135,14 +135,14 @@ private fun CheckoutScreenBottomBar(){
         Spacer(Modifier.width(8.dp))
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { onProceedClick() },
             modifier=Modifier.weight(0.8f),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = ColorYellow
             )
         ) {
             Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Text("Proceed", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text("Proceed", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 Box(Modifier.fillMaxWidth(),contentAlignment = Alignment.CenterEnd){
 
                     Icon(
@@ -160,19 +160,19 @@ private fun CheckoutScreenBottomBar(){
 }
 
 @Composable
-private fun PriceDetailsCard(checkoutProductList:List<ShopApiProductsResponse>){
+private fun PriceDetailsCard( numberOfItems:Int, itemsCost:Float, totalTax:Float, totalDeliveryCharge:Float, discount:Float, totalAmount:Float ){
 
     Card(modifier= Modifier
         .fillMaxWidth(0.85f),
         shape=RoundedCornerShape(12.dp),
-        elevation= 12.dp
+        elevation= 6.dp
     )
     {
         Column {
             Text(
                 text = "Overview", modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp,bottom=12.dp, start = 21.dp),
+                    .padding(top = 12.dp, bottom = 12.dp, start = 21.dp),
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
             )
@@ -180,75 +180,38 @@ private fun PriceDetailsCard(checkoutProductList:List<ShopApiProductsResponse>){
                 Modifier
                     .height(180.dp)
                     .fillMaxWidth()
-                    .background(Color.White), contentAlignment = Alignment.Center){
+                    .background(Color.White), contentAlignment = Alignment.Center) {
 
-                LazyColumn(
-                    contentPadding = PaddingValues(horizontal = 8.dp),
-                    modifier = Modifier.fillMaxWidth()
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
                 ) {
 
-                    items(checkoutProductList) { item ->
+                    Text(
+                        text = "$numberOfItems items",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .fillMaxWidth(0.7f)
+                            .padding(start = 10.dp)
+                    )
 
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 12.dp, vertical = 8.dp)
-                            ) {
-
-                                Text(
-                                    text = item.title,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier
-                                        .fillMaxWidth(0.7f)
-                                        .padding(start = 10.dp)
-                                )
-                                Text(
-                                    text = "$${ item.price }",
-                                    maxLines = 1,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(end = 8.dp),
-                                    textAlign = TextAlign.End
-                                )
-
-                            }
-                        }
-
-                    }
+                    OverviewCardItem(title = "Item's Cost", cost = itemsCost, true)
+                    OverviewCardItem(title = "Discount", cost = discount, false)
+                    OverviewCardItem(title = "Total Tax", cost = totalTax, true)
+                    OverviewCardItem(title = "Delivery charge", cost = totalDeliveryCharge, true)
 
                 }
             }
 
-            Card(Modifier.fillMaxWidth(), elevation = 8.dp) {
+            Card(Modifier.fillMaxWidth(), elevation = 6.dp, shape= RoundedCornerShape( topStart = 0.dp, topEnd = 0.dp, bottomStart = 12.dp, bottomEnd =  12.dp)) {
                 Column(
                     Modifier
                         .background(ColorYellow)
                 ) {
 
                     Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
-                    ) {
-
-                        Text(
-                            "GST", modifier = Modifier
-                                .fillMaxWidth(0.7f)
-                                .padding(start = 18.dp), fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            "$10",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(end = 18.dp),
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.End
-                        )
-
-                    }
 
                     Row(
                         modifier = Modifier
@@ -265,7 +228,7 @@ private fun PriceDetailsCard(checkoutProductList:List<ShopApiProductsResponse>){
                             fontSize = 16.sp
                         )
                         Text(
-                            "$119",
+                            "$$totalAmount",
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(end = 18.dp),
@@ -280,4 +243,35 @@ private fun PriceDetailsCard(checkoutProductList:List<ShopApiProductsResponse>){
 
         }
     }
+}
+
+@Composable
+fun OverviewCardItem(title:String, cost:Float, isAddingToAmout:Boolean){
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+
+    ) {
+
+        Text(
+            text = title,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .fillMaxWidth(0.7f)
+                .padding(start = 10.dp)
+        )
+        Text(
+            text = if(isAddingToAmout) "$$cost" else "- $$cost",
+            maxLines = 1,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 8.dp),
+            textAlign = TextAlign.End,
+            color = if(isAddingToAmout) Color.Black else Color.Green
+        )
+
+    }
+
 }

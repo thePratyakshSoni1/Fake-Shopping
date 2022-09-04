@@ -107,22 +107,24 @@ private fun ShoppingCartTopBar(onBackArrowPress:()->Unit,){
             backgroundColor=Color.White,
             title = {
                 Text(
-                    "Cart",
+                    "My Cart",
                     fontFamily = FontFamily.SansSerif,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 21.sp,
-                    modifier=Modifier.padding(start=12.dp)
+                    fontSize = 18.sp,
+                    modifier=Modifier.padding(start=8.dp)
                 )
             },
             navigationIcon = {
 
-                IconButton(
-                    icon =Icons.Default.ArrowBack ,
-                    onClick = {
-                        onBackArrowPress()
-                    },
-                    contentDescription = "Go back"
-                )
+//                Box(Modifier.padding(start=8.dp)){
+                    IconButton(
+                        icon =Icons.Default.ArrowBack ,
+                        onClick = {
+                            onBackArrowPress()
+                        },
+                        contentDescription = "Go back"
+                    )
+//                }
 
             },
         )
@@ -134,7 +136,7 @@ private fun ShoppingCartTopBar(onBackArrowPress:()->Unit,){
 @Composable
 private fun ShoppingCartBottomBar( onCheckOut:()->Unit, totalItems:Int, totalCost:Float, isDisabled:Boolean ) {
 
-    Box(Modifier.shadow(elevation = 8.dp)){
+    Box(Modifier.shadow(elevation = 12.dp)){
         Column(
             modifier = Modifier
                 .background(Color.White)
@@ -142,19 +144,18 @@ private fun ShoppingCartBottomBar( onCheckOut:()->Unit, totalItems:Int, totalCos
                 .background(Color.White)
                 .padding(top = 18.dp),
         ) {
-            Column(modifier=Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp) ){
+            Column(modifier=Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 12.dp) ){
 
-                Spacer(Modifier.height(12.dp))
-                Text(text = "$totalItems Items", fontSize = 12.sp, color=Color.LightGray, modifier = Modifier.padding(start= 12.dp))
+                Text(text = "Items: $totalItems", fontSize = 14.sp, color=Color.LightGray, modifier = Modifier.padding(start= 12.dp))
                 Spacer(Modifier.height(8.dp))
-                Text( text= "$ $totalCost", fontSize = 16.sp, color= Color.Black, fontWeight = FontWeight.Bold , modifier = Modifier.padding(start= 12.dp))
-                Spacer(Modifier.height(12.dp))
+                Text( text= "Total Price: $$totalCost", fontSize = 16.sp, color= Color.Black, fontWeight = FontWeight.Bold , modifier = Modifier.padding(start= 12.dp))
+                Spacer(Modifier.height(8.dp))
 
                 Row(horizontalArrangement = Arrangement.Center, modifier=Modifier.fillMaxWidth()){
 
                     Button(
                         onClick = { onCheckOut() },
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = ColorYellow,
                             disabledBackgroundColor = ColorYellowVarient

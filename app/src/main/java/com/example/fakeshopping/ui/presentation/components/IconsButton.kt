@@ -26,7 +26,7 @@ fun IconButton(
             .clip(CircleShape)
             .background(backgoundColor)
             .clickable { onClick() }
-            .padding(6.dp),
+            .padding(8.dp),
         imageVector = icon,
         contentDescription = contentDescription,
         tint = iconTint,

@@ -79,6 +79,13 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String)->Unit, getCu
             FavouritesScreen(navController = navController, currentUser = currentUser!!)
         }
 
+        composable(
+            route = Routes.checkOutOverviewScreen,
+        ){
+            window.statusBarColor = Color.White.toArgb()
+            ProductCheckoutScreen(navController = navController, currentUser = currentUser!!)
+        }
+
     }
 
 }

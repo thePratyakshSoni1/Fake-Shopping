@@ -125,7 +125,7 @@ fun CollapsingTopAppBar(
                     color = if(searchbarColor.value == ColorWhiteVariant) Color(0xFFA7A7A7) else Color.LightGray,
                     modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp),
+                    .padding(start = 12.dp),
                     fontSize = 16.sp
                 )
 
