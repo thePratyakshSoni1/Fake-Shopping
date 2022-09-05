@@ -61,7 +61,7 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String)->Unit, getCu
         ) { backStackEntry ->
 
             window.statusBarColor = Color.White.toArgb()
-            ProductDetailScreen(navController, backStackEntry.arguments?.getInt("productId")!!)
+            ProductDetailScreen(navController, backStackEntry.arguments?.getInt("productId")!!, currentUser = currentUser!!)
 
         }
 

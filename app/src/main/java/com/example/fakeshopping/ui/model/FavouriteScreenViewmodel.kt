@@ -34,6 +34,7 @@ class FavouriteScreenViewmodel @Inject constructor( private val userRepo:UserRep
         _isSelectionMode.value = it
     }
 
+
     fun setCurrentUserAndFavs(id:String){
 
         _currentUserId = id
@@ -79,7 +80,9 @@ class FavouriteScreenViewmodel @Inject constructor( private val userRepo:UserRep
     fun removeAllSelectedFromFavourites(){
 
         viewModelScope.launch {
+            val tempUser = userRepo.getUserByPhone(_currentUserId.toLong())!!
             _selectedProducts.forEach{ item ->
+                tempUser.favourites.remove(item.key)
                 _favouriteProducts.remove(item.key)
             }
             _selectedProducts.clear()

@@ -1,6 +1,7 @@
 package com.example.fakeshopping.ui.presentation
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -11,9 +12,11 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,20 +30,27 @@ import com.example.fakeshopping.ui.theme.ColorYellow
 import com.example.fakeshopping.utils.Routes
 
 @Composable
-fun ProductDetailScreen(navController: NavController, productId: Int) {
+fun ProductDetailScreen(navController: NavController, productId: Int, currentUser:String) {
 
     val viewModel: ProductsDetailScreenViewModel = hiltViewModel()
+    val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
-        viewModel.setProduct(productId)
+        viewModel.setProductAndUserId(productId, currentUser)
     }
+
+    LaunchedEffect(key1 = viewModel.userFavs, block = {
+        viewModel.updateCurrentProductFavStatus()
+    })
 
     if (viewModel.product.value == null) {
         LoadingView(modifier = Modifier.fillMaxSize(), circleSize = 64.dp)
     } else {
 
         Scaffold(
-            modifier = Modifier.fillMaxSize().statusBarsPadding(),
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding(),
         ) {
 
             Column(
@@ -58,49 +68,26 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
                     currentImageIndex = viewModel.currentProductPreviewSlide,
                     onBackArrowPress = {
                         navController.popBackStack()
+                    },
+                    isFavourite = viewModel.isFavouriteProduct,
+                    onToggleFavouriteBtn = {
+                        if (viewModel.userFavs.contains(productId)) {
+                            viewModel.removeFromFavourites(productId)
+                        }else{
+                            viewModel.addProductToFavourites(productId)
+                        }
                     }
                 )
 
                 Spacer(Modifier.height(24.dp))
 
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = ColorYellow
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = ButtonDefaults.elevation(0.dp)
-                ) {
-                    Text(
-                        "BUY NOW",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.SansSerif,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-                }
-
-                Spacer(Modifier.height(6.dp))
-
-                Button(
-                    onClick = { /*TODO*/ },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Transparent
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                    border = BorderStroke(3.dp, ColorYellow),
-                    elevation = ButtonDefaults.elevation(pressedElevation = 0.4.dp, defaultElevation = 0.dp, focusedElevation = 0.dp)
-                ) {
-                    Text(
-                        "ADD TO CART",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.SansSerif,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-                }
+                ActionButtons(
+                    onAddToCart = {
+                        viewModel.addToCart()
+                        Toast.makeText(context, "Added To Cart ✔", Toast.LENGTH_SHORT).show()
+                    },
+                    onBuyBow = { Unit }
+                 )
 
                 Spacer(Modifier.height(24.dp))
 
@@ -116,6 +103,16 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
                     },
                     onOtherSeeAllBtnClick = {
                         navController.navigate("${Routes.homeScreen}?category=All")
+                    },
+                    onTogglefavButton = {
+                        if (viewModel.userFavs.contains(it)) {
+                            viewModel.removeFromFavourites(it)
+                        }else{
+                            viewModel.addProductToFavourites(it)
+                        }
+                    },
+                    checkIsFavourite = {
+                        viewModel.userFavs.contains(it)
                     }
 
                 )
@@ -130,13 +127,63 @@ fun ProductDetailScreen(navController: NavController, productId: Int) {
 
 }
 
+@Composable
+fun ActionButtons( onAddToCart:()->Unit, onBuyBow:()->Unit ){
+
+    Button(
+        onClick = { onBuyBow() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = ColorYellow
+        ),
+        shape = RoundedCornerShape(12.dp),
+        elevation = ButtonDefaults.elevation(0.dp)
+    ) {
+        Text(
+            "BUY NOW",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.SansSerif,
+            modifier = Modifier.padding(vertical = 4.dp)
+        )
+    }
+
+    Spacer(Modifier.height(6.dp))
+
+    Button(
+        onClick = { onAddToCart() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = Color.Transparent
+        ),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(3.dp, ColorYellow),
+        elevation = ButtonDefaults.elevation(pressedElevation = 0.4.dp, defaultElevation = 0.dp, focusedElevation = 0.dp)
+    ) {
+        Text(
+            "ADD TO CART",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily.SansSerif,
+            modifier = Modifier.padding(vertical = 4.dp)
+        )
+    }
+
+}
+
 
 @Composable
 fun ProductDetailsSection(
     modifier: Modifier,
     product: ShopApiProductsResponse,
     currentImageIndex: MutableState<Int>,
-    onBackArrowPress:()->Unit
+    onBackArrowPress:()->Unit,
+    isFavourite: State<Boolean>,
+    onToggleFavouriteBtn:()->Unit
 ) {
 
     val currentProductPrevSlideState = rememberLazyListState()
@@ -151,7 +198,9 @@ fun ProductDetailsSection(
             currentImageIndex = currentImageIndex,
             listState = currentProductPrevSlideState,
             onBackArrowPress= onBackArrowPress,
-            product.image,product.image
+            product.image,product.image,
+            isFavourite = isFavourite,
+            ontoggleFavouriteBtn = { onToggleFavouriteBtn() }
         )
 
         Spacer(Modifier.height(18.dp))
@@ -186,6 +235,8 @@ fun ProductRecommendationsSection(
     onNaviagte:(ShopApiProductsResponse)->Unit,
     onRelevantSeeAllBtnClick: () -> Unit,
     onOtherSeeAllBtnClick: () -> Unit,
+    checkIsFavourite:(Int)->Boolean,
+    onTogglefavButton:(Int)->Unit
 ){
 
     Column(modifier= Modifier
@@ -197,6 +248,8 @@ fun ProductRecommendationsSection(
                 productsList = relevantProductList,
                 onNavigate = onNaviagte,
                 onSeeAllBtnClick = onRelevantSeeAllBtnClick,
+                checkIsFavourite= checkIsFavourite,
+                onTogglefavButton= onTogglefavButton
             )
 
 
@@ -206,6 +259,8 @@ fun ProductRecommendationsSection(
                 productsList = otherProductsList,
                 onNavigate = onNaviagte,
                 onOtherSeeAllBtnClick = onOtherSeeAllBtnClick,
+                checkIsFavourite= checkIsFavourite,
+                onTogglefavButton= onTogglefavButton
             )
 
             Spacer(Modifier.height(6.dp))

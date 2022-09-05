@@ -12,8 +12,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -47,6 +50,8 @@ fun ProductPreviewSection(
     listState: LazyListState,
     onBackArrowPress:()->Unit,
     vararg productImagesUrl: String,
+    isFavourite: State<Boolean>,
+    ontoggleFavouriteBtn:()->Unit
 ) {
 
     var downOffsetX = 0f
@@ -106,7 +111,9 @@ fun ProductPreviewSection(
                     productImagesUrl.size,
                     Modifier.fillMaxSize()
                 )
-            Box(modifier=Modifier.fillMaxSize().padding(top= 12.dp, start=12.dp), contentAlignment = Alignment.TopStart ){
+            Box(modifier= Modifier
+                .fillMaxSize()
+                .padding(top = 12.dp, start = 12.dp), contentAlignment = Alignment.TopStart ){
 
                 IconButton(
                     icon = Icons.Default.ArrowBack,
@@ -117,10 +124,29 @@ fun ProductPreviewSection(
                 )
 
             }
+
+            Box(modifier= Modifier
+                .fillMaxSize()
+                .padding(top = 12.dp, end = 12.dp), contentAlignment = Alignment.TopEnd ){
+
+                IconButton(
+                    icon = if(isFavourite.value) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                    onClick = { ontoggleFavouriteBtn() },
+                    contentDescription = if(isFavourite.value) "add to favourites" else "add to favourites",
+                    iconTint = if(isFavourite.value) Color(0xFFFF0059) else Color.LightGray,
+                    backgoundColor= Color.White,
+                    elevation = 4.dp
+                )
+
+            }
+
+
             Spacer(Modifier.height(21.dp))
         }
     }
 }
+
+
 
 @Composable
 fun DottedProgressIndicator(
@@ -215,44 +241,6 @@ fun ProductTextDetails(modifier: Modifier, product: ShopApiProductsResponse) {
 
 }
 
-@Composable
-fun BottomBarContent(modifier: Modifier) {
-
-    Row(Modifier.shadow(1140.dp)) {
-
-        Box(
-
-            modifier = Modifier
-                .clickable {
-                    //TODO
-                }
-                .weight(1f)
-                .background(Color.White)
-                .padding(horizontal = 8.dp, vertical = 12.dp) ,
-            contentAlignment = Alignment.Center
-
-        ) {
-            Text(text = "ADD TO CART", fontSize = 16.sp, color = Color.Black)
-
-        }
-
-        Box(
-            modifier = Modifier
-                .clickable {
-                    //TODO
-                }
-                .weight(1f)
-                .background(Color(0xFFFF5C28))
-                .padding(horizontal = 8.dp, vertical = 12.dp) ,
-            contentAlignment = Alignment.Center
-
-        ) {
-            Text(text = "BUY NOW", fontSize = 16.sp, color = Color.White)
-        }
-    }
-
-}
-
 
 @Composable
 fun RecommendationSectionTitle(
@@ -294,25 +282,12 @@ fun RecommendationSectionTitle(
 }
 
 @Composable
-fun RecommendationSectionSeeAllButton(onButtonClick: () -> Unit){
-
-    Box(
-        modifier= Modifier
-            .clip(RoundedCornerShape(2.dp))
-            .clickable { onButtonClick() }
-            .padding(6.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text( "SEE ALL", color = Color.Blue )
-    }
-
-}
-
-@Composable
 fun OtherProductRecommendations(
     productsList:SnapshotStateList<ShopApiProductsResponse>,
     onNavigate:(ShopApiProductsResponse)->Unit,
-    onOtherSeeAllBtnClick:() -> Unit
+    onOtherSeeAllBtnClick:() -> Unit,
+    checkIsFavourite:(Int)->Boolean,
+    onTogglefavButton:(Int)->Unit
 ) {
     Column(
         modifier = Modifier
@@ -344,9 +319,9 @@ fun OtherProductRecommendations(
                             .fillParentMaxWidth(0.3f),
                         product = product,
                         onNavigate = onNavigate,
-                        isFavourite = product.id % 2 ==0,
+                        isFavourite = checkIsFavourite(product.id) ,
                         onFavouriteButtonClick = {
-
+                            onTogglefavButton(it)
                         }
                     )
                 }
@@ -362,16 +337,19 @@ fun OtherProductRecommendations(
             item {
                 Spacer(Modifier.width(4.dp))
             }
-//            item {
-//                RecommendationSectionSeeAllButton(onOtherSeelBtnClick)
-//            }
         }
     }
     Spacer(modifier = Modifier.height(18.dp))
 }
 
 @Composable
-fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProductsResponse>, onNavigate:(ShopApiProductsResponse)->Unit, onSeeAllBtnClick: () -> Unit) {
+fun RelevantProductRecommendations(
+    productsList:SnapshotStateList<ShopApiProductsResponse>,
+    onNavigate:(ShopApiProductsResponse)->Unit,
+    onSeeAllBtnClick: () -> Unit,
+    checkIsFavourite:(Int)->Boolean,
+    onTogglefavButton:(Int)->Unit
+) {
 
     Column(
         modifier= Modifier
@@ -402,9 +380,9 @@ fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProduc
                             .fillParentMaxWidth(0.3f),
                         product = product,
                         onNavigate = onNavigate,
-                        isFavourite = product.id % 2 ==0,
+                        isFavourite = checkIsFavourite(product.id),
                         onFavouriteButtonClick = {
-
+                            onTogglefavButton(it)
                         }
                     )
                     Spacer(modifier = Modifier.width(4.dp))
@@ -422,10 +400,6 @@ fun RelevantProductRecommendations( productsList:SnapshotStateList<ShopApiProduc
             item {
                 Spacer(Modifier.width(4.dp))
             }
-
-//            item {
-//                RecommendationSectionSeeAllButton(onSellAllBtnClick)
-//            }
         }
         Spacer(modifier = Modifier.height(18.dp))
     }

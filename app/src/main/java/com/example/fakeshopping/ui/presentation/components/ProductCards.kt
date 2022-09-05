@@ -104,7 +104,7 @@ fun ProductsCard(
                             IconButton(
                                 icon = if(isFavourite == true) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
                                 onClick = { onFavouriteButtonClick(product.id) },
-                                contentDescription = if(isFavourite == true) "Remove to favourite" else "Add from favourites",
+                                contentDescription = if(isFavourite == true) "Remove from favourite" else "Add to favourites",
                                 iconTint = if(isFavourite == true) Color(0xFFFF0048) else Color.LightGray
                             )
 

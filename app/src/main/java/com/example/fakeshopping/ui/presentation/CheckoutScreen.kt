@@ -246,7 +246,7 @@ private fun PriceDetailsCard( numberOfItems:Int, itemsCost:Float, totalTax:Float
 }
 
 @Composable
-fun OverviewCardItem(title:String, cost:Float, isAddingToAmout:Boolean){
+fun OverviewCardItem(title:String, cost:Float, isAddingToAmount:Boolean){
 
     Row(
         modifier = Modifier
@@ -263,13 +263,13 @@ fun OverviewCardItem(title:String, cost:Float, isAddingToAmout:Boolean){
                 .padding(start = 10.dp)
         )
         Text(
-            text = if(isAddingToAmout) "$$cost" else "- $$cost",
+            text = if(isAddingToAmount) "$$cost" else "- $$cost",
             maxLines = 1,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(end = 8.dp),
             textAlign = TextAlign.End,
-            color = if(isAddingToAmout) Color.Black else Color.Green
+            color = if(isAddingToAmount) Color.Black else Color.Green
         )
 
     }
