@@ -39,10 +39,6 @@ fun ProductDetailScreen(navController: NavController, productId: Int, currentUse
         viewModel.setProductAndUserId(productId, currentUser)
     }
 
-    LaunchedEffect(key1 = viewModel.userFavs, block = {
-        viewModel.updateCurrentProductFavStatus()
-    })
-
     if (viewModel.product.value == null) {
         LoadingView(modifier = Modifier.fillMaxSize(), circleSize = 64.dp)
     } else {
@@ -182,7 +178,7 @@ fun ProductDetailsSection(
     product: ShopApiProductsResponse,
     currentImageIndex: MutableState<Int>,
     onBackArrowPress:()->Unit,
-    isFavourite: State<Boolean>,
+    isFavourite: State<Boolean?>,
     onToggleFavouriteBtn:()->Unit
 ) {
 
@@ -253,7 +249,7 @@ fun ProductRecommendationsSection(
             )
 
 
-            Spacer(Modifier.height(39.dp))
+            Spacer(Modifier.height(24.dp))
 
             OtherProductRecommendations(
                 productsList = otherProductsList,

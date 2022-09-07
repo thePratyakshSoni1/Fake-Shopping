@@ -10,6 +10,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

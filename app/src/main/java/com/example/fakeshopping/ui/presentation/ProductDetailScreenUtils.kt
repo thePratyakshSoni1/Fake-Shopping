@@ -39,6 +39,7 @@ import com.example.fakeshopping.ui.presentation.components.IconButton
 import com.example.fakeshopping.ui.presentation.components.LoadingView
 import com.example.fakeshopping.ui.presentation.components.RatingBar
 import com.example.fakeshopping.ui.presentation.components.ProductsCard
+import com.example.fakeshopping.ui.theme.ColorWhiteVariant
 import com.example.fakeshopping.ui.theme.ColorYellow
 import kotlin.math.roundToInt
 
@@ -50,8 +51,8 @@ fun ProductPreviewSection(
     listState: LazyListState,
     onBackArrowPress:()->Unit,
     vararg productImagesUrl: String,
-    isFavourite: State<Boolean>,
-    ontoggleFavouriteBtn:()->Unit
+    isFavourite: State<Boolean?>,
+    ontoggleFavouriteBtn:()->Unit,
 ) {
 
     var downOffsetX = 0f
@@ -111,6 +112,7 @@ fun ProductPreviewSection(
                     productImagesUrl.size,
                     Modifier.fillMaxSize()
                 )
+
             Box(modifier= Modifier
                 .fillMaxSize()
                 .padding(top = 12.dp, start = 12.dp), contentAlignment = Alignment.TopStart ){
@@ -125,19 +127,23 @@ fun ProductPreviewSection(
 
             }
 
-            Box(modifier= Modifier
-                .fillMaxSize()
-                .padding(top = 12.dp, end = 12.dp), contentAlignment = Alignment.TopEnd ){
+            if(isFavourite.value != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 12.dp, end = 12.dp), contentAlignment = Alignment.TopEnd
+                ) {
 
-                IconButton(
-                    icon = if(isFavourite.value) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                    onClick = { ontoggleFavouriteBtn() },
-                    contentDescription = if(isFavourite.value) "add to favourites" else "add to favourites",
-                    iconTint = if(isFavourite.value) Color(0xFFFF0059) else Color.LightGray,
-                    backgoundColor= Color.White,
-                    elevation = 4.dp
-                )
+                    IconButton(
+                        icon = if (isFavourite.value!!) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                        onClick = { ontoggleFavouriteBtn() },
+                        contentDescription = if (isFavourite.value!!) "add to favourites" else "add to favourites",
+                        iconTint = if (isFavourite.value!!) Color(0xFFFF0059) else Color.DarkGray,
+                        backgoundColor = ColorWhiteVariant,
+                        elevation = 4.dp
+                    )
 
+                }
             }
 
 

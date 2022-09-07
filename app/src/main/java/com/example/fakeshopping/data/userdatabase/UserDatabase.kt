@@ -11,7 +11,7 @@ import com.example.fakeshopping.data.userdatabase.dao.UserDao
     version = 1
 )
 
-@TypeConverters(IntListTypeConverters::class, MapTypeConverters::class, UserOrderListTypeConverters::class)
+@TypeConverters(IntListTypeConverters::class, MapTypeConverters::class, UserOrderListTypeConverters::class, UserAddressToStringConverters::class)
 
 abstract class UserDatabase: RoomDatabase() {
 

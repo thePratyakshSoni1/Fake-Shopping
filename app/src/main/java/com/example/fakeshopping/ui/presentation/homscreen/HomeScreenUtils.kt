@@ -114,7 +114,7 @@ fun CollapsingTopAppBar(
 
             Row(modifier=Modifier.fillMaxHeight(),verticalAlignment = Alignment.CenterVertically){
 
-                Spacer(Modifier.width(8.dp))
+                Spacer(Modifier.width(14.dp))
                 Icon(
                     imageVector= Icons.Default.Search,
                     tint = Color.LightGray,
@@ -125,7 +125,7 @@ fun CollapsingTopAppBar(
                     color = if(searchbarColor.value == ColorWhiteVariant) Color(0xFFA7A7A7) else Color.LightGray,
                     modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 12.dp),
+                    .padding(start = 8.dp),
                     fontSize = 16.sp
                 )
 

@@ -8,5 +8,6 @@ object Routes {
     const val shoppingCartScreen = "fakeshop_ShoppingCartScreen"
     const val favouritesScreen = "fakeshop_FavouritesScreen"
     const val checkOutOverviewScreen = "fakeshop_CheckOutOverviewScreen"
+    const val myProfileScreen = "fakeshop_MyProfileScren"
 
 }

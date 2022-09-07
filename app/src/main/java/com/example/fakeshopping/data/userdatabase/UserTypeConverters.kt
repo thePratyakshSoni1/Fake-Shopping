@@ -2,8 +2,27 @@ package com.example.fakeshopping.data.userdatabase
 
 import android.util.Log
 import androidx.room.TypeConverter
+import com.example.fakeshopping.data.userdatabase.repository.UserAddress
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+
+class UserAddressToStringConverters {
+
+    @TypeConverter
+    fun intAddressToJson(address:UserAddress):String{
+        return Gson().toJson(address)
+    }
+
+    @TypeConverter
+    fun jsonToAddress(jsonString:String):UserAddress{
+        val type = object: TypeToken<UserAddress>(){}.type
+        val address:UserAddress = Gson().fromJson(jsonString, type )
+        Log.i("GSON","To IntList: $address")
+        return address
+    }
+
+
+}
 
 class IntListTypeConverters {
 

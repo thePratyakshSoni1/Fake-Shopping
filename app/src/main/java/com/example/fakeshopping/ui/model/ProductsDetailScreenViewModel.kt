@@ -7,9 +7,11 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,8 +36,8 @@ class ProductsDetailScreenViewModel @Inject constructor(private val shopRepo: Te
     private var _otherProducts: SnapshotStateList<ShopApiProductsResponse> = mutableStateListOf()
     val otherPproducts get() = _otherProducts
 
-    private val _isFavouriteProduct = mutableStateOf<Boolean>( false )
-    val isFavouriteProduct get() = _isFavouriteProduct as State<Boolean>
+    private val _isFavouriteProduct = mutableStateOf<Boolean?>( null )
+    val isFavouriteProduct get() = _isFavouriteProduct as State<Boolean?>
 
     val currentProductPreviewSlide: MutableState<Int> = mutableStateOf(0)
 
@@ -56,14 +58,14 @@ class ProductsDetailScreenViewModel @Inject constructor(private val shopRepo: Te
 
     }
 
-    fun updateCurrentProductFavStatus(){
-        _isFavouriteProduct.value = _userFavs.contains(product.value?.id)
+    private fun updateCurrentProductFavStatus(){
+        _isFavouriteProduct.value = _userFavs.contains(product.value!!.id)
     }
 
     fun addProductToFavourites(productId:Int){
 
         _userFavs.add(productId)
-
+        updateCurrentProductFavStatus()
         viewModelScope.launch {
             val user = userRepo.getUserByPhone(currentUserId.toLong())!!
             user.favourites.add(productId)
@@ -75,7 +77,7 @@ class ProductsDetailScreenViewModel @Inject constructor(private val shopRepo: Te
     fun removeFromFavourites(productId:Int){
 
         _userFavs.remove(productId)
-
+        updateCurrentProductFavStatus()
         viewModelScope.launch {
             val user = userRepo.getUserByPhone(currentUserId.toLong())!!
             user.favourites.remove(productId)

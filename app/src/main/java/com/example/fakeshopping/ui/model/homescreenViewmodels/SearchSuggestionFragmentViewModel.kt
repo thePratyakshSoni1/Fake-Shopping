@@ -7,13 +7,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
+import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchSuggestionFragmentViewModel @Inject constructor(val repository:TestDataRepo ): ViewModel() {
+class SearchSuggestionFragmentViewModel @Inject constructor(val repository: TestDataRepo): ViewModel() {
 
     var _searchString:MutableState<TextFieldValue> = mutableStateOf( TextFieldValue("") )
     private var _suggestions:SnapshotStateList<String> = mutableStateListOf()

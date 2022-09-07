@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fakeshopping.data.SelectedProduct
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FavouriteScreenViewmodel @Inject constructor( private val userRepo:UserRepository, private val shopRepo:TestDataRepo ) : ViewModel(){
+class FavouriteScreenViewmodel @Inject constructor( private val userRepo:UserRepository, private val shopRepo: TestDataRepo) : ViewModel(){
 
     private lateinit var _currentUserId:String
 

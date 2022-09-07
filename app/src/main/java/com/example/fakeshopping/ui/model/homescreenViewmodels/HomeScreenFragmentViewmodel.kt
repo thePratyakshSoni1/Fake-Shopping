@@ -1,14 +1,18 @@
 package com.example.fakeshopping.ui.model.homescreenViewmodels
 
 import android.util.Log
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fakeshopping.R
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.userdatabase.Users
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
+import com.example.fakeshopping.ui.theme.ColorWhiteVariant
+import com.example.fakeshopping.utils.ToolbarProperties
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.async
@@ -25,6 +29,11 @@ class HomeScreenFragmentViewmodel @Inject constructor(private val repository: Te
         Log.d("MAIN_FRAG VIEWMODEL","Destroying")
         super.onCleared()
     }
+
+    val toolBaroffsetY: MutableState<Float> =  mutableStateOf(0f)
+    val toolbarColor =  mutableStateOf(ToolbarProperties.ExpandedToolbarColorBrush)
+    val showAccountDialog =  mutableStateOf(false)
+    val searchBarColor = mutableStateOf(ColorWhiteVariant)
 
     private val _products = mutableStateListOf<ShopApiProductsResponse>()
     private val _currentUserName = mutableStateOf<String>("")

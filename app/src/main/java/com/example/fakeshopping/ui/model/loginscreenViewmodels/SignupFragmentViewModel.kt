@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fakeshopping.data.userdatabase.UserOrders
 import com.example.fakeshopping.data.userdatabase.Users
+import com.example.fakeshopping.data.userdatabase.repository.UserAddress
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
 import com.example.fakeshopping.utils.LoginSignupStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -116,7 +117,13 @@ class SignupFragmentViewModel @Inject constructor(val usersRepo: UserRepository)
                         password = password.value,
                         favourites = mutableListOf<Int>(),
                         cartItems = mutableMapOf<Int,Int>(),
-                        userAddress = null,
+                        userAddress = UserAddress(
+                            country = "",
+                            city = "",
+                            state = "",
+                            pincode = 0,
+                            landmark = ""
+                        ),
                         userFirstName = firstName.value,
                         userLastName = lastName.value,
                         userOrders = mutableListOf<UserOrders>()

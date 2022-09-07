@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CheckoutScreenViewModel @Inject constructor( private val shopRepo:TestDataRepo, private val userRepo: UserRepository ) :ViewModel(){
+class CheckoutScreenViewModel @Inject constructor(private val shopRepo: TestDataRepo, private val userRepo: UserRepository ) :ViewModel(){
 
     private val _cartItems = mutableStateMapOf<Int, Int>()
     val cartItems get() = _cartItems as Map<Int, Int>
@@ -57,7 +58,7 @@ class CheckoutScreenViewModel @Inject constructor( private val shopRepo:TestData
 
             val tempItemCost = shopRepo.getProductbyId(items.key).price.toFloat()
             _itemsCost.value +=  tempItemCost * items.value
-            _tax.value += (tempItemCost * items.value) * 0.05f
+            _tax.value += (tempItemCost * items.value) * 0.03f
             _deliveryCharge.value += if( tempItemCost > 30f) 5f else 8f
 
         }

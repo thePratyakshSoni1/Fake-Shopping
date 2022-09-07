@@ -9,10 +9,7 @@ import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.List
-import androidx.compose.material.icons.outlined.Send
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Info
 import androidx.compose.runtime.*
@@ -59,10 +56,7 @@ fun HomeScreenMainFragment(
         homeScreenviewmodelFragment.changeCategory(category)
     }
 
-    val toolBaroffsetY: MutableState<Float> = remember{ mutableStateOf(0f) }
     val homefeedScrollOffset = rememberLazyGridState()
-    val toolbarColor = remember { mutableStateOf(ToolbarProperties.ExpandedToolbarColorBrush) }
-    val showAccountDialog = remember{ mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -70,23 +64,20 @@ fun HomeScreenMainFragment(
         context.resources.openRawResource(R.raw.topappbar_motion_scene).readBytes().decodeToString()
     }
 
-    val searchBarColor = remember {
-        mutableStateOf(ColorWhiteVariant)
-    }
 
     fun setHeaderColor(isCollapsed:Boolean){
         if(isCollapsed){
-            toolbarColor.value = ToolbarProperties.CollapsedToolbarColorBrush
-            searchBarColor.value = Color.White
+            homeScreenviewmodelFragment.toolbarColor.value = ToolbarProperties.CollapsedToolbarColorBrush
+            homeScreenviewmodelFragment.searchBarColor.value = Color.White
             window.statusBarColor = Color(0xFF350099).toArgb()
         }else{
-            toolbarColor.value = ToolbarProperties.ExpandedToolbarColorBrush
-            searchBarColor.value = ColorWhiteVariant
+            homeScreenviewmodelFragment.toolbarColor.value = ToolbarProperties.ExpandedToolbarColorBrush
+            homeScreenviewmodelFragment.searchBarColor.value = ColorWhiteVariant
             window.statusBarColor = Color(0xFFE9E9E9).toArgb()
         }
     }
 
-    val animateSearchBarColor = animateColorAsState(targetValue = searchBarColor.value)
+    val animateSearchBarColor = animateColorAsState(targetValue = homeScreenviewmodelFragment.searchBarColor.value)
 
     Log.d("CLICKED","HOME SCREEN RECOMPOSED")
 
@@ -104,18 +95,18 @@ fun HomeScreenMainFragment(
                         source: NestedScrollSource
                     ): Offset {
                         if (homefeedScrollOffset.firstVisibleItemIndex == 0) {
-                            toolBaroffsetY.value =
+                            homeScreenviewmodelFragment.toolBaroffsetY.value =
                                 (homefeedScrollOffset.firstVisibleItemScrollOffset / 100f).coerceIn(
                                     0f,
                                     1f
                                 )
-                            if (toolBaroffsetY.value == 1f) setHeaderColor(true) else setHeaderColor(
+                            if (homeScreenviewmodelFragment.toolBaroffsetY.value == 1f) setHeaderColor(true) else setHeaderColor(
                                 false
                             )
                             Log.d("FLING SCROLL", "VISIBLE: VISIBLE ")
                         } else {
                             setHeaderColor(true)
-                            toolBaroffsetY.value = 1f
+                            homeScreenviewmodelFragment.toolBaroffsetY.value = 1f
                         }
                         return Offset.Zero
                     }
@@ -143,16 +134,16 @@ fun HomeScreenMainFragment(
 
         CollapsingTopAppBar(
             motionScene = toolbarMotionScene,
-            progress = toolBaroffsetY,
-            toolbarBackground = toolbarColor,
+            progress = homeScreenviewmodelFragment.toolBaroffsetY,
+            toolbarBackground = homeScreenviewmodelFragment.toolbarColor,
             searchbarColor = animateSearchBarColor,
             categories = homeScreenviewmodelFragment.categories,
             selectedCategory = homeScreenviewmodelFragment.selectedCategory,
             onCategoryChange = {
-                toolBaroffsetY.value = 0f
+                homeScreenviewmodelFragment.toolBaroffsetY.value = 0f
                 homeScreenviewmodelFragment.changeCategory( it )
             },
-            showDialog= showAccountDialog,
+            showDialog= homeScreenviewmodelFragment.showAccountDialog,
             onCartIconClick = {
                 rootNavController.navigate(Routes.shoppingCartScreen)
             },
@@ -160,8 +151,8 @@ fun HomeScreenMainFragment(
             username = homeScreenviewmodelFragment.currentUserName.value.split(" ").first()
         )
 
-        if(showAccountDialog.value){
-            AccountDialog(userName = homeScreenviewmodelFragment.currentUserName.value, menuItems = generateMenuItems(rootNavController), showAccountDialog, painterResource(id = R.drawable.test_product_placeholder))
+        if(homeScreenviewmodelFragment.showAccountDialog.value){
+            AccountDialog(userName = homeScreenviewmodelFragment.currentUserName.value, menuItems = generateMenuItems(rootNavController), homeScreenviewmodelFragment.showAccountDialog, painterResource(id = R.drawable.test_product_placeholder))
         }
 
 }
@@ -260,6 +251,13 @@ fun LazyGridScope.allProductsSection(
 
 fun generateMenuItems(rootNavController: NavController):List<MenuItemData>{
     return listOf<MenuItemData>(
+        MenuItemData(
+            "My Profile",
+            Icons.Outlined.AccountCircle,
+        ) {
+            rootNavController.navigate(Routes.myProfileScreen)
+        } ,
+
         MenuItemData(
             "Your Cart",
             Icons.Outlined.ShoppingCart,

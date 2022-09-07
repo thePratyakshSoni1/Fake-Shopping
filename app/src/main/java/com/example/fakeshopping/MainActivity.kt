@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
                     Navigation(
                         window,
                         onLoggedStateChanged = { id ->
-                            if(id.isNotEmpty()){
+                            if(!id.isNullOrEmpty()){
                                 createOrSetLoginState(id)
                             }else{
                                 createOrSetLoginState(null)

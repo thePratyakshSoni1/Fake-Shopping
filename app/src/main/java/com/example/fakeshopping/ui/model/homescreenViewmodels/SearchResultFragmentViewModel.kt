@@ -8,6 +8,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchResultFragmentViewModel @Inject constructor( val repository:TestDataRepo, val userRepo: UserRepository ): ViewModel() {
+class SearchResultFragmentViewModel @Inject constructor(val repository: TestDataRepo, val userRepo: UserRepository ): ViewModel() {
 
     private val _searchString:MutableState<TextFieldValue> = mutableStateOf( TextFieldValue("") )
     private val _resultProducts:SnapshotStateList<ShopApiProductsResponse> = mutableStateListOf()

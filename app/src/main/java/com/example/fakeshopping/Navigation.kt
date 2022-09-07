@@ -12,10 +12,11 @@ import androidx.navigation.navArgument
 import com.example.fakeshopping.ui.presentation.*
 import com.example.fakeshopping.ui.presentation.homscreen.HomeScreen
 import com.example.fakeshopping.ui.presentation.login.LoginScreenNavigation
+import com.example.fakeshopping.ui.presentation.myprofile.MyProfileScreen
 import com.example.fakeshopping.utils.Routes
 
 @Composable
-fun Navigation(window: Window, onLoggedStateChanged:(userId:String)->Unit, getCurrentLoggedUser:()->String? ) {
+fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getCurrentLoggedUser:()->String? ) {
 
     val navController = rememberNavController()
     var currentUser = getCurrentLoggedUser()
@@ -84,6 +85,13 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String)->Unit, getCu
         ){
             window.statusBarColor = Color.White.toArgb()
             ProductCheckoutScreen(navController = navController, currentUser = currentUser!!)
+        }
+
+        composable(
+            route = Routes.myProfileScreen,
+        ){
+            window.statusBarColor = Color.White.toArgb()
+            MyProfileScreen(rootNavController = navController, currentUser = currentUser!!, onLoggedStateChanged= onLoggedStateChanged )
         }
 
     }
