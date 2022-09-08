@@ -52,7 +52,7 @@ fun UpdateUserDetailsScreen(myprofileNavController: NavHostController, currentUs
     })
 
     Scaffold(
-        modifier=Modifier.fillMaxSize(),
+        modifier=Modifier.fillMaxSize().imePadding().navigationBarsPadding(),
         topBar = {
             UpdateMyProfileScreenTopAppBar(
                 onBackArrowPress = { myprofileNavController.popBackStack() },
@@ -104,12 +104,6 @@ fun UpdateUserDetailsScreen(myprofileNavController: NavHostController, currentUs
                         landmark = viewModel.currentUserLandmark,
                         pincode = viewModel.currentUserPincode,
                         viewModel = viewModel
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-                    UpdateMyProfileScreenActionButtons(
-                        onSaveClick = {  } ,
-                        onCancelClick = {  }
                     )
                 }
 
@@ -260,56 +254,6 @@ private fun UserDetailItemUpdate( heading:String, value:String, onValueChange:(S
     }
 }
 
-@Composable
-private fun UpdateMyProfileScreenActionButtons ( onSaveClick:()->Unit , onCancelClick:()->Unit){
-
-    Row( Modifier.fillMaxWidth() ){
-
-        Button(
-            onClick = { onSaveClick() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(12.dp),
-            border = BorderStroke(3.dp, Color(0xFF350099)),
-            elevation = ButtonDefaults.elevation(pressedElevation = 0.4.dp, defaultElevation = 0.dp, focusedElevation = 0.dp)
-        ) {
-            Text(
-                "Save",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.SansSerif,
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
-        }
-
-        Button(
-            onClick = { onCancelClick() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(12.dp),
-            border = BorderStroke(3.dp, Color.LightGray),
-            elevation = ButtonDefaults.elevation(pressedElevation = 0.4.dp, defaultElevation = 0.dp, focusedElevation = 0.dp)
-        ) {
-            Text(
-                "Cancel",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.SansSerif,
-                modifier = Modifier.padding(vertical = 4.dp)
-            )
-        }
-
-    }
-
-}
 
 @Composable
 private fun UserProfileAndNameUpdate(firstName: State<String>,lastName: State<String>, onFirstNameChange:(String)->Unit,onLastNameChange:(String)->Unit){

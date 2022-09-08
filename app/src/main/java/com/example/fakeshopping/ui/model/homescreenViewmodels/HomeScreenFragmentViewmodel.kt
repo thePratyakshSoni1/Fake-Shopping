@@ -1,6 +1,7 @@
 package com.example.fakeshopping.ui.model.homescreenViewmodels
 
 import android.util.Log
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel

@@ -1,6 +1,7 @@
 package com.example.fakeshopping.ui.presentation.myprofile
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,10 +24,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import com.example.fakeshopping.ui.model.myprofileViewmodels.MyProfileScreenViewmodel
 import com.example.fakeshopping.ui.presentation.components.IconButton
 import com.example.fakeshopping.utils.MyProfileScreenRoutes
@@ -49,9 +53,16 @@ fun MyProfileScreen(rootNavController:NavHostController, currentUser:String, onL
                     currentUser = currentUser,
                     myprofileNavController = myProfilefragmentsNavController,
                     onLogout = {
+//                        rootNavController.backQueue.forEach{
+//                            Log.d("DESTS",it.destination.route.toString())
+//                        }
+                        rootNavController.navigate(Routes.loginSignupScreen) {
+                            popUpTo(0)
+                        }
                         onLoggedStateChanged(null)
-                        rootNavController.navigate(Routes.loginSignupScreen)
-                        rootNavController.backQueue.clear()
+//                        rootNavController.backQueue.forEach{
+//                            Log.d("DESTS",it.destination.route.toString())
+//                        }
                     },
                     onProfileBackPress = {
                         rootNavController.popBackStack()

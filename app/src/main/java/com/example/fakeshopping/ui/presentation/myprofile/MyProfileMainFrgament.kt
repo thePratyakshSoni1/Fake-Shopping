@@ -192,7 +192,7 @@ private fun UserDetailItem(heading:String, value:String){
 @Composable
 private fun MyProfileScreenActionButtons ( onLogoutClick:()->Unit , onDeleteAccountClick:()->Unit){
 
-    Row( Modifier.fillMaxWidth() ){
+    Column( Modifier.fillMaxWidth() ){
 
         Button(
             onClick = { onLogoutClick() },
@@ -211,12 +211,15 @@ private fun MyProfileScreenActionButtons ( onLogoutClick:()->Unit , onDeleteAcco
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif,
-                modifier = Modifier.padding(vertical = 4.dp)
+                modifier = Modifier.padding(vertical = 4.dp),
+                color= Color(0xFF350099)
             )
         }
 
+        Spacer(modifier=Modifier.height(8.dp))
+
         Button(
-            onClick = { onLogoutClick() },
+            onClick = { onDeleteAccountClick() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp),
@@ -232,7 +235,8 @@ private fun MyProfileScreenActionButtons ( onLogoutClick:()->Unit , onDeleteAcco
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif,
-                modifier = Modifier.padding(vertical = 4.dp)
+                modifier = Modifier.padding(vertical = 4.dp),
+                color=Color.DarkGray
             )
         }
 
