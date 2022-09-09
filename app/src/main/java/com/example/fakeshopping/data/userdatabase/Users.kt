@@ -7,8 +7,8 @@ import com.example.fakeshopping.data.userdatabase.repository.UserAddress
 @Entity
 data class Users(
 
-    @PrimaryKey val userPhoneNumer:Long,
-    val password:String,
+    @PrimaryKey var userPhoneNumer:Long,
+    var password:String,
     val favourites:MutableList<Int>,
     val cartItems:MutableMap<Int,Int>,
     val userAddress:UserAddress,

@@ -19,6 +19,10 @@ class UserRepositoryImpl( private val userDao: UserDao): UserRepository {
         return userDao.getUserByPhone(phoneNumber)
     }
 
+    override suspend fun getAllUsers(): List<Users> {
+        return userDao.getAllUsers()
+    }
+
     override suspend fun getUserFavourites(phoneNumber: Long): List<Int> {
         val user = userDao.getUserByPhone(phoneNumber)!!
         return user.favourites

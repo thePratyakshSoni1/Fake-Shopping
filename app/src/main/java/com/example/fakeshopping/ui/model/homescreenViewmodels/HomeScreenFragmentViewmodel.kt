@@ -33,7 +33,6 @@ class HomeScreenFragmentViewmodel @Inject constructor(private val repository: Te
 
     val toolBaroffsetY: MutableState<Float> =  mutableStateOf(0f)
     val toolbarColor =  mutableStateOf(ToolbarProperties.ExpandedToolbarColorBrush)
-    val showAccountDialog =  mutableStateOf(false)
     val searchBarColor = mutableStateOf(ColorWhiteVariant)
 
     private val _products = mutableStateListOf<ShopApiProductsResponse>()

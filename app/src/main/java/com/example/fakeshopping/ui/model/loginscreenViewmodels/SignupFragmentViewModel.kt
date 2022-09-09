@@ -23,7 +23,9 @@ class SignupFragmentViewModel @Inject constructor(val usersRepo: UserRepository)
         Log.d("SIGNUP","Now on signup screen viewModel initializing")
     }
 
+
     private val _code = mutableStateOf("")
+    private val _isPasswordVisible = mutableStateOf( false )
     private val _password = mutableStateOf("")
     private val _lastName = mutableStateOf("")
     private val _confirmPassword = mutableStateOf("")
@@ -32,6 +34,7 @@ class SignupFragmentViewModel @Inject constructor(val usersRepo: UserRepository)
     private val _dob = mutableStateOf("")
     private val _isOtpStep = mutableStateOf(false)
 
+    val isPasswordVisible get() = _isPasswordVisible as State<Boolean>
     val isOtpStep get() = _isOtpStep as State<Boolean>
     val firstName =_firstName as State<String>
     val code = _code as State<String>
@@ -40,6 +43,10 @@ class SignupFragmentViewModel @Inject constructor(val usersRepo: UserRepository)
     val dob = _dob as State<String>
     val password = _password as  State<String>
     val confirmPassword = _confirmPassword as  State<String>
+
+    fun togglePasswordVisibility(){
+        _isPasswordVisible.value = !_isPasswordVisible.value
+    }
 
     fun toggleSignupStep(isVericationStep:Boolean){
         _isOtpStep.value = isVericationStep

@@ -49,6 +49,7 @@ fun HomeScreenMainFragment(
 ){
 
     val homeScreenviewmodelFragment: HomeScreenFragmentViewmodel = hiltViewModel()
+    val showAccountDialog =  remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true ){
         Log.d("FRAGMENT","IM here: Suggestion")
@@ -82,7 +83,10 @@ fun HomeScreenMainFragment(
     Log.d("CLICKED","HOME SCREEN RECOMPOSED")
 
     Box(
-        modifier= Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding()
+        modifier= Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
     ){
 
         Column(
@@ -100,7 +104,9 @@ fun HomeScreenMainFragment(
                                     0f,
                                     1f
                                 )
-                            if (homeScreenviewmodelFragment.toolBaroffsetY.value == 1f) setHeaderColor(true) else setHeaderColor(
+                            if (homeScreenviewmodelFragment.toolBaroffsetY.value == 1f) setHeaderColor(
+                                true
+                            ) else setHeaderColor(
                                 false
                             )
                             Log.d("FLING SCROLL", "VISIBLE: VISIBLE ")
@@ -143,7 +149,7 @@ fun HomeScreenMainFragment(
                 homeScreenviewmodelFragment.toolBaroffsetY.value = 0f
                 homeScreenviewmodelFragment.changeCategory( it )
             },
-            showDialog= homeScreenviewmodelFragment.showAccountDialog,
+            showDialog= showAccountDialog,
             onCartIconClick = {
                 rootNavController.navigate(Routes.shoppingCartScreen)
             },
@@ -151,8 +157,8 @@ fun HomeScreenMainFragment(
             username = homeScreenviewmodelFragment.currentUserName.value.split(" ").first()
         )
 
-        if(homeScreenviewmodelFragment.showAccountDialog.value){
-            AccountDialog(userName = homeScreenviewmodelFragment.currentUserName.value, menuItems = generateMenuItems(rootNavController), homeScreenviewmodelFragment.showAccountDialog, painterResource(id = R.drawable.test_product_placeholder))
+        if(showAccountDialog.value){
+            AccountDialog(userName = homeScreenviewmodelFragment.currentUserName.value, menuItems = generateMenuItems(rootNavController), showAccountDialog, painterResource(id = R.drawable.test_product_placeholder))
         }
 
 }

@@ -41,7 +41,6 @@ fun MyProfileScreen(rootNavController:NavHostController, currentUser:String, onL
 
     val myProfilefragmentsNavController = rememberNavController()
 
-
     Scaffold(
         modifier=Modifier.fillMaxSize(),
     ) {
@@ -77,6 +76,10 @@ fun MyProfileScreen(rootNavController:NavHostController, currentUser:String, onL
                     onBackPress = {
 
                     })
+            }
+
+            composable(route = MyProfileScreenRoutes.changeNumberFragment) {
+                ChangePhoneNumberFragment(currentUserId = currentUser, myProfileNavController = myProfilefragmentsNavController, onLoggedStateChanged)
             }
 
         }

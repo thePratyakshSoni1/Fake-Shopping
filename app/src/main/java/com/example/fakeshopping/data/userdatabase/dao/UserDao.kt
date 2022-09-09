@@ -15,6 +15,9 @@ interface UserDao {
     @Update()
     suspend fun updateUser(user:Users)
 
+    @Query("SELECT * From Users")
+    suspend fun getAllUsers():List<Users>
+
     @Query("SELECT * FROM Users WHERE userPhoneNumer = :phoneNumber")
     suspend fun getUserByPhone(phoneNumber:Long): Users?
 

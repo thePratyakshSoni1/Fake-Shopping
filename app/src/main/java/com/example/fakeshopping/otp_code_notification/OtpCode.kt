@@ -14,5 +14,11 @@ object OtpCode {
         return code!!
     }
 
+    fun clearCode():String{
+
+        _code = ""
+        return code!!
+    }
+
 
 }

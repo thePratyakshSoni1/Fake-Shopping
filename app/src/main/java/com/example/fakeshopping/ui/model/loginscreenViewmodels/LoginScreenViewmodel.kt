@@ -14,11 +14,18 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginScreenViewmodel @Inject constructor(val usersRepo: UserRepository): ViewModel() {
 
+    private val _isPasswordVisible = mutableStateOf( false )
+    val isPasswordVisible get() = _isPasswordVisible as State<Boolean>
+
     private val _phoneNumberTxt: MutableState<String> = mutableStateOf("")
     private val _passwordTxt: MutableState<String> = mutableStateOf("")
 
     val phoneNumberTxt:State<String> = _phoneNumberTxt as State<String>
     val passwordTxt:State<String> = _passwordTxt as State<String>
+
+    fun togglePasswordVisibility(){
+        _isPasswordVisible.value = !_isPasswordVisible.value
+    }
 
     fun changePhoneText(newText:String){
         _phoneNumberTxt.value = newText

@@ -6,23 +6,28 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.AppBarDefaults
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
+import androidx.compose.runtime.collection.MutableVector
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
+import com.example.fakeshopping.R
+import com.example.fakeshopping.ui.theme.ColorExtraDarkGray
 import com.example.fakeshopping.ui.theme.ColorWhiteVariant
 
 @Preview(showBackground = true)
@@ -84,6 +89,53 @@ private fun OtpTextFieldBox(text:String) {
 
 }
 
+@Composable
+fun PasswordTextField(
+    value: State<String>,
+    onValuechange:(String)->Unit,
+    backgroundColor:Color,
+    textColor:Color,
+    hintColor: Color,
+    hintTxt:String,
+    textType:KeyboardType,
+    isPasswordVisible:State<Boolean>,
+    onTogglePassword:()->Unit
+){
+
+    TextField(
+        modifier= Modifier.fillMaxWidth(),
+        value = value.value,
+        onValueChange = {
+            onValuechange(it)
+        },
+        trailingIcon = {
+            Icon(
+                painter= if(isPasswordVisible.value) painterResource(R.drawable.ic_visibility) else painterResource(R.drawable.ic_visibility_off) ,
+                contentDescription = "toggle password visibility",
+                tint= ColorExtraDarkGray,
+                modifier=Modifier.clickable(
+                    indication = null,
+                    interactionSource = MutableInteractionSource()
+                ) {
+                    onTogglePassword()
+                }
+            )
+        },
+        placeholder = { Text(hintTxt, color = hintColor) },
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = backgroundColor,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            cursorColor = textColor
+        ),
+        shape = RoundedCornerShape(12.dp),
+        maxLines = 1,
+        keyboardOptions = KeyboardOptions( keyboardType = textType),
+        visualTransformation = if( isPasswordVisible.value ) VisualTransformation.None else PasswordVisualTransformation()
+    )
+
+}
+
 
 
 @Composable
@@ -94,7 +146,7 @@ fun AppTextField(
     textColor:Color,
     hintColor: Color,
     hintTxt:String,
-    textType:KeyboardType
+    textType:KeyboardType,
 ){
 
     TextField(
@@ -112,7 +164,7 @@ fun AppTextField(
         ),
         shape = RoundedCornerShape(12.dp),
         maxLines = 1,
-        keyboardOptions = KeyboardOptions( keyboardType = textType)
+        keyboardOptions = KeyboardOptions( keyboardType = textType),
     )
 
 

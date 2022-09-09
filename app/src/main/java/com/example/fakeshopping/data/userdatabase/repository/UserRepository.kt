@@ -14,6 +14,8 @@ interface UserRepository {
 
     suspend fun getUserByPhone(phoneNumber:Long): Users?
 
+    suspend fun getAllUsers(): List<Users>
+
     suspend fun getUserFavourites(phoneNumber:Long): List<Int>
 
     suspend fun getUserOrders(phoneNumber:Long): List<UserOrders>

@@ -42,6 +42,7 @@ import com.example.fakeshopping.ui.model.loginscreenViewmodels.LoginScreenViewmo
 import com.example.fakeshopping.ui.model.loginscreenViewmodels.SignupFragmentViewModel
 import com.example.fakeshopping.ui.presentation.components.AppTextField
 import com.example.fakeshopping.ui.presentation.components.OtpTextField
+import com.example.fakeshopping.ui.presentation.components.PasswordTextField
 import com.example.fakeshopping.ui.theme.ColorWhiteVariant
 import com.example.fakeshopping.ui.theme.ColorYellow
 import com.example.fakeshopping.utils.LoginScreenRoutes
@@ -75,7 +76,6 @@ fun SignupFragment(loginFragmentNavController: NavHostController , onSuccessVeri
                     endX = 600f
                 )
             )
-            .imePadding()
     ) {
 
         ScreenTitle(isVerificationStep = viewModel.isOtpStep)
@@ -93,7 +93,7 @@ fun SignupFragment(loginFragmentNavController: NavHostController , onSuccessVeri
 
                 Column(
                     modifier = Modifier
-                        .verticalScroll( rememberScrollState(), true)
+                        .verticalScroll(rememberScrollState(), true)
                         .fillMaxSize()
                         .padding(end = 24.dp, start = 24.dp, top = 33.dp)
                 ) {
@@ -340,7 +340,9 @@ private fun OtpStepBottomActionButtons(onVerifyClick: () -> Unit, onLoginClick:(
 @Composable
 private fun SignUpDetailStepBottomActionButtons( onSignUpBtnClick:()->Unit, onLogInBtnClick:()->Unit ){
 
-    Row(modifier=Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 8.dp), horizontalArrangement = Arrangement.SpaceAround){
+    Row(modifier= Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 18.dp, vertical = 8.dp), horizontalArrangement = Arrangement.SpaceAround){
 
         Button(
             onClick = {
@@ -401,7 +403,6 @@ private fun SignUpDetailStepBottomActionButtons( onSignUpBtnClick:()->Unit, onLo
 
         }
 
-
     }
 
 }
@@ -409,82 +410,86 @@ private fun SignUpDetailStepBottomActionButtons( onSignUpBtnClick:()->Unit, onLo
 @Composable
 private fun ScreenTextFields(viewModel:SignupFragmentViewModel){
 
-    AppTextField(
-        value = viewModel.firstName,
-        onValuechange = {
-            viewModel.onFirstNameTxtChange(it)
-        },
-        backgroundColor = ColorWhiteVariant,
-        textColor = Color.Black,
-        hintColor = Color.LightGray,
-        hintTxt = "first Name",
-        textType = KeyboardType.Text
-    )
-    Spacer(Modifier.height(12.dp))
-    AppTextField(
-        value = viewModel.lastName,
-        onValuechange = {
-            viewModel.onLastNameTxtChange(it)
-        },
-        backgroundColor = ColorWhiteVariant,
-        textColor = Color.Black,
-        hintColor = Color.LightGray,
-        hintTxt = "Last Name",
-        textType = KeyboardType.Text
-    )
-    Spacer(Modifier.height(12.dp))
+    Column(Modifier.imePadding()) {
 
-    AppTextField(
-        value = viewModel.phone,
-        onValuechange = {
-            viewModel.onPhoneNumberTxtChange(it)
-        },
-        backgroundColor = ColorWhiteVariant,
-        textColor = Color.Black,
-        hintColor = Color.LightGray,
-        hintTxt = "Phone Number",
-        textType = KeyboardType.Number
-    )
-    Spacer(Modifier.height(12.dp))
+        AppTextField(
+            value = viewModel.firstName,
+            onValuechange = {
+                viewModel.onFirstNameTxtChange(it)
+            },
+            backgroundColor = ColorWhiteVariant,
+            textColor = Color.Black,
+            hintColor = Color.LightGray,
+            hintTxt = "first Name",
+            textType = KeyboardType.Text
+        )
+        Spacer(Modifier.height(12.dp))
+        AppTextField(
+            value = viewModel.lastName,
+            onValuechange = {
+                viewModel.onLastNameTxtChange(it)
+            },
+            backgroundColor = ColorWhiteVariant,
+            textColor = Color.Black,
+            hintColor = Color.LightGray,
+            hintTxt = "Last Name",
+            textType = KeyboardType.Text
+        )
+        Spacer(Modifier.height(12.dp))
 
-    AppTextField(
-        value = viewModel.dob,
-        onValuechange = {
-            viewModel.onDobTxtChange(it)
-        },
-        backgroundColor = ColorWhiteVariant,
-        textColor = Color.Black,
-        hintColor = Color.LightGray,
-        hintTxt = "Date Of Birth",
-        textType = KeyboardType.Text
-    )
-    Spacer(Modifier.height(12.dp))
+        AppTextField(
+            value = viewModel.phone,
+            onValuechange = {
+                viewModel.onPhoneNumberTxtChange(it)
+            },
+            backgroundColor = ColorWhiteVariant,
+            textColor = Color.Black,
+            hintColor = Color.LightGray,
+            hintTxt = "Phone Number",
+            textType = KeyboardType.Number
+        )
+        Spacer(Modifier.height(12.dp))
 
-    AppTextField(
-        value = viewModel.password,
-        onValuechange = {
-            viewModel.onPassWordTxtChange(it)
-        },
-        backgroundColor = ColorWhiteVariant,
-        textColor = Color.Black,
-        hintColor = Color.LightGray,
-        hintTxt = "Password",
-        textType = KeyboardType.Password
-    )
-    Spacer(Modifier.height(12.dp))
+        AppTextField(
+            value = viewModel.dob,
+            onValuechange = {
+                viewModel.onDobTxtChange(it)
+            },
+            backgroundColor = ColorWhiteVariant,
+            textColor = Color.Black,
+            hintColor = Color.LightGray,
+            hintTxt = "Date Of Birth",
+            textType = KeyboardType.Text
+        )
+        Spacer(Modifier.height(12.dp))
 
-    AppTextField(
-        value = viewModel.confirmPassword,
-        onValuechange = {
-            viewModel.onConfirmPasswordtxtChange(it)
-        },
-        backgroundColor = ColorWhiteVariant,
-        textColor = Color.Black,
-        hintColor = Color.LightGray,
-        hintTxt = "Confirm password",
-        textType = KeyboardType.Password
-    )
+        PasswordTextField(
+            value = viewModel.password,
+            onValuechange = {
+                viewModel.onPassWordTxtChange(it)
+            },
+            backgroundColor = ColorWhiteVariant,
+            textColor = Color.Black,
+            hintColor = Color.LightGray,
+            hintTxt = "Password",
+            textType = KeyboardType.Password,
+            isPasswordVisible = viewModel.isPasswordVisible,
+            onTogglePassword = { viewModel.togglePasswordVisibility() }
+        )
+        Spacer(Modifier.height(12.dp))
 
+        AppTextField(
+            value = viewModel.confirmPassword,
+            onValuechange = {
+                viewModel.onConfirmPasswordtxtChange(it)
+            },
+            backgroundColor = ColorWhiteVariant,
+            textColor = Color.Black,
+            hintColor = Color.LightGray,
+            hintTxt = "Confirm password",
+            textType = KeyboardType.Password
+        )
+    }
 }
 
 @Composable

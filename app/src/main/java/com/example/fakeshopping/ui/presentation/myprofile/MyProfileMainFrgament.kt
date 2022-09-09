@@ -2,29 +2,33 @@ package com.example.fakeshopping.ui.presentation.myprofile
 
 import android.content.Context
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
+import androidx.compose.material.icons.filled.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import com.example.fakeshopping.ui.presentation.components.IconButton
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,9 +36,13 @@ import androidx.navigation.NavHostController
 import com.example.fakeshopping.data.userdatabase.repository.UserAddress
 import com.example.fakeshopping.ui.model.myprofileViewmodels.MyProfileScreenViewmodel
 import com.example.fakeshopping.ui.presentation.components.LoadingView
+import com.example.fakeshopping.ui.presentation.components.PasswordTextField
+import com.example.fakeshopping.ui.theme.ColorExtraDarkGray
 import com.example.fakeshopping.utils.MyProfileScreenRoutes
+import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun MyProfileScreenMainFragment(myprofileNavController:NavHostController, currentUser: String, onLogout:()->Unit, onProfileBackPress:()->Unit){
 
@@ -43,59 +51,262 @@ fun MyProfileScreenMainFragment(myprofileNavController:NavHostController, curren
         viewModel.setUserIdAndDetails(currentUser)
     })
 
-    Scaffold(
-        modifier=Modifier.fillMaxSize(),
-        topBar = {
-            MyProfileScreenTopAppBar(
-                onBackArrowPress = {
-                    onProfileBackPress()
-                },
-                onEditBtnPress = {
-                    myprofileNavController.navigate(MyProfileScreenRoutes.editingFragment)
-                },
-                myProfileNavController = myprofileNavController
-            )
+
+    val sheetExpandingCoroutineScope = rememberCoroutineScope()
+
+    val localKeyboardControler= LocalSoftwareKeyboardController.current
+    val bottomSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden
+    )
+    LaunchedEffect( key1 = bottomSheetState.isVisible) {
+        if (!bottomSheetState.isVisible) {
+            localKeyboardControler?.hide()
         }
-    ) {
+    }
+    BackHandler(bottomSheetState.isVisible) {
+        sheetExpandingCoroutineScope.launch {
+            bottomSheetState.hide()
+        }
+    }
 
-        if(viewModel.currentUserDetails.value == null){
-            LoadingView(modifier = Modifier.fillMaxSize(), circleSize = 64.dp)
-        }else{
+    ModalBottomSheetLayout(
+        sheetContent = {
+            ChangePasswordBottomSheetContent(
+                onTogglePasswordVisibility = { viewModel.togglePasswordVisibility() },
+                isPasswordVisible = viewModel.isPasswordVisible,
+                onPasswordChange = { newPassword ->
+                    viewModel.updatePassword(newPassword)
+                    sheetExpandingCoroutineScope.launch { bottomSheetState.show() }
+                },
+                onVerifyOldPassword = { oldPassword ->
+                    viewModel.verifyOldPassword(oldPassword)
+                } ,
+                onVerifyNewPasswordPattern = { newPassword ->
+                    viewModel.verifyNewPasswordPattern(newPassword)
+                },
+                onCancel = { sheetExpandingCoroutineScope.launch { bottomSheetState.hide() } },
+                sheetState = bottomSheetState
+            )
+        } ,
+        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd= 16.dp, bottomStart = 0.dp, bottomEnd= 0.dp),
+        sheetElevation = 4.dp,
+        sheetBackgroundColor = Color.White,
+        sheetState = bottomSheetState
+    ){
 
-            Column(modifier=Modifier.fillMaxSize()) {
+        Scaffold(
+            modifier=Modifier.fillMaxSize(),
+            topBar = {
+                MyProfileScreenTopAppBar(
+                    onBackArrowPress = {
+                        onProfileBackPress()
+                    },
+                    onEditBtnPress = {
+                        myprofileNavController.navigate(MyProfileScreenRoutes.editingFragment)
+                    },
+                    myProfileNavController = myprofileNavController
+                )
+            },
+        ) {
 
-                Spacer(modifier = Modifier.height(22.dp))
-                UserProfileAndName("${viewModel.currentUserDetails.value!!.userFirstName} ${viewModel.currentUserDetails.value!!.userLastName}")
+            if(viewModel.currentUserDetails.value == null){
+                LoadingView(modifier = Modifier.fillMaxSize(), circleSize = 64.dp)
+            }else{
 
-                Spacer(modifier = Modifier.height(22.dp))
-                Column(modifier=Modifier.padding(start= 12.dp)){
+                Column(modifier=Modifier.fillMaxSize()) {
 
-                    UserDetails(userPhone = viewModel.currentUserId, userAddress = viewModel.currentUserAddress)
+                    Spacer(modifier = Modifier.height(22.dp))
+                    UserProfileAndName("${viewModel.currentUserDetails.value!!.userFirstName} ${viewModel.currentUserDetails.value!!.userLastName}")
 
-                    Spacer(modifier = Modifier.height(12.dp))
-                    MyProfileScreenActionButtons(
-                        onLogoutClick = { onLogout() } ,
-                        onDeleteAccountClick = {
-                            viewModel.deleteAccount()
-                            onLogout()
-                        }
-                    )
+                    Spacer(modifier = Modifier.height(22.dp))
+                    Column(modifier=Modifier.padding(start= 12.dp)){
+
+                        UserDetails(
+                            userPhone = viewModel.currentUserId,
+                            userAddress = viewModel.currentUserAddress,
+                            userPassword = viewModel.currentUserDetails.value!!.password,
+                            onPasswordChange = { sheetExpandingCoroutineScope.launch { bottomSheetState.show() } },
+                            onPhoneChange = { myprofileNavController.navigate(MyProfileScreenRoutes.changeNumberFragment) }
+                        )
+
+                        Spacer(modifier = Modifier.height(36.dp))
+                        MyProfileScreenActionButtons(
+                            onLogoutClick = { onLogout() } ,
+                            onDeleteAccountClick = {
+                                viewModel.deleteAccount()
+                                onLogout()
+                            }
+                        )
+                    }
                 }
+
             }
 
         }
+
     }
 
 }
 
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun ChangePasswordBottomSheetContent(
+    onTogglePasswordVisibility:()->Unit,
+    isPasswordVisible:State<Boolean>,
+    onPasswordChange:(String)->Unit,
+    onVerifyOldPassword:(oldPassword:String)->Boolean,
+    onVerifyNewPasswordPattern:(newPassword:String)->Boolean,
+    onCancel:()->Unit,
+    sheetState:ModalBottomSheetState
+){
+
+    val oldPasswordValue = remember{ mutableStateOf("") }
+    val newPasswordValue = remember{ mutableStateOf("") }
+    val confirmNewPasswordValue = remember{ mutableStateOf("") }
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = sheetState.isVisible, block = {
+        if(sheetState.isVisible){
+            oldPasswordValue.value = ""
+            newPasswordValue.value = ""
+            confirmNewPasswordValue.value = ""
+        }
+    })
+
+    Column(modifier= Modifier
+        .fillMaxWidth()
+        .padding(top = 18.dp, bottom = 18.dp, start = 12.dp, end = 12.dp)
+        .imePadding(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        PasswordTextField(
+            value = oldPasswordValue,
+            onValuechange = {
+                oldPasswordValue.value = it
+            },
+            backgroundColor = Color.Transparent,
+            textColor = Color.Black,
+            hintColor = Color.LightGray,
+            hintTxt = "Old Password",
+            textType = KeyboardType.Password,
+            isPasswordVisible = isPasswordVisible,
+            onTogglePassword = { onTogglePasswordVisibility() },
+        )
+        Spacer(Modifier.height(8.dp))
+
+        PasswordTextField(
+            value = newPasswordValue,
+            onValuechange = {
+                newPasswordValue.value = it
+            },
+            backgroundColor = Color.Transparent,
+            textColor = Color.Black,
+            hintColor = Color.LightGray,
+            hintTxt = "New Password",
+            textType = KeyboardType.Password,
+            isPasswordVisible = isPasswordVisible,
+            onTogglePassword = { onTogglePasswordVisibility() },
+        )
+        Spacer(Modifier.height(8.dp))
+
+        PasswordTextField(
+            value = confirmNewPasswordValue,
+            onValuechange = {
+                confirmNewPasswordValue.value = it
+            },
+            backgroundColor = Color.Transparent,
+            textColor = Color.Black,
+            hintColor = Color.LightGray,
+            hintTxt = "Confirm New Password",
+            textType = KeyboardType.Password,
+            isPasswordVisible = isPasswordVisible,
+            onTogglePassword = { onTogglePasswordVisibility() },
+        )
+
+        Spacer(Modifier.height(8.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Text(
+                "Cancel",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = FontFamily.SansSerif,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 4.dp)
+                    .clickable(
+                        interactionSource = MutableInteractionSource(),
+                        indication = null
+                    ) {
+                        onCancel()
+                    },
+                textAlign = TextAlign.Center,
+                color = Color.Red
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Button(
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(0xFF350099)
+                ),
+                onClick = {
+                    if (onVerifyOldPassword(oldPasswordValue.value)) {
+                        if (onVerifyNewPasswordPattern(newPasswordValue.value)) {
+                            if (newPasswordValue.value == confirmNewPasswordValue.value) {
+                                onPasswordChange(newPasswordValue.value)
+                                Toast.makeText(context, "Password Updated ✔", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Password didn't confirm",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else {
+                            Toast.makeText(
+                                context,
+                                "Password must be 8 digit containing a symbol, number & alphabet",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else {
+                        Toast.makeText(context, "Wrong old password !", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            ) {
+                Text(
+                    "Change",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.SansSerif,
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    color = Color.White
+                )
+            }
+
+        }
+        Spacer(Modifier.height(12.dp))
+    }
+}
 
 @Composable
-private fun UserDetails(userPhone:State<String>, userAddress: State<UserAddress?>){
+private fun UserDetails(userPhone:State<String>, userAddress: State<UserAddress?>, userPassword:String, onPasswordChange:() -> Unit,  onPhoneChange:() -> Unit){
 
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically
+            .padding(start = 12.dp, end = 8.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = Icons.Default.Phone,
@@ -106,9 +317,50 @@ private fun UserDetails(userPhone:State<String>, userAddress: State<UserAddress?
                 .clip(CircleShape),
             tint = Color.LightGray
         )
-        UserDetailItem(heading = "Phone Number", value = userPhone.value)
+
+        Box(Modifier.weight(1f)) {
+            UserDetailItem(heading = "Phone Number", value = userPhone.value)
+        }
+        IconButton(
+            icon = Icons.Default.Edit,
+            onClick = { onPhoneChange() },
+            contentDescription = "Change Phone number ?"
+        )
     }
-    Spacer(modifier = Modifier.height(12.dp))
+
+    Spacer(modifier = Modifier.height(16.dp))
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(start = 12.dp, end = 8.dp), verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.Lock,
+            contentDescription = "Your Phone Number",
+            modifier = Modifier
+                .padding(end = 8.dp)
+                .padding(6.dp)
+                .clip(CircleShape),
+            tint = Color.LightGray
+        )
+
+        var passwordTxt = ""
+        repeat(userPassword.length){
+            passwordTxt+= "*"
+        }
+
+        Box(Modifier.weight(1f)){
+            UserDetailItem(heading = "Password", passwordTxt)
+        }
+
+        IconButton(
+            icon = Icons.Default.Edit,
+            onClick = { onPasswordChange() },
+            contentDescription = "Change Password ?"
+        )
+    }
+
+    Spacer(modifier = Modifier.height(16.dp))
     Row(
         Modifier
             .fillMaxWidth()
@@ -122,38 +374,8 @@ private fun UserDetails(userPhone:State<String>, userAddress: State<UserAddress?
                 .clip(CircleShape),
             tint = Color.LightGray
         )
-        UserAddressDetailItem(userAdress = userAddress.value)
-
-    }
-
-}
-
-@Composable
-private fun UserAddressDetailItem(userAdress: UserAddress?){
-
-    Column(Modifier.fillMaxWidth()) {
-
-        UserDetailItem(heading = "Country", userAdress?.country ?: "")
-        Spacer(modifier = Modifier.height(12.dp))
-
-        UserDetailItem(heading = "State", userAdress?.state ?: "")
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Row(modifier=Modifier.fillMaxWidth()) {
-
-            Box(modifier=Modifier.weight(1f)){
-                UserDetailItem(heading = "Pincode", userAdress?.pincode.toString() )
-            }
-            Spacer(Modifier.width(8.dp))
-            Box(modifier=Modifier.weight(1f)){
-                UserDetailItem(heading = "City", userAdress?.city ?: "")
-            }
-
-        }
-        Spacer(modifier = Modifier.height(12.dp))
-
-        UserDetailItem(heading = "Landmark", userAdress?.landmark ?: "")
-        Spacer(modifier = Modifier.height(12.dp))
+        val address = "${userAddress.value?.landmark}, ${userAddress.value?.city}, ${userAddress.value?.pincode}, ${userAddress.value?.state}, ${userAddress.value?.country}"
+        UserDetailItem(heading = "Address", value = address)
 
     }
 
@@ -212,7 +434,7 @@ private fun MyProfileScreenActionButtons ( onLogoutClick:()->Unit , onDeleteAcco
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.SansSerif,
                 modifier = Modifier.padding(vertical = 4.dp),
-                color= Color(0xFF350099)
+                color= Color(0xFF350099),
             )
         }
 
@@ -227,16 +449,16 @@ private fun MyProfileScreenActionButtons ( onLogoutClick:()->Unit , onDeleteAcco
                 backgroundColor = Color.Transparent
             ),
             shape = RoundedCornerShape(12.dp),
-            border = BorderStroke(3.dp, Color.LightGray),
-            elevation = ButtonDefaults.elevation(pressedElevation = 0.4.dp, defaultElevation = 0.dp, focusedElevation = 0.dp)
+            border = BorderStroke(3.dp, Color.Transparent),
+            elevation = ButtonDefaults.elevation(pressedElevation = 0.dp, defaultElevation = 0.dp, focusedElevation = 0.dp)
         ) {
             Text(
                 "Delete Account",
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Medium,
                 fontFamily = FontFamily.SansSerif,
                 modifier = Modifier.padding(vertical = 4.dp),
-                color=Color.DarkGray
+                color=Color.Red
             )
         }
 
@@ -250,7 +472,7 @@ private fun UserProfileAndName(userName:String){
     Column(modifier=Modifier.fillMaxWidth(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
 
         Box(modifier = Modifier
-            .size(120.dp)
+            .size(112.dp)
             .clip(CircleShape) ){
             Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "Your Profile", modifier = Modifier.fillMaxSize(), tint = Color.LightGray)
         }

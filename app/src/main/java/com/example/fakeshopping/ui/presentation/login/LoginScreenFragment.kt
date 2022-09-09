@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.fakeshopping.ui.model.loginscreenViewmodels.LoginScreenViewmodel
 import com.example.fakeshopping.ui.presentation.components.AppTextField
+import com.example.fakeshopping.ui.presentation.components.PasswordTextField
 import com.example.fakeshopping.ui.theme.ColorWhiteVariant
 import com.example.fakeshopping.ui.theme.ColorYellow
 import com.example.fakeshopping.utils.LoginScreenRoutes
@@ -112,7 +113,7 @@ fun LoginFragment(loginFragmentNavController: NavHostController, onLoginSuccess:
                     textType = KeyboardType.Number
                 )
                 Spacer(Modifier.height(12.dp))
-                AppTextField(
+                PasswordTextField(
                     value = viewModel.passwordTxt ,
                     onValuechange = {
                         viewModel.changePasswordText(it)
@@ -121,7 +122,9 @@ fun LoginFragment(loginFragmentNavController: NavHostController, onLoginSuccess:
                     textColor = Color.Black,
                     hintColor = Color.LightGray,
                     hintTxt = "Password",
-                    textType = KeyboardType.Password
+                    textType = KeyboardType.Password,
+                    isPasswordVisible = viewModel.isPasswordVisible,
+                    onTogglePassword = { viewModel.togglePasswordVisibility() }
                 )
                 Spacer(Modifier.height(12.dp))
 

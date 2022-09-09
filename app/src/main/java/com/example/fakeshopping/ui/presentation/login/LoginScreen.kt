@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.fakeshopping.otp_code_notification.OtpCode
 import com.example.fakeshopping.utils.HomeScreenFragmentRoutes
 import com.example.fakeshopping.utils.LoginScreenRoutes
 import com.example.fakeshopping.utils.Routes
@@ -33,6 +34,7 @@ fun LoginScreenNavigation(rootnavController:NavHostController, onLoggedStateChan
             SignupFragment(
                 loginFragsNavController,
                 onSuccessVerification = { userId ->
+                    OtpCode.clearCode()
                     onLoggedStateChanged(userId)
                     loginFragsNavController.popBackStack()
                     loginFragsNavController.popBackStack()
