@@ -1,6 +1,7 @@
 package com.example.fakeshopping
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,19 +15,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
-import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.fakeshopping.ui.theme.FakeShoppingTheme
-import com.example.fakeshopping.utils.LoginScreenRoutes
 import com.example.fakeshopping.utils.LoginStateDataStore
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -46,7 +44,9 @@ class MainActivity : ComponentActivity() {
             FakeShoppingTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize().statusBarsPadding(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding(),
                     color = MaterialTheme.colors.background
                 ) {
 
@@ -61,6 +61,15 @@ class MainActivity : ComponentActivity() {
                         },
                         getCurrentLoggedUser = {
                             readCurrentLoggedUser()
+                        },
+                        onContinueToPayment = { paymentRoute ->
+                            val intent = Intent(
+                                this@MainActivity,
+                                OrderPaymentActivity::class.java
+                            )
+
+                            intent.putExtra("FAKESHOPPING_PAYMENT_ROUTE",paymentRoute)
+                            startActivity(intent)
                         }
                     )
 
@@ -95,6 +104,7 @@ class MainActivity : ComponentActivity() {
         }
 
     }
+
 
 }
 

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Fake Shopping</string>
+    <string name="title_activity_order_payment">OrderPaymentActivity</string>
 </resources>

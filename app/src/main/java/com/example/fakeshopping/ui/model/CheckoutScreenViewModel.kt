@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
+import com.example.fakeshopping.utils.PaymentOptionId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,6 +38,9 @@ class CheckoutScreenViewModel @Inject constructor(private val shopRepo: TestData
     private val _tax = mutableStateOf(0f)
     val tax get() = _tax as State<Float>
 
+    private val _paymentMethod = mutableStateOf(PaymentOptionId.OPTION_CARD)
+    val paymentMethod get() = _paymentMethod as State<PaymentOptionId>
+
     fun setCurrentUser(userId:String){
 
         _currentUserId = userId
@@ -44,6 +48,12 @@ class CheckoutScreenViewModel @Inject constructor(private val shopRepo: TestData
             _cartItems.putAll(userRepo.getUserCartItems(userId.toLong()))
             reCalculateTotalCost()
         }
+
+    }
+
+    fun changeCurrentPaymentMethod(newMethodId:PaymentOptionId){
+
+        _paymentMethod.value = newMethodId
 
     }
 

@@ -9,7 +9,7 @@ import com.google.gson.reflect.TypeToken
 class UserAddressToStringConverters {
 
     @TypeConverter
-    fun intAddressToJson(address:UserAddress):String{
+    fun addressToJson(address:UserAddress):String{
         return Gson().toJson(address)
     }
 

@@ -1,9 +1,12 @@
 package com.example.fakeshopping
 
+import android.content.Intent
 import android.view.Window
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,7 +19,7 @@ import com.example.fakeshopping.ui.presentation.myprofile.MyProfileScreen
 import com.example.fakeshopping.utils.Routes
 
 @Composable
-fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getCurrentLoggedUser:()->String? ) {
+fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getCurrentLoggedUser:()->String?, onContinueToPayment:(paymentOptionRoute:String)->Unit ) {
 
     val navController = rememberNavController()
     var currentUser = getCurrentLoggedUser()
@@ -82,16 +85,25 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getC
 
         composable(
             route = Routes.checkOutOverviewScreen,
-        ){
+        ) {
             window.statusBarColor = Color.White.toArgb()
-            ProductCheckoutScreen(navController = navController, currentUser = currentUser!!)
+            ProductCheckoutScreen(
+                navController = navController,
+                currentUser = currentUser!!,
+                onContinueTOPayment = { paymentRoute ->
+                    onContinueToPayment(paymentRoute)
+                })
         }
 
         composable(
             route = Routes.myProfileScreen,
         ){
             window.statusBarColor = Color.White.toArgb()
-            MyProfileScreen(rootNavController = navController, currentUser = currentUser!!, onLoggedStateChanged= onLoggedStateChanged )
+            MyProfileScreen(
+                rootNavController = navController,
+                currentUser = currentUser!!,
+                onLoggedStateChanged= onLoggedStateChanged
+            )
         }
 
     }
