@@ -34,8 +34,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <receiver android:name=".otp_code_notification.OtpNotificationReceiver" />
+        <meta-data
+            android:name="com.razorpay.ApiKey"
+            android:value="rzp_test_9uZj81WaUZURYH" />
     </application>
 
 </manifest>

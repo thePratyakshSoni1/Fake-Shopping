@@ -19,7 +19,7 @@ import com.example.fakeshopping.ui.presentation.myprofile.MyProfileScreen
 import com.example.fakeshopping.utils.Routes
 
 @Composable
-fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getCurrentLoggedUser:()->String?, onContinueToPayment:(paymentOptionRoute:String)->Unit ) {
+fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getCurrentLoggedUser:()->String?, onContinueToPayment:(paymentOptionRoute:String, amountToPaid:Float)->Unit ) {
 
     val navController = rememberNavController()
     var currentUser = getCurrentLoggedUser()
@@ -90,8 +90,8 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getC
             ProductCheckoutScreen(
                 navController = navController,
                 currentUser = currentUser!!,
-                onContinueTOPayment = { paymentRoute ->
-                    onContinueToPayment(paymentRoute)
+                onContinueTOPayment = { paymentRoute, amountToBePaid ->
+                    onContinueToPayment(paymentRoute, amountToBePaid)
                 })
         }
 

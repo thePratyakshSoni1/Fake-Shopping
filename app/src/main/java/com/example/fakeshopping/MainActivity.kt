@@ -62,12 +62,15 @@ class MainActivity : ComponentActivity() {
                         getCurrentLoggedUser = {
                             readCurrentLoggedUser()
                         },
-                        onContinueToPayment = { paymentRoute ->
+                        onContinueToPayment = { paymentRoute, amountToBePaid ->
                             val intent = Intent(
                                 this@MainActivity,
                                 OrderPaymentActivity::class.java
                             )
 
+
+                            intent.putExtra("FAKESHOPPING_AMOUNT_TO_BE_PAID",amountToBePaid)
+                            intent.putExtra("FAKESHOPPING_CURRENT_USER_ID",readCurrentLoggedUser()!!)
                             intent.putExtra("FAKESHOPPING_PAYMENT_ROUTE",paymentRoute)
                             startActivity(intent)
                         }
@@ -94,7 +97,7 @@ class MainActivity : ComponentActivity() {
     private fun createOrSetLoginState(userId:String?){
 
         val dataStoreUserIdKey = stringPreferencesKey(LoginStateDataStore.DATASTORE_USER_ID_KEY)
-        val preferences:Preferences
+        var preferences:Preferences
             runBlocking {
 
             preferences = dataStore.edit { preferences ->

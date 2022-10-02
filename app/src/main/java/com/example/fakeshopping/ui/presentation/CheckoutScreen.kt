@@ -37,7 +37,7 @@ import com.example.fakeshopping.utils.PaymentOptionId
 import com.example.fakeshopping.utils.PaymentScreenRoutes
 
 @Composable
-fun ProductCheckoutScreen( navController:NavHostController, currentUser:String, onContinueTOPayment:(paymentOptionRoute:String)->Unit) {
+fun ProductCheckoutScreen( navController:NavHostController, currentUser:String, onContinueTOPayment:(paymentOptionRoute:String, amountToBePaid:Float)->Unit) {
 
     val viewModel: CheckoutScreenViewModel = hiltViewModel()
 
@@ -51,15 +51,15 @@ fun ProductCheckoutScreen( navController:NavHostController, currentUser:String, 
         bottomBar = {
             CheckoutScreenBottomBar(
                 onProceedClick = {
-                    val paymentRoute = when(viewModel.paymentMethod.value){
+                    val paymentRoute = when (viewModel.paymentMethod.value) {
                         PaymentOptionId.OPTION_CARD -> PaymentScreenRoutes.cardFragment
                         PaymentOptionId.OPTION_POD -> PaymentScreenRoutes.cardFragment
                         PaymentOptionId.OPTION_UPI -> PaymentScreenRoutes.upiFragment
                         PaymentOptionId.OPTOIN_NETBANKING -> PaymentScreenRoutes.netBankingFragment
                         PaymentOptionId.OPTOIN_WALLET -> PaymentScreenRoutes.walletFragment
                     }
-                    onContinueTOPayment(paymentRoute)
-                                 },
+                    onContinueTOPayment(paymentRoute, viewModel.totalCost.value)
+                },
                 onCancel = { navController.popBackStack() })
         },
         modifier = Modifier
@@ -72,7 +72,7 @@ fun ProductCheckoutScreen( navController:NavHostController, currentUser:String, 
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 64.dp), contentAlignment = Alignment.TopCenter
+                    .padding(top = 36.dp), contentAlignment = Alignment.TopCenter
             ) {
 
                 PriceDetailsCard(
@@ -94,8 +94,13 @@ fun ProductCheckoutScreen( navController:NavHostController, currentUser:String, 
                 modifier = Modifier.padding(start = 22.dp)
             )
 
-            PaymentOptionsSelection(currentSelectedOption = viewModel.paymentMethod)
-            Spacer(Modifier.height(18.dp))
+            Spacer(Modifier.height(16.dp))
+            PaymentOptionsSelection(
+                currentSelectedOption = viewModel.paymentMethod,
+                onOptionChange = {
+                    viewModel.changeCurrentPaymentMethod(it)
+                })
+            Spacer(Modifier.height(36.dp))
 
         }
 
@@ -108,21 +113,21 @@ fun ProductCheckoutScreen( navController:NavHostController, currentUser:String, 
 private fun CheckoutTopBar( onBackArrowClick:()->Unit ){
 
     SmallTopAppBar(
-        modifier = Modifier.padding(start=12.dp),
+        modifier = Modifier.padding(start= 14.dp, bottom=12.dp).background(Color.White),
         title = {
             Text(
                 "Overview",
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold,
                 fontSize = 21.sp,
-                modifier=Modifier.padding(start=12.dp)
+                modifier=Modifier.padding(start= 14.dp, top=12.dp, bottom=12.dp)
             )
         },
         navigationIcon = {
 
             com.example.fakeshopping.ui.presentation.components.IconButton(
                 icon =Icons.Default.ArrowBack ,
-                onClick = {  },
+                onClick = { onBackArrowClick()  },
                 contentDescription = "Go back"
             )
 
@@ -311,19 +316,19 @@ fun OverviewCardItem(title:String, cost:Float, isAddingToAmount:Boolean){
 }
 
 @Composable
-fun PaymentOptionsSelection(currentSelectedOption: State<PaymentOptionId>){
+fun PaymentOptionsSelection(currentSelectedOption: State<PaymentOptionId>, onOptionChange:(option:PaymentOptionId)->Unit){
 
     Column(modifier= Modifier
-        .fillMaxWidth(),
+        .fillMaxWidth(0.85f),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
 
         Card(
             shape = RoundedCornerShape(12.dp),
             border = if(currentSelectedOption.value == PaymentOptionId.OPTION_CARD) BorderStroke(1.7.dp, Color(0xFF350099)) else null,
-            modifier=Modifier.fillMaxWidth().padding(start= 14.dp, end=12.dp, top=12.dp, bottom=12.dp).clickable {  }
+            modifier=Modifier.clickable { onOptionChange(PaymentOptionId.OPTION_CARD) }.fillMaxWidth().padding(horizontal= 12.dp)
         ) {
-            Text("Card", modifier=Modifier.fillMaxWidth().padding(start=12.dp), fontWeight = FontWeight.Bold )
+            Text("Card", modifier=Modifier.fillMaxWidth().padding(start= 18.dp, top=16.dp, bottom=16.dp), fontWeight = FontWeight.Bold )
         }
 
         Spacer(modifier=Modifier.height(8.dp))
@@ -331,9 +336,19 @@ fun PaymentOptionsSelection(currentSelectedOption: State<PaymentOptionId>){
         Card(
             shape = RoundedCornerShape(12.dp),
             border = if(currentSelectedOption.value == PaymentOptionId.OPTION_UPI) BorderStroke(1.7.dp, Color(0xFF350099)) else null,
-            modifier=Modifier.fillMaxWidth().padding(start= 14.dp, end=12.dp, top=12.dp, bottom=12.dp)
+            modifier=Modifier.fillMaxWidth().clickable { onOptionChange(PaymentOptionId.OPTION_UPI) }.padding(horizontal=12.dp)
         ) {
-            Text("UPI", modifier=Modifier.fillMaxWidth().padding(start=12.dp), fontWeight = FontWeight.Bold )
+            Text("UPI", modifier=Modifier.fillMaxWidth().padding(start= 18.dp, top=16.dp, bottom=16.dp), fontWeight = FontWeight.Bold )
+        }
+
+        Spacer(modifier=Modifier.height(8.dp))
+
+        Card(
+            shape = RoundedCornerShape(12.dp),
+            border = if(currentSelectedOption.value == PaymentOptionId.OPTOIN_NETBANKING) BorderStroke(1.7.dp, Color(0xFF350099)) else null,
+            modifier=Modifier.fillMaxWidth().clickable { onOptionChange(PaymentOptionId.OPTOIN_NETBANKING) }.padding(start= 18.dp, top=16.dp, bottom=16.dp)
+        ) {
+            Text("Net Banking", modifier=Modifier.fillMaxWidth().padding(start= 14.dp, top=12.dp, bottom=12.dp), fontWeight = FontWeight.Bold )
         }
 
         Spacer(modifier=Modifier.height(8.dp))
@@ -341,19 +356,9 @@ fun PaymentOptionsSelection(currentSelectedOption: State<PaymentOptionId>){
         Card(
             shape = RoundedCornerShape(12.dp),
             border = if(currentSelectedOption.value == PaymentOptionId.OPTOIN_WALLET) BorderStroke(1.7.dp, Color(0xFF350099)) else null,
-            modifier=Modifier.fillMaxWidth().padding(start= 14.dp, end=12.dp, top=12.dp, bottom=12.dp)
+            modifier=Modifier.clickable { onOptionChange(PaymentOptionId.OPTOIN_WALLET) }.fillMaxWidth().padding(horizontal=12.dp)
         ) {
-            Text("Net Banking", modifier=Modifier.fillMaxWidth().padding(start=12.dp), fontWeight = FontWeight.Bold )
-        }
-
-        Spacer(modifier=Modifier.height(8.dp))
-
-        Card(
-            shape = RoundedCornerShape(12.dp),
-            border = if(currentSelectedOption.value == PaymentOptionId.OPTOIN_WALLET) BorderStroke(1.7.dp, Color(0xFF350099)) else null,
-            modifier=Modifier.fillMaxWidth().padding(start= 14.dp, end=12.dp, top=12.dp, bottom=12.dp)
-        ) {
-            Text("Wallet", modifier=Modifier.fillMaxWidth().padding(start=12.dp), fontWeight = FontWeight.Bold )
+            Text("Wallet", modifier=Modifier.fillMaxWidth().padding(start= 18.dp, top=16.dp, bottom=16.dp), fontWeight = FontWeight.Bold )
         }
 
         Spacer(modifier=Modifier.height(8.dp))
@@ -361,9 +366,9 @@ fun PaymentOptionsSelection(currentSelectedOption: State<PaymentOptionId>){
         Card(
             shape = RoundedCornerShape(12.dp),
             border = if(currentSelectedOption.value == PaymentOptionId.OPTION_POD) BorderStroke(1.7.dp, Color(0xFF350099)) else null,
-            modifier=Modifier.fillMaxWidth().padding(start= 14.dp, end=12.dp, top=12.dp, bottom=12.dp)
+            modifier=Modifier.clickable { onOptionChange(PaymentOptionId.OPTION_POD) }.fillMaxWidth().padding(horizontal=12.dp)
         ) {
-            Text("Pay On Delivery", modifier=Modifier.fillMaxWidth().padding(start=12.dp), fontWeight = FontWeight.Bold )
+            Text("Pay On Delivery", modifier=Modifier.fillMaxWidth().padding(start= 18.dp, top=16.dp, bottom=16.dp), fontWeight = FontWeight.Bold )
         }
 
         Spacer(modifier=Modifier.height(8.dp))
