@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat.startActivity
+import androidx.navigation.NavArgument
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,7 +20,7 @@ import com.example.fakeshopping.ui.presentation.myprofile.MyProfileScreen
 import com.example.fakeshopping.utils.Routes
 
 @Composable
-fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getCurrentLoggedUser:()->String?, onContinueToPayment:(paymentOptionRoute:String, amountToPaid:Float)->Unit ) {
+fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getCurrentLoggedUser:()->String?, onContinueToPayment:(paymentOptionRoute:String, amountToPaid:Float, itemsToBuy:List<Int>, itemsToBuyQuantity:List<Int>)->Unit ) {
 
     val navController = rememberNavController()
     var currentUser = getCurrentLoggedUser()
@@ -84,14 +85,28 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getC
         }
 
         composable(
-            route = Routes.checkOutOverviewScreen,
+            route = "${Routes.checkOutOverviewScreen}/{itemsToBuy}/{itemsToBuyQuantity}",
+            arguments = listOf(
+                navArgument("itemsToBuy"){
+                    type = NavType.StringType
+                },
+
+                navArgument("itemsToBuyQuantity"){
+                    type = NavType.StringType
+                }
+            )
         ) {
             window.statusBarColor = Color.White.toArgb()
             ProductCheckoutScreen(
                 navController = navController,
                 currentUser = currentUser!!,
-                onContinueTOPayment = { paymentRoute, amountToBePaid ->
-                    onContinueToPayment(paymentRoute, amountToBePaid)
+                selectedProductIds = it.arguments!!.getString("itemsToBuy")!!,
+                selectedProductQuantity = it.arguments!!.getString("itemsToBuyQuantity")!!,
+                onContinueToPayment = { paymentRoute, amountToBePaid, itemsTobuy->
+                    onContinueToPayment(
+                        paymentRoute, amountToBePaid,
+                        itemsTobuy.keys.toList(),
+                        itemsTobuy.values.toList()  )
                 })
         }
 

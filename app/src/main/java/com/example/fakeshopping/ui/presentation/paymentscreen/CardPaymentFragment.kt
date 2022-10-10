@@ -1,5 +1,6 @@
 package com.example.fakeshopping.ui.presentation.paymentscreen
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -20,6 +22,8 @@ import com.example.fakeshopping.ui.model.payment_viewmodels.CardPaymentViewModel
 import com.example.fakeshopping.ui.presentation.components.AppTextField
 import com.example.fakeshopping.ui.presentation.components.PasswordTextField
 import com.example.fakeshopping.ui.theme.ColorWhiteVariant
+import com.example.fakeshopping.ui.theme.ColorYellow
+import com.example.fakeshopping.ui.theme.ColorYellowVarient
 import com.squareup.moshi.Json
 import org.json.JSONObject
 
@@ -28,7 +32,8 @@ import org.json.JSONObject
 fun CardPaymentFragment(
     sendRequest:(payload:JSONObject) -> Unit,
     amountToBePaid:Float,
-    currentUserId:Long
+    currentUserId:Long,
+    onGoBack:()->Unit
 ) {
 
     val viewModel: CardPaymentViewModel = hiltViewModel()
@@ -95,21 +100,29 @@ fun CardPaymentFragment(
             }
         }
         Spacer(Modifier.height(22.dp))
+        val context = LocalContext.current
         CardPaymentActionButtons(
             onContinue = {
-                try {
-                    viewModel.payload.value?.put("method", "card")
-                    viewModel.payload.value?.put("card[name]", viewModel.cardHolderName.value)
-                    viewModel.payload.value?.put("card[number]", viewModel.cardNumber.value)
-                    viewModel.payload.value?.put("card[expiry_month]", viewModel.cardExpiry.value.split("/")[0])
-                    viewModel.payload.value?.put("card[expiry_year]",  viewModel.cardExpiry.value.split("/")[1])
-                    viewModel.payload.value?.put("card[cvv]",  viewModel.cardCvv.value)
-                    sendRequest(viewModel.payload.value!!)
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                if(viewModel.isHolderNameValid()){
+                   if(viewModel.isCardNumberValid()){
+                       if(viewModel.isCardExpiryValid()){
+                           if(viewModel.isValidCVV()){
+                               viewModel.preparePayloadForRequest()
+                               sendRequest(viewModel.payload.value!!)
+                           }else{
+                               Toast.makeText(context,"Invalid CVV", Toast.LENGTH_LONG).show()
+                           }
+                       }else{
+                           Toast.makeText(context,"Invalid Expiry Date", Toast.LENGTH_LONG).show()
+                       }
+                   }else{
+                       Toast.makeText(context,"Invalid Card Number", Toast.LENGTH_LONG).show()
+                   }
+                }else{
+                    Toast.makeText(context,"Invalid Holder Name", Toast.LENGTH_LONG).show()
                 }
-            },
-            onCancel = { }
+                         },
+            onCancel = { onGoBack() }
         )
 
     }
@@ -129,7 +142,7 @@ private fun CardPaymentActionButtons(onContinue:()->Unit, onCancel: () -> Unit){
             .fillMaxWidth()
             .padding(horizontal = 12.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color(0xFF9500FF)
+            backgroundColor = ColorYellow
         ),
         shape = RoundedCornerShape(12.dp),
         elevation = ButtonDefaults.elevation(pressedElevation = 0.4.dp, defaultElevation = 0.dp, focusedElevation = 0.dp)
@@ -140,7 +153,7 @@ private fun CardPaymentActionButtons(onContinue:()->Unit, onCancel: () -> Unit){
             fontWeight = FontWeight.Bold,
             fontFamily = FontFamily.SansSerif,
             modifier = Modifier.padding(vertical = 4.dp),
-            color= Color.White
+            color= Color.Black
         )
     }
 

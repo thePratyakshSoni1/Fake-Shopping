@@ -96,7 +96,7 @@ class SignupFragmentViewModel @Inject constructor(val usersRepo: UserRepository)
         val numPattern = Regex("[0-9]+")
         val symbolPattern = Regex("""[&|“|`|´|}|{|°|>|<|:|.|;|#|'|)|(|@|_|$|"|!|?|*|=|^|-]+""")
 
-        return if(_firstName.value.isEmpty()){
+        return if(_firstName.value.isEmpty() || _firstName.value.contains(Regex("[^A-Za-z]"))){
             LoginSignupStatus.STATUS_SIGNUP_INVALID_NAME
         }else if(_lastName.value.contains(Regex("[^A-Za-z]"))){
             LoginSignupStatus.STATUS_SIGNUP_INVALID_NAME

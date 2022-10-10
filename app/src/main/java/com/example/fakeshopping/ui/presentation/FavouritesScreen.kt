@@ -81,10 +81,12 @@ fun FavouritesScreen(navController: NavController, currentUser:String){
             if(viewModel.isSelectionMode.value){
                 FavouritesBottomBar(
                     onMovieToCart = {
-                    viewModel.moveToCart()
-                                    },
+                        viewModel.moveToCart()
+                     },
                     onCheckout = {
-                        navController.navigate(Routes.checkOutOverviewScreen)
+                        val itemsToBuy = viewModel.selectedProducts.keys.toList().toString()
+                        val itemsToBuyQuantity = viewModel.selectedProducts.values.toList().toString()
+                        navController.navigate("${ Routes.checkOutOverviewScreen }/$itemsToBuy/$itemsToBuyQuantity")
                     }
                 )
             }

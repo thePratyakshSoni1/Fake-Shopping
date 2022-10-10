@@ -1,5 +1,6 @@
 package com.example.fakeshopping.ui.model
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -10,12 +11,16 @@ import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
 import com.example.fakeshopping.utils.PaymentOptionId
+import com.example.fakeshopping.utils.extractIntListStringToIntList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CheckoutScreenViewModel @Inject constructor(private val shopRepo: TestDataRepo, private val userRepo: UserRepository ) :ViewModel(){
+
+    private val _itemsToBuy = mutableStateMapOf<Int, Int>()
+    val itemsToBuy get() = _itemsToBuy as Map<Int, Int>
 
     private val _cartItems = mutableStateMapOf<Int, Int>()
     val cartItems get() = _cartItems as Map<Int, Int>
@@ -41,20 +46,28 @@ class CheckoutScreenViewModel @Inject constructor(private val shopRepo: TestData
     private val _paymentMethod = mutableStateOf(PaymentOptionId.OPTION_CARD)
     val paymentMethod get() = _paymentMethod as State<PaymentOptionId>
 
-    fun setCurrentUser(userId:String){
+    fun setCurrentUser(userId:String, selectedProductsId:String, selectedProductsQuantity:String){
 
         _currentUserId = userId
         viewModelScope.launch{
-            _cartItems.putAll(userRepo.getUserCartItems(userId.toLong()))
+            _itemsToBuy.clear()
+
+            val tempItemsToBuyList = extractIntListStringToIntList(selectedProductsId)
+            val tempItemsToBuyQuantityList = extractIntListStringToIntList(selectedProductsQuantity)
+
+            Log.d("ITEMS_TO_BUY_LIST", tempItemsToBuyList.toString())
+            Log.d("ITEMS_QUANTITY_LIST", tempItemsToBuyQuantityList.toString())
+
+            for( index in tempItemsToBuyList.indices){
+                _itemsToBuy[tempItemsToBuyList[index]] = tempItemsToBuyQuantityList[index]
+            }
             reCalculateTotalCost()
         }
 
     }
 
     fun changeCurrentPaymentMethod(newMethodId:PaymentOptionId){
-
         _paymentMethod.value = newMethodId
-
     }
 
     private suspend fun reCalculateTotalCost(){
@@ -64,18 +77,22 @@ class CheckoutScreenViewModel @Inject constructor(private val shopRepo: TestData
         _deliveryCharge.value = 0f
         _tax.value = 0f
 
-        for( items in cartItems){
+        viewModelScope.launch {
+            for( items in itemsToBuy){
 
-            val tempItemCost = shopRepo.getProductbyId(items.key).price.toFloat()
-            _itemsCost.value +=  tempItemCost * items.value
-            _tax.value += (tempItemCost * items.value) * 0.03f
-            _deliveryCharge.value += if( tempItemCost > 30f) 5f else 8f
+                val tempItemCost = shopRepo.getProductbyId(items.key).price.toFloat()
+                _itemsCost.value +=  tempItemCost * items.value
+                _tax.value += (tempItemCost * items.value) * 0.03f
+                _deliveryCharge.value += if( tempItemCost > 30f) 5f else 8f
 
+            }
+
+            _totalCost.value = (itemsCost.value + tax.value + deliveryCharge.value) - discount.value
         }
 
-        _totalCost.value = (itemsCost.value + tax.value + deliveryCharge.value) - discount.value
-
     }
+
+
 
 
 }

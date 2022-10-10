@@ -36,6 +36,8 @@ class OrderPaymentActivity : ComponentActivity(), PaymentResultListener {
         val startDestination = intent.extras?.getString("FAKESHOPPING_PAYMENT_ROUTE")!!
         val amountToBePaid = intent.extras?.getFloat("FAKESHOPPING_AMOUNT_TO_BE_PAID")!!
         val currentUserId = intent.extras?.getString("FAKESHOPPING_CURRENT_USER_ID")!!
+        val itemsToBuy = intent.extras?.getString("FAKESHOPPING_PAYMENT_ITEMS_TO_BUY_LIST")!!
+        val itemsToBuyQuantity = intent.extras?.getString("FAKESHOPPING_PAYMENT_ITEMS_TO_BUY_QUANTITY_LIST")!!
 
         setContent {
             FakeShoppingTheme {
@@ -65,9 +67,13 @@ class OrderPaymentActivity : ComponentActivity(), PaymentResultListener {
                 PaymentScreen(
                     stratDestination = startDestination,
                     razorpay,
-                    this@OrderPaymentActivity,
                     amountToBePaid,
-                    currentUserId = currentUserId.toLong()
+                    currentUserId = currentUserId.toLong(),
+                    onGoBack = {
+                        onBackPressed()
+                    },
+                    itemsToBuyListString = itemsToBuy,
+                    itemsToBuyQuantityListString = itemsToBuyQuantity
                 )
             }
         }

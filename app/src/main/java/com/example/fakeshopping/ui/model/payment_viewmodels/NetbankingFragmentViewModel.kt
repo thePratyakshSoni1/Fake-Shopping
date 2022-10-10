@@ -75,6 +75,7 @@ class NetbankingFragmentViewModel @Inject constructor(): ViewModel() {
 
     fun onBankChange(bankName:String){
         _payload.put("method", "netbanking")
+        Log.d("SELECTED BANK", banksKeys[(banksNameList.toSet().indexOf(bankName))])
         _payload.put("bank", banksKeys[(banksNameList.toSet().indexOf(bankName))])
     }
 

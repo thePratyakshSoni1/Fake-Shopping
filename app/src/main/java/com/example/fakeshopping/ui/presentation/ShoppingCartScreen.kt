@@ -1,5 +1,6 @@
 package com.example.fakeshopping.ui.presentation
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -89,10 +90,17 @@ fun ShopingCartScreen(navController:NavController, currentUserId:String){
             }
 
             ShoppingCartBottomBar(
-                onCheckOut = { navController.navigate( Routes.checkOutOverviewScreen ) },
+                onCheckOut = {
+                    val itemsToBuy = viewModel.cartItems.keys.toList().toString()
+                    val itemsToBuyQuantity = viewModel.cartItems.values.toList().toString()
+                    Log.d("COMPOSE_NAV", itemsToBuy)
+                    Log.d("COMPOSE_NAV", itemsToBuy)
+                    navController.navigate( "${Routes.checkOutOverviewScreen}/$itemsToBuy/$itemsToBuyQuantity" )
+                             },
                 totalItems = viewModel.cartItems.size,
                 totalCost = viewModel.totalCost.value,
                 isDisabled = viewModel.cartItems.isEmpty()
+
             )
 
         }
@@ -144,7 +152,9 @@ private fun ShoppingCartBottomBar( onCheckOut:()->Unit, totalItems:Int, totalCos
                 .background(Color.White)
                 .padding(top = 18.dp),
         ) {
-            Column(modifier=Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 12.dp) ){
+            Column(modifier= Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 12.dp) ){
 
                 Text(text = "Items: $totalItems", fontSize = 14.sp, color=Color.LightGray, modifier = Modifier.padding(start= 12.dp))
                 Spacer(Modifier.height(8.dp))

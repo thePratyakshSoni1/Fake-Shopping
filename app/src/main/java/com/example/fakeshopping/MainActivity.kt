@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
                         getCurrentLoggedUser = {
                             readCurrentLoggedUser()
                         },
-                        onContinueToPayment = { paymentRoute, amountToBePaid ->
+                        onContinueToPayment = { paymentRoute, amountToBePaid, itemsToBuy, itemsToBuyQuantity  ->
                             val intent = Intent(
                                 this@MainActivity,
                                 OrderPaymentActivity::class.java
@@ -72,6 +72,8 @@ class MainActivity : ComponentActivity() {
                             intent.putExtra("FAKESHOPPING_AMOUNT_TO_BE_PAID",amountToBePaid)
                             intent.putExtra("FAKESHOPPING_CURRENT_USER_ID",readCurrentLoggedUser()!!)
                             intent.putExtra("FAKESHOPPING_PAYMENT_ROUTE",paymentRoute)
+                            intent.putExtra("FAKESHOPPING_PAYMENT_ITEMS_TO_BUY_LIST", itemsToBuy.toString())
+                            intent.putExtra("FAKESHOPPING_PAYMENT_ITEMS_TO_BUY_QUANTITY_LIST", itemsToBuyQuantity.toString())
                             startActivity(intent)
                         }
                     )
