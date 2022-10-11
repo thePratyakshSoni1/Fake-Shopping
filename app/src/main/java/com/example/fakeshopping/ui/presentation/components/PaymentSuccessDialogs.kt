@@ -95,7 +95,7 @@ fun PaymentSuccesDialog( paymentSucceed:State<Boolean>, onDialogueRemove:()->Uni
                 Icon(
                     imageVector = Icons.Rounded.Close,
                     contentDescription = "close payment status message",
-                    modifier=Modifier.clickable { onDialogueRemove() }.clip(CircleShape).padding(16.dp)
+                    modifier=Modifier.clip(CircleShape).clickable { onDialogueRemove() }.padding(16.dp)
                 )
             }
 

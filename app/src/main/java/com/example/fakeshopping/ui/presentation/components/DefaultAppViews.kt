@@ -1,6 +1,7 @@
 package com.example.fakeshopping.ui.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -136,8 +137,6 @@ fun PasswordTextField(
 
 }
 
-
-
 @Composable
 fun AppTextField(
     value: State<String>,
@@ -169,3 +168,121 @@ fun AppTextField(
 
 
 }
+
+
+@Composable
+fun UserAddressTextFiled(
+    country: State<String>,
+    state: State<String>,
+    city: State<String>,
+    landmark: State<String>,
+    pincode: State<String>,
+    onCountryTextValueChange:(newValue:String)->Unit,
+    onStateTextValueChange:(newValue:String)->Unit,
+    onCityTextValueChange:(newValue:String)->Unit,
+    onPincodeTextValueChange:(newValue:Int)->Unit,
+    onLandmarkTextValueChange:(newValue:String)->Unit,
+){
+
+    Column(Modifier.fillMaxWidth()) {
+
+        UserDetailItemUpdate(
+            heading = "Country", country.value ,
+            onValueChange = {
+                onCountryTextValueChange(it)
+            },
+            keyBardType = KeyboardType.Text
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        UserDetailItemUpdate(
+            heading = "State", state.value,
+            onValueChange = {
+                onStateTextValueChange(it)
+            }
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(modifier= Modifier.fillMaxWidth()) {
+
+            Box(modifier=Modifier.weight(1f)){
+
+                UserDetailItemUpdate(
+                    heading = "Pincode", pincode.value,
+                    onValueChange = {
+                        onPincodeTextValueChange(it.toInt())
+                    },
+                    keyBardType = KeyboardType.Phone
+                )
+            }
+            Spacer(Modifier.width(8.dp))
+            Box(modifier=Modifier.weight(1f)) {
+                UserDetailItemUpdate(
+                    heading = "City", city.value,
+                    onValueChange = {
+                        onCityTextValueChange(it)
+                    }
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        UserDetailItemUpdate(
+            heading = "Landmark", landmark.value,
+            onValueChange = {
+                onLandmarkTextValueChange(it)
+            },
+            keyBardType = KeyboardType.Text
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+    }
+
+}
+
+
+@Composable
+private fun UserDetailHeading(text:String){
+    Text(
+        text = text,
+        color = Color.DarkGray,
+        fontSize = 14.sp,
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+private fun UserDetailValueUpdate(value:String, onValueChange:(String)->Unit, keyBardType:KeyboardType){
+    TextField(
+        value = value,
+        onValueChange= {
+            onValueChange(it)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(width = 1.5.dp, color = Color(0xFF350099), shape = RoundedCornerShape(8.dp)),
+        colors = TextFieldDefaults.textFieldColors(
+            textColor = Color.Black,
+            cursorColor = Color.Black,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            backgroundColor = Color.Transparent
+        ),
+        shape = RoundedCornerShape(8.dp),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyBardType
+        ),
+        maxLines = 1
+    )
+}
+
+@Composable
+private fun UserDetailItemUpdate( heading:String, value:String, onValueChange:(String)->Unit, keyBardType:KeyboardType = KeyboardType.Text ){
+    Column(Modifier.fillMaxWidth()) {
+        UserDetailHeading(text = heading)
+        Spacer(modifier=Modifier.height(6.dp))
+        UserDetailValueUpdate(value = value, onValueChange= onValueChange, keyBardType)
+    }
+}
+
+

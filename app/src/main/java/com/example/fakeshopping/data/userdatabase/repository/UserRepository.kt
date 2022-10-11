@@ -18,6 +18,8 @@ interface UserRepository {
 
     suspend fun getUserFavourites(phoneNumber:Long): List<Int>
 
+    suspend fun getUserAddress(phoneNumber:Long): UserAddress
+
     suspend fun getUserOrders(phoneNumber:Long): List<UserOrders>
 
     suspend fun getUserCartItems(phoneNumber:Long): Map<Int, Int>

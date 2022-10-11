@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.example.fakeshopping.ui.presentation.paymentscreen.PaymentScreen
+import com.example.fakeshopping.ui.presentation.order_checkout.paymentscreen.PaymentScreen
 import com.example.fakeshopping.ui.theme.FakeShoppingTheme
 import com.example.fakeshopping.utils.PaymentScreenRoutes
 import com.google.gson.Gson
@@ -66,10 +66,17 @@ class OrderPaymentActivity : ComponentActivity(), PaymentResultListener {
                 })
                 PaymentScreen(
                     stratDestination = startDestination,
-                    razorpay,
-                    amountToBePaid,
+                    razorpay = razorpay,
+                    amoutToBePaid = amountToBePaid,
                     currentUserId = currentUserId.toLong(),
-                    onGoBack = {
+                    onPaymentSuccessNav = {
+                        val intent = Intent(
+                            this@OrderPaymentActivity,
+                            MainActivity::class.java
+                        )
+                        startActivity(intent)
+                    },
+                    onGoBack={
                         onBackPressed()
                     },
                     itemsToBuyListString = itemsToBuy,

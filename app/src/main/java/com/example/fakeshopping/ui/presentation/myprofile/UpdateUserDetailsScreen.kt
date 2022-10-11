@@ -32,6 +32,7 @@ import androidx.navigation.NavHostController
 import com.example.fakeshopping.data.userdatabase.repository.UserAddress
 import com.example.fakeshopping.ui.model.myprofileViewmodels.UpdateMyProfileViewmodel
 import com.example.fakeshopping.ui.presentation.components.LoadingView
+import com.example.fakeshopping.ui.presentation.components.UserAddressTextFiled
 import com.example.fakeshopping.ui.theme.ColorWhiteVariant
 import com.example.fakeshopping.utils.MyProfileScreenRoutes
 
@@ -131,129 +132,22 @@ private fun UserDetails(country: State<String>,state: State<String>,city: State<
                 .clip(CircleShape),
             tint = Color.LightGray
         )
-        UserAddressDetailUpdate(
+        UserAddressTextFiled(
             country = country,
             state = state,
             city = city,
             landmark = landmark,
             pincode = pincode,
-            viewModel = viewModel
+            onCityTextValueChange = { viewModel.onCityTextValueChange(it) },
+            onCountryTextValueChange = { viewModel.onCountryTextValueChange(it) },
+            onStateTextValueChange = { viewModel.onStateTextValueChange(it) },
+            onPincodeTextValueChange = { viewModel.onPincodeTextValueChange(it) },
+            onLandmarkTextValueChange = { viewModel.onLandMarkTextValueChange(it) },
         )
 
     }
 
 }
-
-@Composable
-private fun UserAddressDetailUpdate(
-    country: State<String>,
-    state: State<String>,
-    city: State<String>,
-    landmark: State<String>,
-    pincode: State<String>,
-    viewModel: UpdateMyProfileViewmodel
-){
-
-    Column(Modifier.fillMaxWidth()) {
-
-        UserDetailItemUpdate(
-            heading = "Country", country.value ,
-            onValueChange = {
-                viewModel.onCountryTextValueChange(it)
-            },
-            keyBardType = KeyboardType.Text
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        UserDetailItemUpdate(
-            heading = "State", state.value,
-            onValueChange = {
-                viewModel.onStateTextValueChange(it)
-            }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(modifier= Modifier.fillMaxWidth()) {
-
-            Box(modifier=Modifier.weight(1f)){
-
-                UserDetailItemUpdate(
-                    heading = "Pincode", pincode.value,
-                    onValueChange = {
-                        viewModel.onPincodeTextValueChange(it.toInt())
-                    },
-                    keyBardType = KeyboardType.Phone
-                )
-            }
-            Spacer(Modifier.width(8.dp))
-            Box(modifier=Modifier.weight(1f)) {
-                UserDetailItemUpdate(
-                    heading = "City", city.value,
-                    onValueChange = {
-                        viewModel.onCityTextValueChange(it)
-                    }
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-
-        UserDetailItemUpdate(
-            heading = "Landmark", landmark.value,
-            onValueChange = {
-                viewModel.onLandMarkTextValueChange(it)
-            },
-            keyBardType = KeyboardType.Text
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-
-    }
-
-}
-
-@Composable
-private fun UserDetailHeading(text:String){
-    Text(
-        text = text,
-        color = ColorWhiteVariant,
-        fontSize = 14.sp,
-        modifier = Modifier.fillMaxWidth()
-    )
-}
-
-@Composable
-private fun UserDetailValueUpdate(value:String, onValueChange:(String)->Unit, keyBardType:KeyboardType){
-    TextField(
-        value = value,
-        onValueChange= {
-            onValueChange(it)
-        },
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(width = 1.5.dp, color = Color(0xFF350099), shape = RoundedCornerShape(8.dp)),
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = Color.Black,
-            cursorColor = Color.Black,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            backgroundColor = Color.Transparent
-        ),
-        shape = RoundedCornerShape(8.dp),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyBardType
-        ),
-        maxLines = 1
-    )
-}
-
-@Composable
-private fun UserDetailItemUpdate( heading:String, value:String, onValueChange:(String)->Unit, keyBardType:KeyboardType = KeyboardType.Text ){
-    Column(Modifier.fillMaxWidth()) {
-        UserDetailHeading(text = heading)
-        Spacer(modifier=Modifier.height(6.dp))
-        UserDetailValueUpdate(value = value, onValueChange= onValueChange, keyBardType)
-    }
-}
-
 
 @Composable
 private fun UserProfileAndNameUpdate(firstName: State<String>,lastName: State<String>, onFirstNameChange:(String)->Unit,onLastNameChange:(String)->Unit){

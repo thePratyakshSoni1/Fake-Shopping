@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SmallTopAppBar
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -244,7 +243,7 @@ private fun FavouritesBottomBar(onMovieToCart:()->Unit, onCheckout:()->Unit){
                 Spacer(Modifier.width(12.dp))
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { onCheckout() },
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = ColorYellow,

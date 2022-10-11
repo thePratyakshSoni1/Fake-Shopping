@@ -94,7 +94,7 @@ fun ShopingCartScreen(navController:NavController, currentUserId:String){
                     val itemsToBuy = viewModel.cartItems.keys.toList().toString()
                     val itemsToBuyQuantity = viewModel.cartItems.values.toList().toString()
                     Log.d("COMPOSE_NAV", itemsToBuy)
-                    Log.d("COMPOSE_NAV", itemsToBuy)
+                    Log.d("COMPOSE_NAV", itemsToBuyQuantity)
                     navController.navigate( "${Routes.checkOutOverviewScreen}/$itemsToBuy/$itemsToBuyQuantity" )
                              },
                 totalItems = viewModel.cartItems.size,

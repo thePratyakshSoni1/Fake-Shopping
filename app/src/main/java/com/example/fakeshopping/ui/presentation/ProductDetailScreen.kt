@@ -82,7 +82,11 @@ fun ProductDetailScreen(navController: NavController, productId: Int, currentUse
                         viewModel.addToCart()
                         Toast.makeText(context, "Added To Cart ✔", Toast.LENGTH_SHORT).show()
                     },
-                    onBuyBow = { Unit }
+                    onBuyBow = {
+                        val itemsToBuyList = mutableListOf(viewModel.product.value!!.id)
+                        val itemsQuantityList = mutableListOf(1)
+                        navController.navigate("${Routes.checkOutOverviewScreen}/${itemsToBuyList.toString()}/${itemsQuantityList.toString()}")
+                    }
                  )
 
                 Spacer(Modifier.height(24.dp))
