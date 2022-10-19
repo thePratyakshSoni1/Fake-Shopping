@@ -3,10 +3,13 @@ package com.example.fakeshopping.ui.model
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fakeshopping.data.userdatabase.UserOrders
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
 import com.example.fakeshopping.utils.extractIntListStringToIntList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -53,6 +56,25 @@ class PaymentViewModel @Inject constructor( private val userRepo: UserRepository
         _isPaymentDialogVisible = setToVisible
     }
 
+    fun storeOrderDetails():UserOrders{
+        var currentMills = System.currentTimeMillis().toString()
+        var millsLastDigits = currentMills.subSequence(currentMills.length-5,currentMills.length-1)
+        var simpleStrFormat = SimpleDateFormat("ddMMyy", Locale.US)
+        var date = Calendar.getInstance().time
+        var orderId = "${currentUserId.subSequence(6,9)}${millsLastDigits}${simpleStrFormat.format(date)}"
+
+        var order= UserOrders(
+            orderId = orderId.toLong(),
+            productId = itemsToBuy,
+            orderDateTime = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(date),
+            orderDelivered = null,
+            orderDeliverTime = null,
+            productQuantity = itemsToBuyQuantity,
+            orderDeliveryAddress = "Azad Nagar, 225001 Barabanki, Uttar Pradesh, India"
+        )
+        return order
+    }
+
 
     fun updateUserCartAfterPayment(){
 
@@ -62,6 +84,12 @@ class PaymentViewModel @Inject constructor( private val userRepo: UserRepository
                 user.cartItems.remove(it)
             }
             userRepo.updateUser(user)
+        }
+
+        viewModelScope.launch {
+            val tempUser = userRepo.getUserByPhone(currentUserId.toLong())!!
+            tempUser.userOrders.add(storeOrderDetails())
+            userRepo.updateUser(tempUser)
         }
 
     }

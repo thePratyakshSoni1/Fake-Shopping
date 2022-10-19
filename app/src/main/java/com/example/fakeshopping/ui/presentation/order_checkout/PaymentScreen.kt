@@ -1,4 +1,4 @@
-package com.example.fakeshopping.ui.presentation.order_checkout.paymentscreen
+package com.example.fakeshopping.ui.presentation.order_checkout
 
 import android.content.Context
 import android.util.Log
@@ -14,9 +14,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.fakeshopping.OrderPaymentActivity
 import com.example.fakeshopping.ui.model.PaymentViewModel
 import com.example.fakeshopping.ui.presentation.components.PaymentSuccesDialog
+import com.example.fakeshopping.ui.presentation.order_checkout.paymentscreen.CardPaymentFragment
+import com.example.fakeshopping.ui.presentation.order_checkout.paymentscreen.NetbankingFragment
+import com.example.fakeshopping.ui.presentation.order_checkout.paymentscreen.UpiPaymentFragment
+import com.example.fakeshopping.ui.presentation.order_checkout.paymentscreen.WalletPaymentFragment
 import com.example.fakeshopping.utils.PaymentScreenRoutes
 import com.razorpay.PaymentResultListener
 import com.razorpay.Razorpay
@@ -115,7 +118,11 @@ fun PaymentScreen(onPaymentSuccessNav:()->Unit, stratDestination:String,razorpay
         if(viewModel.isPaymentDialogVisible) {
             PaymentSuccesDialog(paymentSucceed = viewModel.isPaymentSuccess, onDialogueRemove = {
                 viewModel.setPaymentDialogVisibility(false)
-                onPaymentSuccessNav()
+                if(viewModel.isPaymentSuccess.value){
+                    onPaymentSuccessNav()
+                }else{
+                    onGoBack()
+                }
             })
         }
     }

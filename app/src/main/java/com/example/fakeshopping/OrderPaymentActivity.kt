@@ -1,23 +1,15 @@
 package com.example.fakeshopping
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.webkit.WebView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.LocalContentAlpha
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import com.example.fakeshopping.ui.presentation.order_checkout.paymentscreen.PaymentScreen
+import com.example.fakeshopping.ui.presentation.order_checkout.PaymentScreen
 import com.example.fakeshopping.ui.theme.FakeShoppingTheme
-import com.example.fakeshopping.utils.PaymentScreenRoutes
-import com.google.gson.Gson
+import com.example.fakeshopping.utils.Routes
 import com.razorpay.PaymentResultListener
 import com.razorpay.Razorpay
 import com.razorpay.ValidateVpaCallback
@@ -70,11 +62,10 @@ class OrderPaymentActivity : ComponentActivity(), PaymentResultListener {
                     amoutToBePaid = amountToBePaid,
                     currentUserId = currentUserId.toLong(),
                     onPaymentSuccessNav = {
-                        val intent = Intent(
-                            this@OrderPaymentActivity,
-                            MainActivity::class.java
-                        )
-                        startActivity(intent)
+                        onBackPressed()
+                        MainActivity.MAINACTIVITY_navController.navigate("${Routes.homeScreen}?category={category}"){
+                            popUpTo("${Routes.homeScreen}?category={category}") { inclusive = true }
+                        }
                     },
                     onGoBack={
                         onBackPressed()
@@ -93,4 +84,5 @@ class OrderPaymentActivity : ComponentActivity(), PaymentResultListener {
     override fun onPaymentError(p0: Int, p1: String?) {
         TODO("Not yet implemented")
     }
+
 }

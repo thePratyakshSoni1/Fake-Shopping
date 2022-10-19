@@ -4,14 +4,17 @@ import android.view.Window
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.fakeshopping.data.userdatabase.UserOrders
 import com.example.fakeshopping.ui.presentation.*
 import com.example.fakeshopping.ui.presentation.homscreen.HomeScreen
 import com.example.fakeshopping.ui.presentation.login.LoginScreenNavigation
+import com.example.fakeshopping.ui.presentation.myorders.UserOrdersScreen
 import com.example.fakeshopping.ui.presentation.myprofile.MyProfileScreen
 import com.example.fakeshopping.ui.presentation.order_checkout.ProductCheckoutScreen
 import com.example.fakeshopping.utils.Routes
@@ -21,6 +24,8 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getC
 
     val navController = rememberNavController()
     var currentUser = getCurrentLoggedUser()
+
+    MainActivity.MAINACTIVITY_navController = navController
 
     NavHost(
         navController = navController,
@@ -116,6 +121,13 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getC
                 currentUser = currentUser!!,
                 onLoggedStateChanged= onLoggedStateChanged
             )
+        }
+
+        composable(
+            route = Routes.userOrders,
+        ){
+            window.statusBarColor = Color.White.toArgb()
+            UserOrdersScreen(currentUserId = currentUser!!)
         }
 
     }

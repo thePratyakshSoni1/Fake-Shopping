@@ -19,6 +19,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.navigation.NavHostController
 import com.example.fakeshopping.ui.theme.FakeShoppingTheme
 import com.example.fakeshopping.utils.LoginStateDataStore
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,10 +30,13 @@ import kotlinx.coroutines.runBlocking
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-
     private val Context.dataStore by preferencesDataStore(
         LoginStateDataStore.dataStoreName
     )
+
+    companion object {
+        lateinit var MAINACTIVITY_navController: NavHostController
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,7 +103,7 @@ class MainActivity : ComponentActivity() {
     private fun createOrSetLoginState(userId:String?){
 
         val dataStoreUserIdKey = stringPreferencesKey(LoginStateDataStore.DATASTORE_USER_ID_KEY)
-        var preferences:Preferences
+        lateinit var preferences:Preferences
             runBlocking {
 
             preferences = dataStore.edit { preferences ->

@@ -282,7 +282,7 @@ fun generateMenuItems(rootNavController: NavController):List<MenuItemData>{
             "Your Orders",
             Icons.Outlined.Send
         ) {
-
+          rootNavController.navigate(Routes.userOrders)
         },
 
         MenuItemData(
