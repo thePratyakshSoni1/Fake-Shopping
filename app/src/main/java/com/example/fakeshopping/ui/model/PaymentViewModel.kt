@@ -1,5 +1,6 @@
 package com.example.fakeshopping.ui.model
 
+import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -80,16 +81,13 @@ class PaymentViewModel @Inject constructor( private val userRepo: UserRepository
 
         viewModelScope.launch {
             val user = userRepo.getUserByPhone(currentUserId.toLong())!!
+            val tempUserOrderDetail = storeOrderDetails()
+            user.userOrders.add(tempUserOrderDetail)
+            Log.d("ORDER_DATASAVED","Strong Data: $tempUserOrderDetail")
             itemsToBuy.forEach{
                 user.cartItems.remove(it)
             }
             userRepo.updateUser(user)
-        }
-
-        viewModelScope.launch {
-            val tempUser = userRepo.getUserByPhone(currentUserId.toLong())!!
-            tempUser.userOrders.add(storeOrderDetails())
-            userRepo.updateUser(tempUser)
         }
 
     }

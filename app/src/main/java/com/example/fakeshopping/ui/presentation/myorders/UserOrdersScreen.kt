@@ -26,7 +26,7 @@ fun UserOrdersScreen(currentUserId:String){
                 .fillMaxSize()
                 .padding(12.dp)
         ){
-            items(viewModel.userOrders){ it->
+            items(viewModel.userOrders){ it ->
                 Card(modifier= Modifier
                     .fillMaxWidth(0.9f)
                     .padding(14.dp)){
