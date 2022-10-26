@@ -9,16 +9,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collection.MutableVector
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -37,6 +42,34 @@ import com.example.fakeshopping.ui.theme.ColorWhiteVariant
     Box(Modifier.fillMaxSize(), contentAlignment= Alignment.Center){
 
 
+    }
+
+}
+
+@Composable
+fun SimpleAppScreensTopBar(title:String, onBackArrowPress:()->Unit){
+
+    Box(Modifier.shadow(elevation = 4.dp)) {
+        TopAppBar(
+            backgroundColor = Color.White,
+            title = {
+                Text(
+                    title,
+                    fontFamily = FontFamily.SansSerif,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            },
+
+            navigationIcon = {
+                IconButton(
+                icon = Icons.Default.ArrowBack,
+                onClick = { onBackArrowPress() },
+                contentDescription = "Go back"
+                )
+            }
+
+        )
     }
 
 }

@@ -34,7 +34,9 @@ fun PaymentScreen(onPaymentSuccessNav:()->Unit, stratDestination:String,razorpay
     viewModel.initViewModel(
         currentUserId,
         itemsToBuyListString,
-        itemsToBuyQuantityListString
+        itemsToBuyQuantityListString,
+        amoutToBePaid,
+        stratDestination
     )
 
     val context = LocalContext.current

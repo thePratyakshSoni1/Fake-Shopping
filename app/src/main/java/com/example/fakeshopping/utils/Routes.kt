@@ -10,5 +10,6 @@ object Routes {
     const val checkOutOverviewScreen = "fakeshop_CheckOutOverviewScreen"
     const val myProfileScreen = "fakeshop_MyProfileScren"
     const val userOrders = "fakeshop_UserOrders"
+    const val userOrderDetails = "fakeshop_UserOrderDetails"
 
 }

@@ -8,6 +8,8 @@ data class UserOrders(
     val orderDelivered:Boolean?,
     val orderDeliverTime:String?,
     val productQuantity:List<Int>,
-    val orderDeliveryAddress:String
+    val orderDeliveryAddress:String,
+    val totalAmountPaid:Float,
+    val paymentMethod:Int
 
 )

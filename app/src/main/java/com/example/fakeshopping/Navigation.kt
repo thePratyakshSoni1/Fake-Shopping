@@ -14,6 +14,7 @@ import com.example.fakeshopping.data.userdatabase.UserOrders
 import com.example.fakeshopping.ui.presentation.*
 import com.example.fakeshopping.ui.presentation.homscreen.HomeScreen
 import com.example.fakeshopping.ui.presentation.login.LoginScreenNavigation
+import com.example.fakeshopping.ui.presentation.myorders.UserOrderDetailScreen
 import com.example.fakeshopping.ui.presentation.myorders.UserOrdersScreen
 import com.example.fakeshopping.ui.presentation.myprofile.MyProfileScreen
 import com.example.fakeshopping.ui.presentation.order_checkout.ProductCheckoutScreen
@@ -127,7 +128,23 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getC
             route = Routes.userOrders,
         ){
             window.statusBarColor = Color.White.toArgb()
-            UserOrdersScreen(currentUserId = currentUser!!)
+            UserOrdersScreen(currentUserId = currentUser!!, { navController.popBackStack() }, goToOrderDetails= {
+                navController.navigate("${Routes.userOrderDetails}/$it")
+            })
+        }
+
+        composable(
+            route = "${Routes.userOrderDetails}/{orderId}",
+            arguments = listOf(
+                navArgument("orderId") {
+                    type = NavType.StringType
+                    nullable = false
+                }
+            )
+        ){ backStackentry ->
+            window.statusBarColor = Color.White.toArgb()
+            UserOrderDetailScreen(currentUserId = currentUser!!, orderId = backStackentry.arguments?.getString("orderId")!!.toLong(),
+                { navController.popBackStack() } )
         }
 
     }

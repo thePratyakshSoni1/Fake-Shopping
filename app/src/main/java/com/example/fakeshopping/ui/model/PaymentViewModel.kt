@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fakeshopping.data.userdatabase.UserOrders
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
+import com.example.fakeshopping.utils.PaymentOptionId
+import com.example.fakeshopping.utils.PaymentScreenRoutes
 import com.example.fakeshopping.utils.extractIntListStringToIntList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,6 +21,9 @@ class PaymentViewModel @Inject constructor( private val userRepo: UserRepository
     private var _currentUserId:String = ""
     private val currentUserId get() = _currentUserId
 
+    private var _amountToPay = mutableStateOf(0F)
+    val amountToPay get() = _amountToPay as State<Float>
+
     private var _itemsToBuy = mutableStateListOf<Int>()
     private val itemsToBuy get() = _itemsToBuy
 
@@ -31,11 +36,14 @@ class PaymentViewModel @Inject constructor( private val userRepo: UserRepository
     val isPaymentSuccess get() = _isPaymentSuccess
     val isPaymentDialogVisible get() = _isPaymentDialogVisible
 
+    var paymentMethod: PaymentOptionId? = null
 
-    fun initViewModel(currentUserId:Long, itemsToBuyListString:String, itemsToBuyQuantityListString:String ){
+
+    fun initViewModel(currentUserId:Long, itemsToBuyListString:String, itemsToBuyQuantityListString:String, amountToPay:Float, methodpath:String ){
         _currentUserId = currentUserId.toString()
 
         viewModelScope.launch {
+            _amountToPay.value = amountToPay
             _itemsToBuy.clear()
             val tempItemsToBuy = extractIntListStringToIntList(itemsToBuyListString)
             _itemsToBuy.addAll(tempItemsToBuy)
@@ -45,6 +53,16 @@ class PaymentViewModel @Inject constructor( private val userRepo: UserRepository
             _itemsToBuyQuantity.clear()
             val tempItemsToBuyQuantity = extractIntListStringToIntList(itemsToBuyQuantityListString)
             _itemsToBuyQuantity.addAll(tempItemsToBuyQuantity)
+        }
+
+        viewModelScope.launch {
+            paymentMethod = when(methodpath){
+                PaymentScreenRoutes.cardFragment -> PaymentOptionId.OPTION_CARD
+                PaymentScreenRoutes.netBankingFragment -> PaymentOptionId.OPTOIN_NETBANKING
+                PaymentScreenRoutes.upiFragment -> PaymentOptionId.OPTION_UPI
+                PaymentScreenRoutes.walletFragment -> PaymentOptionId.OPTOIN_WALLET
+                else -> PaymentOptionId.OPTION_POD
+            }
         }
 
     }
@@ -57,23 +75,31 @@ class PaymentViewModel @Inject constructor( private val userRepo: UserRepository
         _isPaymentDialogVisible = setToVisible
     }
 
-    fun storeOrderDetails():UserOrders{
-        var currentMills = System.currentTimeMillis().toString()
-        var millsLastDigits = currentMills.subSequence(currentMills.length-5,currentMills.length-1)
-        var simpleStrFormat = SimpleDateFormat("ddMMyy", Locale.US)
-        var date = Calendar.getInstance().time
-        var orderId = "${currentUserId.subSequence(6,9)}${millsLastDigits}${simpleStrFormat.format(date)}"
+    fun updatePaymentMetgod(methodId:PaymentOptionId){
+        paymentMethod = methodId
+    }
 
-        var order= UserOrders(
+    suspend fun storeOrderDetails(): UserOrders {
+        val currentMills = System.currentTimeMillis().toString()
+        val millsLastDigits = currentMills.subSequence(currentMills.length - 5, currentMills.length - 1)
+        val simpleStrFormat = SimpleDateFormat("ddMMyy", Locale.US)
+        val date = Calendar.getInstance().time
+        val orderId =
+            "${currentUserId.subSequence(6, 9)}${millsLastDigits}${simpleStrFormat.format(date)}"
+        val userAddress = userRepo.getUserAddress(currentUserId.toLong())
+
+
+        return UserOrders(
             orderId = orderId.toLong(),
             productId = itemsToBuy,
             orderDateTime = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(date),
             orderDelivered = null,
             orderDeliverTime = null,
             productQuantity = itemsToBuyQuantity,
-            orderDeliveryAddress = "Azad Nagar, 225001 Barabanki, Uttar Pradesh, India"
+            orderDeliveryAddress = "${userAddress.landmark}, ${userAddress.pincode} ${userAddress.city}, ${userAddress.state}, ${userAddress.country}",
+            totalAmountPaid = amountToPay.value,
+            paymentMethod = paymentMethod?.id!!
         )
-        return order
     }
 
 
