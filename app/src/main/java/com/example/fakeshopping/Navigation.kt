@@ -144,7 +144,7 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getC
         ){ backStackentry ->
             window.statusBarColor = Color.White.toArgb()
             UserOrderDetailScreen(currentUserId = currentUser!!, orderId = backStackentry.arguments?.getString("orderId")!!.toLong(),
-                { navController.popBackStack() } )
+                { navController.popBackStack() } , rootnavController = navController)
         }
 
     }
