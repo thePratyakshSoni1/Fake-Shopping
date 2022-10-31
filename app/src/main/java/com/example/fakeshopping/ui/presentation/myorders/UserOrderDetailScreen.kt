@@ -2,6 +2,7 @@ package com.example.fakeshopping.ui.presentation.myorders
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,6 +36,7 @@ import com.example.fakeshopping.ui.presentation.components.SimpleAppScreensTopBa
 import com.example.fakeshopping.ui.theme.ColorYellow
 import com.example.fakeshopping.utils.PaymentOptionId
 import com.example.fakeshopping.utils.Routes
+import com.example.fakeshopping.utils.ToolbarProperties
 import com.google.android.gms.wallet.WalletConstants.PaymentMethod
 import kotlin.math.roundToInt
 
@@ -98,44 +100,115 @@ fun UserOrderDetailScreen( currentUserId:String, orderId:Long, onBackPress:()->U
 @Composable
 private fun OrderSummaryCard(order: UserOrders, totalItems:Int) {
 
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(0.95f)
-            .padding(top = 14.dp, bottom = 12.dp),
-        shape = RoundedCornerShape(12.dp)
-    ) {
+    Column{
 
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp, horizontal = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(0.95f)
+                .padding(top = 14.dp, bottom = 14.dp),
+            shape = RoundedCornerShape(12.dp),
+            elevation = 4.dp
         ) {
 
-            OrderSummaryCardTextItem(heading = "Total items", value = totalItems.toString())
-            Spacer(Modifier.height(4.dp))
-            OrderSummaryCardTextItem(heading = "Order Date", value = order.orderDateTime)
-            Spacer(Modifier.height(4.dp))
-            OrderSummaryCardTextItem(heading = "Total Amount", value = order.totalAmountPaid.toString())
-            Spacer(Modifier.height(4.dp))
-            OrderSummaryCardTextItem(heading = "Payment Id", value = order.razorpayPaymentId)
-            Spacer(Modifier.height(4.dp))
-            OrderSummaryCardTextItem( heading = "Method: ",
-                value = when(order.paymentMethod){
-                    PaymentOptionId.OPTION_CARD.id -> { "Card" }
-                    PaymentOptionId.OPTION_POD.id -> { "POD" }
-                    PaymentOptionId.OPTION_UPI.id -> { "UPI" }
-                    PaymentOptionId.OPTOIN_WALLET.id -> { "Wallet" }
-                    PaymentOptionId.OPTOIN_NETBANKING.id -> { "Net Banking" }
-                    else -> { "Error" }
+            Column(
+                Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ){
+
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp, horizontal = 12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+
+                    OrderSummaryCardTextItem(heading = "Total items", value = totalItems.toString())
+                    Spacer(Modifier.height(4.dp))
+                    OrderSummaryCardTextItem(heading = "Order Date", value = order.orderDateTime)
+                    Spacer(Modifier.height(4.dp))
+                    OrderSummaryCardTextItem(heading = "Total Amount", value = order.totalAmountPaid.toString())
+                    Spacer(Modifier.height(4.dp))
+                    OrderSummaryCardTextItem(heading = "Payment Id", value = order.razorpayPaymentId)
+                    Spacer(Modifier.height(4.dp))
+                    OrderSummaryCardTextItem( heading = "Method: ",
+                        value = when(order.paymentMethod){
+                            PaymentOptionId.OPTION_CARD.id -> { "Card" }
+                            PaymentOptionId.OPTION_POD.id -> { "POD" }
+                            PaymentOptionId.OPTION_UPI.id -> { "UPI" }
+                            PaymentOptionId.OPTOIN_WALLET.id -> { "Wallet" }
+                            PaymentOptionId.OPTOIN_NETBANKING.id -> { "Net Banking" }
+                            else -> { "Error" }
+                        }
+                    )
+                    Spacer(Modifier.height(4.dp))
+                    OrderSummaryCardTextItem(heading = "Address", value = order.orderDeliveryAddress)
+                    Spacer(Modifier.height(4.dp))
+                    OrderSummaryCardTextItem(heading = "Status", value = if(order.orderDelivered == true) "Delivered" else "Pending")
                 }
-            )
-            Spacer(Modifier.height(4.dp))
-            OrderSummaryCardTextItem(heading = "Address", value = order.orderDeliveryAddress)
-            Spacer(Modifier.height(4.dp))
-            OrderSummaryCardTextItem(heading = "Status", value = if(order.orderDelivered == true) "Delivered" else "Pending")
-            Spacer(Modifier.height(4.dp))
+
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(bottomStart = 12.dp, bottomEnd=12.dp))
+                        .background(ToolbarProperties.CollapsedToolbarColorBrush)
+                ) {
+                    Spacer(Modifier.height(14.dp))
+                    Box(
+                        Modifier.fillMaxWidth().padding(horizontal = 42.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        LinearProgressIndicator(
+                            progress = 0.5f,
+                            modifier = Modifier.fillMaxWidth().padding(horizontal= 4.dp),
+                            color = ColorYellow,
+                            backgroundColor = Color.White
+                        )
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Box(
+                                Modifier.clip(CircleShape).size(12.dp).background(ColorYellow)
+                            )
+                            Box(
+                                Modifier.clip(CircleShape).size(18.dp).background(ColorYellow)
+                            )
+                            Box(
+                                Modifier.clip(CircleShape).size(12.dp).background(Color.White)
+                            )
+                        }
+                    }
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Order Placed",
+                            fontSize = 12.sp,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.weight(1f).padding(vertical = 6.dp)
+                        )
+                        Text(
+                            text = "Shipped",
+                            fontSize = 14.sp,
+                            color = Color.White,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.weight(1f).padding(vertical = 6.dp)
+                        )
+                        Text(
+                            text = "Delivered",
+                            fontSize = 12.sp,
+                            textAlign = TextAlign.Center,
+                            color = Color.White,
+                            modifier = Modifier.weight(1f).padding(vertical = 6.dp)
+                        )
+                    }
+                    Spacer(Modifier.height(12.dp))
+                }
+
+            }
 
         }
 
@@ -177,7 +250,8 @@ private fun OrderSummaryProductItemsDetails( product:ShopApiProductsResponse, qu
 
     Card( modifier= Modifier
         .fillMaxWidth(0.95f),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        elevation = 2.dp
     ){
 
         Column(Modifier.fillMaxWidth()){
