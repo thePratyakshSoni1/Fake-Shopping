@@ -1,6 +1,7 @@
 package com.example.fakeshopping.ui.presentation.myorders
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -38,6 +39,7 @@ import kotlin.math.roundToInt
 fun UserOrdersScreen(currentUserId:String, onBackPress:()->Unit, goToOrderDetails:(orderId:Long)->Unit){
 
     val viewModel = hiltViewModel<UserOrdersViewModel>()
+    var oldDate = ""
     LaunchedEffect(key1 = true){
         viewModel.setCurrentUser(currentUserId.toLong())
     }
@@ -53,7 +55,19 @@ fun UserOrdersScreen(currentUserId:String, onBackPress:()->Unit, goToOrderDetail
                     .padding(12.dp)
             ){
                 items(viewModel.userOrders){ order ->
-                    Column(){
+                    Column( horizontalAlignment = Alignment.CenterHorizontally ){
+                        if(oldDate != order.orderDateTime) {
+                            oldDate = order.orderDateTime
+                            Spacer(Modifier.height(12.dp))
+                            Text(
+                                modifier = Modifier.clip(RoundedCornerShape(4.dp)).background(ColorYellow).padding(vertical=4.dp, horizontal= 6.dp),
+                                text = order.orderDateTime,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(Modifier.height(8.dp))
+                        }
                         UserOrderItem(
                             order = order,
                             orderProduct = viewModel.userOrderProductDetail
@@ -76,7 +90,9 @@ fun UserOrdersScreen(currentUserId:String, onBackPress:()->Unit, goToOrderDetail
 private fun UserOrderItem(order:UserOrders, orderProduct:ShopApiProductsResponse,  goToOrderDetails:(orderId:Long)->Unit){
 
     Card(
-        modifier=Modifier.fillMaxWidth(0.95f).clickable { goToOrderDetails(order.orderId) },
+        modifier= Modifier
+            .fillMaxWidth(0.95f)
+            .clickable { goToOrderDetails(order.orderId) },
         shape= RoundedCornerShape(12.dp),
     ) {
         Row(

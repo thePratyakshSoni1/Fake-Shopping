@@ -10,6 +10,7 @@ data class UserOrders(
     val productQuantity:List<Int>,
     val orderDeliveryAddress:String,
     val totalAmountPaid:Float,
-    val paymentMethod:Int
+    val paymentMethod:Int,
+    val razorpayPaymentId:String
 
 )

@@ -56,14 +56,18 @@ fun UserOrderDetailScreen( currentUserId:String, orderId:Long, onBackPress:()->U
         if(viewModel.order.value != null) {
             Column(horizontalAlignment = Alignment.CenterHorizontally){
 
-                OrderSummaryCard(
-                    order = viewModel.order.value!!,
-                    totalItems = viewModel.totalItems.value
-                )
-
-                Spacer(Modifier.height(18.dp))
 
                 LazyColumn(content = {
+
+                    item{
+
+                        OrderSummaryCard(
+                            order = viewModel.order.value!!,
+                            totalItems = viewModel.totalItems.value
+                        )
+                        Spacer(Modifier.height(18.dp))
+
+                    }
 
                     items(viewModel.orderProductDetails.keys.toList()){ it ->
                         OrderSummaryProductItemsDetails(
@@ -86,7 +90,6 @@ fun UserOrderDetailScreen( currentUserId:String, orderId:Long, onBackPress:()->U
             }
         }else{
             LoadingView(modifier = Modifier.fillMaxHeight(), circleSize = 32.dp)
-
         }
     }
 
@@ -116,6 +119,8 @@ private fun OrderSummaryCard(order: UserOrders, totalItems:Int) {
             Spacer(Modifier.height(4.dp))
             OrderSummaryCardTextItem(heading = "Total Amount", value = order.totalAmountPaid.toString())
             Spacer(Modifier.height(4.dp))
+            OrderSummaryCardTextItem(heading = "Payment Id", value = order.razorpayPaymentId)
+            Spacer(Modifier.height(4.dp))
             OrderSummaryCardTextItem( heading = "Method: ",
                 value = when(order.paymentMethod){
                     PaymentOptionId.OPTION_CARD.id -> { "Card" }
@@ -129,7 +134,7 @@ private fun OrderSummaryCard(order: UserOrders, totalItems:Int) {
             Spacer(Modifier.height(4.dp))
             OrderSummaryCardTextItem(heading = "Address", value = order.orderDeliveryAddress)
             Spacer(Modifier.height(4.dp))
-            OrderSummaryCardTextItem(heading = "Status", value = if(order.orderDelivered == true) "Delivered" else "Peding")
+            OrderSummaryCardTextItem(heading = "Status", value = if(order.orderDelivered == true) "Delivered" else "Pending")
             Spacer(Modifier.height(4.dp))
 
         }
@@ -219,9 +224,10 @@ private fun OrderSummaryProductItemsDetails( product:ShopApiProductsResponse, qu
                         }
                     }
 
-                    Spacer(Modifier.height(6.dp))
-                    RatingBar(modifier = Modifier
-                        .fillMaxWidth(0.4f),
+                    Spacer(Modifier.height(8.dp))
+                    RatingBar(
+                        modifier = Modifier
+                            .fillMaxWidth(0.4f),
                         starsCount = 5, ratingOutOfFive = product.rating.rate.roundToInt(), isSmallSize = false
                     )
 

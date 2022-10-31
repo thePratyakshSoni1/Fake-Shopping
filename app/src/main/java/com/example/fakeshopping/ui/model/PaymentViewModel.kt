@@ -75,11 +75,11 @@ class PaymentViewModel @Inject constructor( private val userRepo: UserRepository
         _isPaymentDialogVisible = setToVisible
     }
 
-    fun updatePaymentMetgod(methodId:PaymentOptionId){
+    fun updatePaymentMethod(methodId:PaymentOptionId){
         paymentMethod = methodId
     }
 
-    suspend fun storeOrderDetails(): UserOrders {
+    suspend fun storeOrderDetails(razorpayPaymentId:String): UserOrders {
         val currentMills = System.currentTimeMillis().toString()
         val millsLastDigits = currentMills.subSequence(currentMills.length - 5, currentMills.length - 1)
         val simpleStrFormat = SimpleDateFormat("ddMMyy", Locale.US)
@@ -98,16 +98,17 @@ class PaymentViewModel @Inject constructor( private val userRepo: UserRepository
             productQuantity = itemsToBuyQuantity,
             orderDeliveryAddress = "${userAddress.landmark}, ${userAddress.pincode} ${userAddress.city}, ${userAddress.state}, ${userAddress.country}",
             totalAmountPaid = amountToPay.value,
-            paymentMethod = paymentMethod?.id!!
+            paymentMethod = paymentMethod?.id!!,
+            razorpayPaymentId= razorpayPaymentId
         )
     }
 
 
-    fun updateUserCartAfterPayment(){
+    fun updateUserCartAfterPayment(razorpayPaymentId: String){
 
         viewModelScope.launch {
             val user = userRepo.getUserByPhone(currentUserId.toLong())!!
-            val tempUserOrderDetail = storeOrderDetails()
+            val tempUserOrderDetail = storeOrderDetails(razorpayPaymentId)
             user.userOrders.add(tempUserOrderDetail)
             Log.d("ORDER_DATASAVED","Strong Data: $tempUserOrderDetail")
             itemsToBuy.forEach{

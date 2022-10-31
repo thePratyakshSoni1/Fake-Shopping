@@ -44,7 +44,7 @@ fun RatingBar(modifier:Modifier,starsCount:Int,ratingOutOfFive:Int, isSmallSize:
                     }
                 }
             }else{
-                Text("$ratingOutOfFive/5", fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Medium)
+                Text("$ratingOutOfFive/5", fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.Medium, modifier=Modifier.padding(top=2.dp))
                 Image(
                     imageVector = Icons.Default.Star,
                     colorFilter = ColorFilter.tint(Color(0xFFF5EA00)),

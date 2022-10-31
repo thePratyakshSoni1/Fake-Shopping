@@ -7,6 +7,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.fakeshopping.ui.model.PaymentViewModel
 import com.example.fakeshopping.ui.presentation.order_checkout.PaymentScreen
 import com.example.fakeshopping.ui.theme.FakeShoppingTheme
 import com.example.fakeshopping.utils.Routes
@@ -16,13 +18,14 @@ import com.razorpay.ValidateVpaCallback
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
 
-
 // test: rzp_test_9uZj81WaUZURYH, sexret: TlPMOGgmIfFs2pzeNnNgA2pq
 
 @AndroidEntryPoint
-class OrderPaymentActivity : ComponentActivity(), PaymentResultListener {
+class OrderPaymentActivity : PaymentResultListener, ComponentActivity()   {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         val razorpay = Razorpay(this@OrderPaymentActivity)
         val startDestination = intent.extras?.getString("FAKESHOPPING_PAYMENT_ROUTE")!!
@@ -32,6 +35,7 @@ class OrderPaymentActivity : ComponentActivity(), PaymentResultListener {
         val itemsToBuyQuantity = intent.extras?.getString("FAKESHOPPING_PAYMENT_ITEMS_TO_BUY_QUANTITY_LIST")!!
 
         setContent {
+
             FakeShoppingTheme {
                 val context = LocalContext.current
 
@@ -77,12 +81,9 @@ class OrderPaymentActivity : ComponentActivity(), PaymentResultListener {
         }
     }
 
-    override fun onPaymentSuccess(p0: String?) {
-        TODO("Not yet implemented")
-    }
+    override fun onPaymentSuccess(razorpayPaymentId: String?) { }
 
-    override fun onPaymentError(p0: Int, p1: String?) {
-        TODO("Not yet implemented")
-    }
+    override fun onPaymentError(p0: Int, p1: String?) { }
+
 
 }

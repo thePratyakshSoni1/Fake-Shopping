@@ -29,34 +29,34 @@ import org.json.JSONObject
 @Composable
 fun PaymentScreen(onPaymentSuccessNav:()->Unit, stratDestination:String,razorpay: Razorpay, amoutToBePaid:Float, currentUserId: Long, onGoBack:()->Unit, itemsToBuyListString:String, itemsToBuyQuantityListString:String) {
 
-    val viewModel:PaymentViewModel = hiltViewModel()
-
-    viewModel.initViewModel(
-        currentUserId,
-        itemsToBuyListString,
-        itemsToBuyQuantityListString,
-        amoutToBePaid,
-        stratDestination
-    )
-
     val context = LocalContext.current
     val paymentWebView = WebView(context)
+    val viewModel = hiltViewModel<PaymentViewModel>()
     paymentWebView.visibility = View.GONE
 
     fun setPaymentWebviewVisibility(setToVisible:Boolean){
         paymentWebView.visibility = if(setToVisible) View.VISIBLE else View.INVISIBLE
     }
 
+    LaunchedEffect(key1 = true, block = {
+        viewModel.initViewModel(
+            currentUserId,
+            itemsToBuyListString,
+            itemsToBuyQuantityListString,
+            amoutToBePaid,
+            methodpath = stratDestination
+        )
+    })
 
     val onPaymentFailure = {
         viewModel.setPaymentSuccessStatus(false)
         viewModel.setPaymentDialogVisibility(true)
     }
 
-    val onPaymentSuccess = {
+    val onPaymentSuccess:(razorpayPaymentId:String)->Unit = {
+        viewModel.updateUserCartAfterPayment(it)
         viewModel.setPaymentSuccessStatus(true)
         viewModel.setPaymentDialogVisibility(true)
-        viewModel.updateUserCartAfterPayment()
     }
 
     val paymentScreenNavController = rememberNavController()
@@ -72,8 +72,8 @@ fun PaymentScreen(onPaymentSuccessNav:()->Unit, stratDestination:String,razorpay
                             payload, razorpay,
                             context = context,
                             setPaymentWebViewVisibility = { setPaymentWebviewVisibility(it) },
-                            onPaymentSuccess = onPaymentSuccess,
-                            onPaymentFailure = onPaymentFailure
+                            onSuccessPay = onPaymentSuccess,
+                            onFailurePay = onPaymentFailure
                         )
                     },
                     amountToBePaid = amoutToBePaid,
@@ -96,10 +96,10 @@ fun PaymentScreen(onPaymentSuccessNav:()->Unit, stratDestination:String,razorpay
                         Log.d("TOTAL AMOUNT", amoutToBePaid.toString())
                         sendPayRequest(
                             payload, razorpay,
-                            context = context,
                             setPaymentWebViewVisibility = { setPaymentWebviewVisibility(it) },
-                            onPaymentSuccess = onPaymentSuccess,
-                            onPaymentFailure = onPaymentFailure
+                            context = context,
+                            onSuccessPay = onPaymentSuccess,
+                            onFailurePay = onPaymentFailure
                         )
                     },
                     currentUserId
@@ -133,7 +133,14 @@ fun PaymentScreen(onPaymentSuccessNav:()->Unit, stratDestination:String,razorpay
 }
 
 
-private fun sendPayRequest(payload:JSONObject, razorpay: Razorpay, onPaymentSuccess:()->Unit, onPaymentFailure:()->Unit, setPaymentWebViewVisibility:(setToVisible:Boolean)->Unit, context: Context ):Boolean{
+private fun sendPayRequest(
+    payload: JSONObject,
+    razorpay: Razorpay,
+    setPaymentWebViewVisibility: (setToVisible: Boolean) -> Unit,
+    context: Context,
+    onSuccessPay: (razorpayPaymentId:String) -> Unit,
+    onFailurePay: () -> Unit
+):Boolean{
 
     var reqScceed = false
 
@@ -142,12 +149,13 @@ private fun sendPayRequest(payload:JSONObject, razorpay: Razorpay, onPaymentSucc
             setPaymentWebViewVisibility(true)
             try {
                 razorpay.submit(payload, object:PaymentResultListener{
-                    override fun onPaymentSuccess(p0: String?) {
-                        onPaymentSuccess()
+                    override fun onPaymentSuccess(razorpayPaymentId: String?) {
+                        onSuccessPay(razorpayPaymentId!!)
+                        Log.d("PAYMENTSUCCESS_SCR","The Resp: ${razorpayPaymentId!!}")
                     }
 
                     override fun onPaymentError(p0: Int, p1: String?) {
-                        onPaymentFailure()
+                        onFailurePay()
                     }
                 } )
                 reqScceed = true
