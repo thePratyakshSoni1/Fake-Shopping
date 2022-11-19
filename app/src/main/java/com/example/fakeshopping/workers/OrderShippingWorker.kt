@@ -10,7 +10,8 @@ import com.example.fakeshopping.utils.OrderDeliveryStatus
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
-class OrderPlacementWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx, workParams) {
+class OrderShippingWorker(ctx: Context, workParams: WorkerParameters): Worker( ctx, workParams) {
+
 
     override fun doWork(): Result {
 
@@ -21,7 +22,6 @@ class OrderPlacementWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx
         ).build()
 
         Log.d("WORKER_ORDER_EXTR","UserId: ${inputData.keyValueMap[OrderWorkerKeys.KEY_CURRENT_USER_ID.value].toString()} - OrderId: ${inputData.keyValueMap[OrderWorkerKeys.KEY_ORDEID.value].toString()}")
-
         lateinit var tempU: Users
         lateinit var orderId:String
 
@@ -35,19 +35,19 @@ class OrderPlacementWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx
 
             tempU.userOrders.remove(tempOrder)
 
-            tempOrder.orderDeliveryStatus = OrderDeliveryStatus.STATUS_PLACED.value
+            tempOrder.orderDeliveryStatus = OrderDeliveryStatus.STATUS_SHIPPED.value
             tempU.userOrders.add(tempOrder)
             userDao.dao.updateUser(tempU)
 
         }
 
-        makeNotfication("Order Placed", applicationContext)
+        makeNotfication("Order Shipped", applicationContext)
 
         val workManager = WorkManager.getInstance(applicationContext)
         workManager.beginUniqueWork(
             "FSWORKER_ORDERSHIPPMENT_UNIQUEWORK",
             ExistingWorkPolicy.REPLACE,
-            OneTimeWorkRequestBuilder<OrderShippingWorker>().apply{
+            OneTimeWorkRequestBuilder<OrderDeliverWorker>().apply{
                 setInitialDelay(20L, TimeUnit.SECONDS)
                 setInputData(
                     Data.Builder()
@@ -62,8 +62,10 @@ class OrderPlacementWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx
             }.build()
         ).enqueue()
 
+
         return Result.success()
 
     }
+
 
 }

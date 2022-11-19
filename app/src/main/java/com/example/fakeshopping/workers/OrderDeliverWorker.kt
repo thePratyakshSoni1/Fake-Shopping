@@ -10,7 +10,7 @@ import com.example.fakeshopping.utils.OrderDeliveryStatus
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
-class OrderPlacementWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx, workParams) {
+class OrderDeliverWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx, workParams) {
 
     override fun doWork(): Result {
 
@@ -35,35 +35,16 @@ class OrderPlacementWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx
 
             tempU.userOrders.remove(tempOrder)
 
-            tempOrder.orderDeliveryStatus = OrderDeliveryStatus.STATUS_PLACED.value
+            tempOrder.orderDeliveryStatus = OrderDeliveryStatus.STATUS_DELIVERED.value
             tempU.userOrders.add(tempOrder)
             userDao.dao.updateUser(tempU)
 
         }
 
-        makeNotfication("Order Placed", applicationContext)
-
-        val workManager = WorkManager.getInstance(applicationContext)
-        workManager.beginUniqueWork(
-            "FSWORKER_ORDERSHIPPMENT_UNIQUEWORK",
-            ExistingWorkPolicy.REPLACE,
-            OneTimeWorkRequestBuilder<OrderShippingWorker>().apply{
-                setInitialDelay(20L, TimeUnit.SECONDS)
-                setInputData(
-                    Data.Builder()
-                        .putAll(
-                            mutableMapOf(
-                                OrderWorkerKeys.KEY_ORDEID.value to orderId,
-                                OrderWorkerKeys.KEY_CURRENT_USER_ID.value to tempU.userPhoneNumer.toString()
-                            ) as Map<String, Any>
-                        )
-                        .build()
-                )
-            }.build()
-        ).enqueue()
-
+        makeNotfication("Order Delivered", applicationContext)
         return Result.success()
 
     }
+
 
 }
