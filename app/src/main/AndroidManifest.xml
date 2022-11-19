@@ -37,7 +37,7 @@
         <receiver android:name=".otp_code_notification.OtpNotificationReceiver" />
         <meta-data
             android:name="com.razorpay.ApiKey"
-            android:value="rzp_test_9uZj81WaUZURYH" />
+            android:value="rzp_test_mSc4yamsDh8f16" />
     </application>
 
 </manifest>

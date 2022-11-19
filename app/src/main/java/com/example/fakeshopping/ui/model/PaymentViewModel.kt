@@ -1,22 +1,31 @@
 package com.example.fakeshopping.ui.model
 
+import android.app.Application
 import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.fakeshopping.data.userdatabase.UserOrders
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
+import com.example.fakeshopping.utils.OrderDeliveryStatus
 import com.example.fakeshopping.utils.PaymentOptionId
 import com.example.fakeshopping.utils.PaymentScreenRoutes
 import com.example.fakeshopping.utils.extractIntListStringToIntList
+import com.example.fakeshopping.workers.OrderPlacementWorker
+import com.example.fakeshopping.workers.OrderWorkerKeys
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
-class PaymentViewModel @Inject constructor( private val userRepo: UserRepository) : ViewModel() {
+class PaymentViewModel @Inject constructor( private val userRepo: UserRepository, val application:Application) : ViewModel() {
 
     private var _currentUserId:String = ""
     private val currentUserId get() = _currentUserId
@@ -93,7 +102,7 @@ class PaymentViewModel @Inject constructor( private val userRepo: UserRepository
             orderId = orderId.toLong(),
             productId = itemsToBuy,
             orderDateTime = SimpleDateFormat("dd-MM-yyyy", Locale.US).format(date),
-            orderDelivered = null,
+            orderDeliveryStatus = OrderDeliveryStatus.STATUS_PROCESSING.value,
             orderDeliverTime = null,
             productQuantity = itemsToBuyQuantity,
             orderDeliveryAddress = "${userAddress.landmark}, ${userAddress.pincode} ${userAddress.city}, ${userAddress.state}, ${userAddress.country}",
@@ -106,16 +115,44 @@ class PaymentViewModel @Inject constructor( private val userRepo: UserRepository
 
     fun updateUserCartAfterPayment(razorpayPaymentId: String){
 
+        lateinit var tempUserOrderDetail:UserOrders
         viewModelScope.launch {
             val user = userRepo.getUserByPhone(currentUserId.toLong())!!
-            val tempUserOrderDetail = storeOrderDetails(razorpayPaymentId)
+            tempUserOrderDetail = storeOrderDetails(razorpayPaymentId)
+
             user.userOrders.add(tempUserOrderDetail)
             Log.d("ORDER_DATASAVED","Strong Data: $tempUserOrderDetail")
             itemsToBuy.forEach{
                 user.cartItems.remove(it)
             }
             userRepo.updateUser(user)
+
+            val workManager = WorkManager.getInstance(application)
+            workManager.beginUniqueWork(
+                "FSWORKER_ORDERPLACEMENT_UNIQUEWORK",
+                ExistingWorkPolicy.REPLACE,
+                OneTimeWorkRequestBuilder<OrderPlacementWorker>().apply {
+
+                    setInitialDelay(20L, TimeUnit.SECONDS)
+                    Log.d("ORDERID","Adding : ${tempUserOrderDetail.orderId}")
+
+                    setInputData(
+                        Data.Builder()
+                            .putAll(
+                                mutableMapOf(
+                                    OrderWorkerKeys.KEY_ORDEID.value to tempUserOrderDetail.orderId.toString(),
+                                    OrderWorkerKeys.KEY_CURRENT_USER_ID.value to currentUserId
+                                ) as Map<String, Any>
+                            )
+                            .build()
+                    )
+
+                }.build()
+
+            ).enqueue()
+
         }
+
 
     }
 

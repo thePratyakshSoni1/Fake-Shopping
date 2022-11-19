@@ -63,7 +63,7 @@ class NetbankingFragmentViewModel @Inject constructor(): ViewModel() {
                     }
 
                     override fun onError(p0: String?) {
-                        TODO("Not yet implemented")
+                        Log.d("PaymentMethod_ERR", "GOT Error:\n $p0")
                     }
 
                 }

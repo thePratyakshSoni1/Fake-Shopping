@@ -64,7 +64,7 @@ fun PaymentScreen(onPaymentSuccessNav:()->Unit, stratDestination:String,razorpay
         NavHost(navController = paymentScreenNavController, startDestination = stratDestination) {
 
             composable(route = PaymentScreenRoutes.cardFragment) {
-                razorpay.changeApiKey("rzp_test_9uZj81WaUZURYH")
+                razorpay.changeApiKey("rzp_test_mSc4yamsDh8f16")
 
                 CardPaymentFragment(
                     sendRequest = { payload ->

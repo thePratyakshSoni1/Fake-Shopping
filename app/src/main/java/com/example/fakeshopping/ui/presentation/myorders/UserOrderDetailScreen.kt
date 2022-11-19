@@ -34,6 +34,7 @@ import com.example.fakeshopping.ui.presentation.components.LoadingView
 import com.example.fakeshopping.ui.presentation.components.RatingBar
 import com.example.fakeshopping.ui.presentation.components.SimpleAppScreensTopBar
 import com.example.fakeshopping.ui.theme.ColorYellow
+import com.example.fakeshopping.utils.OrderDeliveryStatus
 import com.example.fakeshopping.utils.PaymentOptionId
 import com.example.fakeshopping.utils.Routes
 import com.example.fakeshopping.utils.ToolbarProperties
@@ -145,7 +146,8 @@ private fun OrderSummaryCard(order: UserOrders, totalItems:Int) {
                     Spacer(Modifier.height(4.dp))
                     OrderSummaryCardTextItem(heading = "Address", value = order.orderDeliveryAddress)
                     Spacer(Modifier.height(4.dp))
-                    OrderSummaryCardTextItem(heading = "Status", value = if(order.orderDelivered == true) "Delivered" else "Pending")
+                    OrderSummaryCardTextItem(heading = "Status",
+                        value = if(order.orderDeliveryStatus == OrderDeliveryStatus.STATUS_DELIVERED.value) "Delivered" else "Pending")
                 }
 
                 Column(
@@ -159,8 +161,16 @@ private fun OrderSummaryCard(order: UserOrders, totalItems:Int) {
                         Modifier.fillMaxWidth().padding(horizontal = 42.dp),
                         contentAlignment = Alignment.Center
                     ) {
+
+                        var progress =  when(order.orderDeliveryStatus){
+                            OrderDeliveryStatus.STATUS_DELIVERED.value -> 1.0f
+                            OrderDeliveryStatus.STATUS_SHIPPED.value -> 0.5f
+                            OrderDeliveryStatus.STATUS_PLACED.value -> 0.1f
+                            else -> { 0f }
+                        }
+
                         LinearProgressIndicator(
-                            progress = 0.5f,
+                            progress = progress,
                             modifier = Modifier.fillMaxWidth().padding(horizontal= 4.dp),
                             color = ColorYellow,
                             backgroundColor = Color.White
@@ -171,13 +181,19 @@ private fun OrderSummaryCard(order: UserOrders, totalItems:Int) {
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Box(
-                                Modifier.clip(CircleShape).size(12.dp).background(ColorYellow)
+                                Modifier.clip(CircleShape)
+                                    .size( if( progress > 0f ) 18.dp else 12.dp)
+                                    .background( if( progress > 0f ) ColorYellow else Color.White)
                             )
                             Box(
-                                Modifier.clip(CircleShape).size(18.dp).background(ColorYellow)
+                                Modifier.clip(CircleShape).size(18.dp)
+                                    .size( if(progress >= 0.5f ) 18.dp else 12.dp)
+                                    .background( if(progress >= 0.5f ) ColorYellow else Color.White)
                             )
                             Box(
-                                Modifier.clip(CircleShape).size(12.dp).background(Color.White)
+                                Modifier.clip(CircleShape).size(12.dp)
+                                    .size( if(progress == 1f ) 18.dp else 12.dp)
+                                    .background( if(progress == 1f ) ColorYellow else Color.White)
                             )
                         }
                     }

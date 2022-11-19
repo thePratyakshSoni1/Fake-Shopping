@@ -33,6 +33,7 @@ import com.example.fakeshopping.ui.model.UserOrdersViewModel
 import com.example.fakeshopping.ui.presentation.components.RatingBar
 import com.example.fakeshopping.ui.presentation.components.SimpleAppScreensTopBar
 import com.example.fakeshopping.ui.theme.ColorYellow
+import com.example.fakeshopping.utils.OrderDeliveryStatus
 import kotlin.math.roundToInt
 
 @Composable
@@ -129,10 +130,10 @@ private fun UserOrderItem(order:UserOrders, orderProduct:ShopApiProductsResponse
 
                 Spacer(Modifier.height(6.dp))
                 Text(
-                    text = if (order.orderDelivered == true) "Delivered" else "Pending",
+                    text = if (order.orderDeliveryStatus == OrderDeliveryStatus.STATUS_DELIVERED.value) "Delivered" else "Pending",
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Left,
-                    color = if (order.orderDelivered == true) Color.Green else ColorYellow
+                    color = if (order.orderDeliveryStatus == OrderDeliveryStatus.STATUS_DELIVERED.value) Color.Green else ColorYellow
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))

@@ -18,7 +18,8 @@ import com.razorpay.ValidateVpaCallback
 import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONObject
 
-// test: rzp_test_9uZj81WaUZURYH, sexret: TlPMOGgmIfFs2pzeNnNgA2pq
+// not working - test: rzp_test_9uZj81WaUZURYH, sexret: TlPMOGgmIfFs2pzeNnNgA2pq
+// working keys - test: rzp_test_mSc4yamsDh8f16, sexret: J7tP0kb0MUPB1bVqSTBuf4YE
 
 @AndroidEntryPoint
 class OrderPaymentActivity : PaymentResultListener, ComponentActivity()   {

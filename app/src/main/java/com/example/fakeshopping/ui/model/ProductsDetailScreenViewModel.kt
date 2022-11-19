@@ -1,5 +1,6 @@
 package com.example.fakeshopping.ui.model
 
+import android.app.Application
 import android.security.keystore.StrongBoxUnavailableException
 import android.util.Log
 import androidx.compose.runtime.MutableState
@@ -10,16 +11,22 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.core.util.PatternsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.fakeshopping.data.ShopApiProductsResponse
 import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
+import com.example.fakeshopping.workers.OrderPlacementWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
-class ProductsDetailScreenViewModel @Inject constructor(private val shopRepo: TestDataRepo, private val userRepo:UserRepository) : ViewModel() {
+class ProductsDetailScreenViewModel @Inject constructor(private val shopRepo: TestDataRepo, private val userRepo:UserRepository, val application: Application) : ViewModel() {
 
     private var _product: MutableState<ShopApiProductsResponse?> = mutableStateOf(null)
     val product get() = _product
