@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
@@ -32,17 +33,17 @@ class SearchSuggestionFragmentViewModel @Inject constructor(val repository: Test
         withContext(Dispatchers.IO){
             if (searchString.value.text.isNotEmpty()) {
                 _suggestions.clear()
-                delay(1000L)
+                delay(150L)
                 Log.d("SUGGESTION_VIEWMODEL", "I was running ${searchString.value.text}")
                 val responseProducts = async {
                     repository.getallProducts().filter {
-                        it.title.contains(searchString.value.text, true)
+                        it.title.lowercase().contains(searchString.value.text.lowercase(), true)
                     }
                 }
 
                 val temp = mutableListOf<String>()
                 responseProducts.await().map{
-                    if(it.title.contains(searchString.value.text)){
+                    if(it.title.lowercase().contains(searchString.value.text.lowercase())){
                         temp.add(it.title)
                     }
                 }

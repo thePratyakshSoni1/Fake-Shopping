@@ -37,6 +37,10 @@ class UserOrdersViewModel @Inject constructor( private val userRepo:UserReposito
                 }
                 _userOrders.add( items )
             }
+            
+            _userOrders.sortByDescending {
+                it.orderDateTime.toString().split("-")[0]
+            }
         }
     }
 

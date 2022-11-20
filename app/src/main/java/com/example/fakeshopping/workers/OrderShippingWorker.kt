@@ -48,7 +48,7 @@ class OrderShippingWorker(ctx: Context, workParams: WorkerParameters): Worker( c
             "FSWORKER_ORDERSHIPPMENT_UNIQUEWORK",
             ExistingWorkPolicy.REPLACE,
             OneTimeWorkRequestBuilder<OrderDeliverWorker>().apply{
-                setInitialDelay(20L, TimeUnit.SECONDS)
+                setInitialDelay((0..48).random().toLong(), TimeUnit.SECONDS)
                 setInputData(
                     Data.Builder()
                         .putAll(

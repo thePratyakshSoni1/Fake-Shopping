@@ -64,17 +64,20 @@ fun HomeScreenMainFragment(
     val toolbarMotionScene = remember{
         context.resources.openRawResource(R.raw.topappbar_motion_scene).readBytes().decodeToString()
     }
+    window.statusBarColor = homeScreenviewmodelFragment.statusBarColor.value.toArgb()
 
 
     fun setHeaderColor(isCollapsed:Boolean){
         if(isCollapsed){
             homeScreenviewmodelFragment.toolbarColor.value = ToolbarProperties.CollapsedToolbarColorBrush
             homeScreenviewmodelFragment.searchBarColor.value = Color.White
-            window.statusBarColor = Color(0xFF350099).toArgb()
+            //window.statusBarColor = Color(0xFF350099).toArgb()
+            homeScreenviewmodelFragment.statusBarColor.value = Color(0xFF350099)
         }else{
             homeScreenviewmodelFragment.toolbarColor.value = ToolbarProperties.ExpandedToolbarColorBrush
             homeScreenviewmodelFragment.searchBarColor.value = ColorWhiteVariant
-            window.statusBarColor = Color(0xFFE9E9E9).toArgb()
+            //window.statusBarColor = Color(0xFFE9E9E9).toArgb()
+            homeScreenviewmodelFragment.statusBarColor.value = Color.White
         }
     }
 
@@ -148,6 +151,7 @@ fun HomeScreenMainFragment(
             onCategoryChange = {
                 homeScreenviewmodelFragment.toolBaroffsetY.value = 0f
                 homeScreenviewmodelFragment.changeCategory( it )
+                setHeaderColor(isCollapsed = false)
             },
             showDialog= showAccountDialog,
             onCartIconClick = {

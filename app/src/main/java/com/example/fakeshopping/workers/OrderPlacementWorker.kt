@@ -48,7 +48,7 @@ class OrderPlacementWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx
             "FSWORKER_ORDERSHIPPMENT_UNIQUEWORK",
             ExistingWorkPolicy.REPLACE,
             OneTimeWorkRequestBuilder<OrderShippingWorker>().apply{
-                setInitialDelay(20L, TimeUnit.SECONDS)
+                setInitialDelay((0..24).random().toLong(), TimeUnit.SECONDS)
                 setInputData(
                     Data.Builder()
                         .putAll(
@@ -59,6 +59,8 @@ class OrderPlacementWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx
                         )
                         .build()
                 )
+
+
             }.build()
         ).enqueue()
 

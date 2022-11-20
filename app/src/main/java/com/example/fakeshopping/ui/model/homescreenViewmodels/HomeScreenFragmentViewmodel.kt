@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fakeshopping.R
@@ -34,6 +36,7 @@ class HomeScreenFragmentViewmodel @Inject constructor(private val repository: Te
     val toolBaroffsetY: MutableState<Float> =  mutableStateOf(0f)
     val toolbarColor =  mutableStateOf(ToolbarProperties.ExpandedToolbarColorBrush)
     val searchBarColor = mutableStateOf(ColorWhiteVariant)
+    val statusBarColor = mutableStateOf(Color.White)
 
     private val _products = mutableStateListOf<ShopApiProductsResponse>()
     private val _currentUserName = mutableStateOf<String>("")

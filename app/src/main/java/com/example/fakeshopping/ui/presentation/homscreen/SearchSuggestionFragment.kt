@@ -84,13 +84,12 @@ fun HomeScreenSearchSuggestionFragment(
 
                     Row(
                         Modifier
-                            .fillMaxWidth()
-                            .padding(start = 20.dp, end = 16.dp)
-                            .clickable{
+                            .fillMaxWidth().clickable{
                                 searchSuggestionViewModel.changeSearchText(TextFieldValue(item))
                                 keyboardController?.hide()
                                 searchProduct(searchSuggestionViewModel.searchString.value.text)
-                            },
+                            }
+                            .padding(start = 20.dp, end = 16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
 

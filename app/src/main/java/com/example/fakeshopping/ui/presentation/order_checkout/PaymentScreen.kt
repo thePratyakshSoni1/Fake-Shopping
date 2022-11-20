@@ -156,6 +156,7 @@ private fun sendPayRequest(
 
                     override fun onPaymentError(p0: Int, p1: String?) {
                         onFailurePay()
+                        Log.d("PAYMENT_ERR","$p1")
                     }
                 } )
                 reqScceed = true

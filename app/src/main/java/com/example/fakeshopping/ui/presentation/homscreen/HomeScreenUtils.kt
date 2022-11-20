@@ -357,9 +357,6 @@ private fun HeaderSectionCategoryListItem(
         if (isSelected) ColorYellow
         else chipColor.value
 
-    val textColor: Color =
-        if (isSelected) Color.White
-        else Color.DarkGray
 
     Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier
         .padding(horizontal = 4.dp)
@@ -373,7 +370,7 @@ private fun HeaderSectionCategoryListItem(
     ) {
         Text(
             text = categoryName,
-            color = textColor,
+            color = if (isSelected) Color.White else Color.DarkGray,
             fontFamily = FontFamily.SansSerif,
             fontSize = 16.sp,
             fontWeight=FontWeight.Bold,

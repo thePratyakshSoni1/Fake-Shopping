@@ -47,20 +47,20 @@ class CardPaymentViewModel @Inject constructor(private val userRepo:UserReposito
 
     fun isCardNumberValid():Boolean{
         Log.d("REGEX TEST"," Contains Non-Digit: ${ cardNumber.value.contains( Regex("[^0-9] "))}")
-        return cardNumber.value.length == 14 && !cardNumber.value.contains( Regex("[^0-9]"))
+        return !cardNumber.value.contains( Regex("[^0-9]"))
     }
 
     fun isCardExpiryValid():Boolean{
         return  cardExpiry.value.contains("/") &&
                 cardExpiry.value.split("/")[1].length == 2 &&
                 cardExpiry.value.split("/")[0].isNotEmpty() &&
-                cardExpiry.value.split("/")[0].contains(Regex("[^0-9]")) &&
-                cardExpiry.value.split("/")[1].contains(Regex("[^0-9]"))
+                !cardExpiry.value.split("/")[0].contains(Regex("[^0-9]")) &&
+                !cardExpiry.value.split("/")[1].contains(Regex("[^0-9]"))
 
     }
 
     fun isValidCVV():Boolean{
-        return cardCvv.value.contains(Regex("[^0-9]")) && cardCvv.value.length == 3
+        return !cardCvv.value.contains(Regex("[^0-9]")) && cardCvv.value.length == 3
 
     }
 
