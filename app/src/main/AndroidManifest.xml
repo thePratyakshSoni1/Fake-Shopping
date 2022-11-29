@@ -30,11 +30,26 @@
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter>
+
+                <data android:host="fakeshop.in"
+                      android:scheme="https"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <action android:name="android.intent.action.VIEW"/>
+
+            </intent-filter>
+
         </activity>
+
+        <receiver android:name=".deliverydepartment_notifications.DeliveryNotificationReceiver" />
         <receiver android:name=".otp_code_notification.OtpNotificationReceiver" />
+
         <meta-data
             android:name="com.razorpay.ApiKey"
             android:value="rzp_test_mSc4yamsDh8f16" />

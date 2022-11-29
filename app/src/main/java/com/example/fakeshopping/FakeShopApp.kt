@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
+import com.example.fakeshopping.deliverydepartment_notifications.DeliveryNotificationService
 import com.example.fakeshopping.otp_code_notification.OtpCodeNotificationService
 import dagger.hilt.android.HiltAndroidApp
 
@@ -13,22 +14,31 @@ class FakeShopApp : Application(){
 
     override fun onCreate() {
         super.onCreate()
-        createNotificationChannel()
+        createNotificationChannels()
     }
 
-    private fun createNotificationChannel(){
+    private fun createNotificationChannels(){
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
 
-            val channel = NotificationChannel(
+            val channelOtpCodes = NotificationChannel(
                 OtpCodeNotificationService.OTP_CODES_CHANNEL_ID,
                 "OTP codes",
                 NotificationManager.IMPORTANCE_HIGH
             )
+            channelOtpCodes.description = "Used to receieve simulated OTP codes"
 
-            channel.description = "Used to receieve simulated OTP codes"
+            val channelDeliveryUpdates = NotificationChannel(
+                DeliveryNotificationService.deliveryNotificationChannelId,
+                "Delivery Department Notifications",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            channelDeliveryUpdates.description = "Updating you with your order delivery status"
+
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+            notificationManager.createNotificationChannels(
+                listOf( channelOtpCodes, channelDeliveryUpdates )
+            )
 
         }
 

@@ -133,7 +133,7 @@ class PaymentViewModel @Inject constructor( private val userRepo: UserRepository
                 ExistingWorkPolicy.REPLACE,
                 OneTimeWorkRequestBuilder<OrderPlacementWorker>().apply {
 
-                    setInitialDelay( (0..10).random().toLong() , TimeUnit.SECONDS)
+                    setInitialDelay( 10L , TimeUnit.SECONDS)
                     Log.d("ORDERID","Adding : ${tempUserOrderDetail.orderId}")
 
                     setInputData(

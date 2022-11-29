@@ -1,15 +1,14 @@
 package com.example.fakeshopping
 
+import android.content.Intent
 import android.view.Window
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.navigation.NavHostController
-import androidx.navigation.NavType
+import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.fakeshopping.data.userdatabase.UserOrders
 import com.example.fakeshopping.ui.presentation.*
 import com.example.fakeshopping.ui.presentation.homscreen.HomeScreen
@@ -135,6 +134,12 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getC
 
         composable(
             route = "${Routes.userOrderDetails}/{orderId}",
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern= "https://fakeshop.in/{orderId}"
+                    action= Intent.ACTION_VIEW
+                }
+            ),
             arguments = listOf(
                 navArgument("orderId") {
                     type = NavType.StringType
