@@ -68,7 +68,7 @@ class OrderPaymentActivity : PaymentResultListener, ComponentActivity()   {
                     currentUserId = currentUserId.toLong(),
                     onPaymentSuccessNav = {
                         onBackPressed()
-                        MainActivity.MAINACTIVITY_navController.navigate("${Routes.homeScreen}?category={category}"){
+                        MainActivity.getMainNavController().navigate("${Routes.homeScreen}?category={category}"){
                             popUpTo("${Routes.homeScreen}?category={category}") { inclusive = true }
                         }
                     },

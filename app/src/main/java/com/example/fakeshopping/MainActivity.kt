@@ -30,12 +30,22 @@ import kotlinx.coroutines.runBlocking
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val Context.dataStore by preferencesDataStore(
-        LoginStateDataStore.dataStoreName
-    )
 
     companion object {
-        lateinit var MAINACTIVITY_navController: NavHostController
+
+        private val Context.dataStore by preferencesDataStore(
+            LoginStateDataStore.dataStoreName
+        )
+
+        private lateinit var MAINACTIVITY_navController: NavHostController
+        fun setMainNavController(navController:NavHostController){
+            MAINACTIVITY_navController = navController
+        }
+
+        fun getMainNavController():NavHostController{
+            return MAINACTIVITY_navController
+        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

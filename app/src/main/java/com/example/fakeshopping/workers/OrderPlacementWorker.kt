@@ -68,7 +68,7 @@ class OrderPlacementWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx
         }
 
         DeliveryNotificationService(applicationContext)
-            .sendNotification("Order Shipped", "Your order for $orderItems has been placed", orderId.toLong())
+            .sendNotification("Order Placed", "Your order for $orderItems has been placed", orderId.toLong())
 
 
 

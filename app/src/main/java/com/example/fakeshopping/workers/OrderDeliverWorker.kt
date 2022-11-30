@@ -67,10 +67,8 @@ class OrderDeliverWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx, 
 
         }
 
-        DeliveryNotificationService(applicationContext).sendNotification("Order Shipped", "Your order for $orderItems just got delivered", orderId.toLong())
+        DeliveryNotificationService(applicationContext).sendNotification("Your order just got delivered !", "Order for $orderItems just got delivered", orderId.toLong())
 
-
-        makeNotfication("Order Delivered", applicationContext)
         return Result.success()
 
     }

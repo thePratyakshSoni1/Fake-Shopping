@@ -87,6 +87,7 @@ class DeliveryNotificationService(private val context:Context) {
             deliveryNotificationChannelId
         ).setSmallIcon( R.drawable.ic_cart ).setContentTitle(title)
             .setContentText(message)
+            .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .setOngoing(false).build()
 

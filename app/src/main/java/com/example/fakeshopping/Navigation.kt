@@ -25,7 +25,7 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getC
     val navController = rememberNavController()
     var currentUser = getCurrentLoggedUser()
 
-    MainActivity.MAINACTIVITY_navController = navController
+    MainActivity.setMainNavController(navController)
 
     NavHost(
         navController = navController,
