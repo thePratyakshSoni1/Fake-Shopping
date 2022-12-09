@@ -51,13 +51,7 @@ fun HomeScreenMainFragment(
     val homeScreenviewmodelFragment: HomeScreenFragmentViewmodel = hiltViewModel()
     val showAccountDialog =  remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = true ){
-        Log.d("FRAGMENT","IM here: Suggestion")
-        homeScreenviewmodelFragment.setUserId(userId)
-        homeScreenviewmodelFragment.changeCategory(category)
-    }
-
-    val homefeedScrollOffset = rememberLazyGridState()
+    val homefeedScrollOffset = rememberLazyGridState( homeScreenviewmodelFragment.feedFirstVisibleItemIndx, homeScreenviewmodelFragment.feedFirstVisibleItemoffset )
 
     val context = LocalContext.current
 
@@ -66,6 +60,19 @@ fun HomeScreenMainFragment(
     }
     window.statusBarColor = homeScreenviewmodelFragment.statusBarColor.value.toArgb()
 
+    LaunchedEffect(key1 = true ){
+        Log.d("FRAGMENT","IM here: Suggestion")
+        homeScreenviewmodelFragment.setUserId(userId)
+        homeScreenviewmodelFragment.changeCategory(category)
+
+    }
+
+    DisposableEffect(key1 = true, effect = {
+        onDispose{
+            homeScreenviewmodelFragment.feedFirstVisibleItemIndx = homefeedScrollOffset.firstVisibleItemIndex
+            homeScreenviewmodelFragment.feedFirstVisibleItemoffset = homefeedScrollOffset.firstVisibleItemScrollOffset
+        }
+    })
 
     fun setHeaderColor(isCollapsed:Boolean){
         if(isCollapsed){
@@ -117,6 +124,12 @@ fun HomeScreenMainFragment(
                             setHeaderColor(true)
                             homeScreenviewmodelFragment.toolBaroffsetY.value = 1f
                         }
+
+                        homeScreenviewmodelFragment.feedFirstVisibleItemIndx =
+                            homefeedScrollOffset.firstVisibleItemIndex
+                        homeScreenviewmodelFragment.feedFirstVisibleItemoffset =
+                            homefeedScrollOffset.firstVisibleItemScrollOffset
+
                         return Offset.Zero
                     }
                 })
@@ -125,7 +138,7 @@ fun HomeScreenMainFragment(
                     rootNavController,
                     homeScreenviewmodelFragment.bannerResources,
                     homeScreenviewmodelFragment.userInteractedWithBanners,
-                    homefeedScrollOffset,
+                    listState= homefeedScrollOffset,
                     homeScreenviewmodelFragment.products,
                     onFavouriteButtonClick= {
                         if (homeScreenviewmodelFragment.userFavs.contains(it)) {
@@ -165,6 +178,21 @@ fun HomeScreenMainFragment(
             AccountDialog(userName = homeScreenviewmodelFragment.currentUserName.value, menuItems = generateMenuItems(rootNavController), showAccountDialog, painterResource(id = R.drawable.test_product_placeholder))
         }
 
+}
+
+@Composable
+private fun homefeedScrollState(viewModel:HomeScreenFragmentViewmodel):LazyGridState{
+    
+    val scrollState= rememberLazyGridState(viewModel.feedFirstVisibleItemIndx, viewModel.feedFirstVisibleItemoffset)
+    
+    DisposableEffect(key1 = true, effect = {
+        onDispose{
+            viewModel.feedFirstVisibleItemIndx = scrollState.firstVisibleItemIndex
+            viewModel.feedFirstVisibleItemoffset = scrollState.firstVisibleItemScrollOffset
+        }
+    })
+    
+    return scrollState
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -290,24 +318,17 @@ fun generateMenuItems(rootNavController: NavController):List<MenuItemData>{
         },
 
         MenuItemData(
-            "Your Coupons",
-            Icons.Outlined.List
-        ) {
-
-        },
-
-        MenuItemData(
             "Settings",
             Icons.Outlined.Settings
         ) {
-
+           rootNavController.navigate(Routes.settingScreen)
         },
 
         MenuItemData(
             "Support",
             Icons.Rounded.Info
         ) {
-
+            rootNavController.navigate(Routes.supportScreen)
         }
 
     )

@@ -22,6 +22,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavHostController
 import com.example.fakeshopping.ui.theme.FakeShoppingTheme
 import com.example.fakeshopping.utils.LoginStateDataStore
+import com.example.fakeshopping.utils.SettingStateDataStore
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -33,9 +34,10 @@ class MainActivity : ComponentActivity() {
 
     companion object {
 
-        private val Context.dataStore by preferencesDataStore(
+        private val Context.userNameDataStore by preferencesDataStore(
             LoginStateDataStore.dataStoreName
         )
+
 
         private lateinit var MAINACTIVITY_navController: NavHostController
         fun setMainNavController(navController:NavHostController){
@@ -104,7 +106,7 @@ class MainActivity : ComponentActivity() {
         val dataStoreKey = stringPreferencesKey(LoginStateDataStore.DATASTORE_USER_ID_KEY)
         val preferences: Preferences
         runBlocking {
-            preferences = dataStore.data.first()
+            preferences = userNameDataStore.data.first()
         }
         return preferences[dataStoreKey]
 
@@ -116,7 +118,7 @@ class MainActivity : ComponentActivity() {
         lateinit var preferences:Preferences
             runBlocking {
 
-            preferences = dataStore.edit { preferences ->
+            preferences = userNameDataStore.edit { preferences ->
                 preferences[dataStoreUserIdKey] = userId ?: ""
             }
 

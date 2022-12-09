@@ -2,6 +2,7 @@ package com.example.fakeshopping.ui.model.loginscreenViewmodels
 
 import android.util.Log
 import androidx.compose.runtime.State
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,8 @@ import com.example.fakeshopping.data.userdatabase.UserOrders
 import com.example.fakeshopping.data.userdatabase.Users
 import com.example.fakeshopping.data.userdatabase.repository.UserAddress
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
+import com.example.fakeshopping.data.usersettingsdatabse.Settings
+import com.example.fakeshopping.data.usersettingsdatabse.repository.UserSettingRepository
 import com.example.fakeshopping.utils.LoginSignupStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,7 +20,7 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
-class SignupFragmentViewModel @Inject constructor(val usersRepo: UserRepository): ViewModel() {
+class SignupFragmentViewModel @Inject constructor(private val usersRepo: UserRepository, private val settingsRepo: UserSettingRepository ): ViewModel() {
 
     init{
         Log.d("SIGNUP","Now on signup screen viewModel initializing")
@@ -117,6 +120,20 @@ class SignupFragmentViewModel @Inject constructor(val usersRepo: UserRepository)
 
         if(verifySignUpDetails() == LoginSignupStatus.STATUS_SIGNUP_SUCCESS){
 
+            viewModelScope.launch {
+
+                settingsRepo.addUserSettings(
+                    Settings(
+                        userId = phone.value.toLong(),
+                        isAddressChangeSchemeEnabled = true,
+                        isOrderUpdatesnotificationsEnabled = true,
+                        isOtpCodesNotifictionEnabled = true,
+                        isEmailLettersEnabled = true
+                    )
+                )
+
+            }
+
             runBlocking {
                 usersRepo.addUser(
                     Users(
@@ -139,6 +156,7 @@ class SignupFragmentViewModel @Inject constructor(val usersRepo: UserRepository)
 
                 Log.d("USER_DATA", usersRepo.getUserByPhone(phone.value.toLong()).toString())
             }
+
             return LoginSignupStatus.STATUS_LOGIN_SUCCESS
         }else{
             return LoginSignupStatus.STATUS_SIGNUP_FAILED

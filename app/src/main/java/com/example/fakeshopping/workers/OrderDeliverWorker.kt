@@ -9,6 +9,9 @@ import com.example.fakeshopping.data.FakeShopApi
 import com.example.fakeshopping.data.repository.ShopApiRepositoryImpl
 import com.example.fakeshopping.data.userdatabase.UserDatabase
 import com.example.fakeshopping.data.userdatabase.Users
+import com.example.fakeshopping.data.userdatabase.repository.UserRepositoryImpl
+import com.example.fakeshopping.data.usersettingsdatabse.UserSettingsDatabase
+import com.example.fakeshopping.data.usersettingsdatabse.repository.UserSettingsRepositoryImpl
 import com.example.fakeshopping.deliverydepartment_notifications.DeliveryNotificationService
 import com.example.fakeshopping.utils.OrderDeliveryStatus
 import com.squareup.moshi.Moshi
@@ -22,11 +25,13 @@ class OrderDeliverWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx, 
 
     override fun doWork(): Result {
 
-        val userDao = Room.databaseBuilder(
-            applicationContext,
-            UserDatabase::class.java,
-            "users_db"
-        ).build()
+        val userRepo = UserRepositoryImpl(
+                Room.databaseBuilder(
+                applicationContext,
+                UserDatabase::class.java,
+                "users_db"
+                ).build().dao
+        )
 
         Log.d("WORKER_ORDER_EXTR","UserId: ${inputData.keyValueMap[OrderWorkerKeys.KEY_CURRENT_USER_ID.value].toString()} - OrderId: ${inputData.keyValueMap[OrderWorkerKeys.KEY_ORDEID.value].toString()}")
 
@@ -45,7 +50,7 @@ class OrderDeliverWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx, 
         val shopRepo = ShopApiRepositoryImpl( fsApi )
 
         runBlocking {
-            tempU = userDao.dao.getUserByPhone(inputData.keyValueMap[OrderWorkerKeys.KEY_CURRENT_USER_ID.value].toString().toLong())!!
+            tempU = userRepo.getUserByPhone(inputData.keyValueMap[OrderWorkerKeys.KEY_CURRENT_USER_ID.value].toString().toLong())!!
             orderId = inputData.keyValueMap[OrderWorkerKeys.KEY_ORDEID.value].toString()
             val tempOrder = tempU.userOrders.find {
                 Log.d("FINDING_ORDERID","${it.orderId} == $orderId")
@@ -63,9 +68,11 @@ class OrderDeliverWorker(ctx: Context, workParams:WorkerParameters):Worker(ctx, 
 
             tempOrder.orderDeliveryStatus = OrderDeliveryStatus.STATUS_DELIVERED.value
             tempU.userOrders.add(tempOrder)
-            userDao.dao.updateUser(tempU)
+            userRepo.updateUser(tempU)
 
         }
+
+
 
         DeliveryNotificationService(applicationContext).sendNotification("Your order just got delivered !", "Order for $orderItems just got delivered", orderId.toLong())
 

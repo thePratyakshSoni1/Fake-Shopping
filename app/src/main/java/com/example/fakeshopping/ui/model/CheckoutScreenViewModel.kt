@@ -11,14 +11,20 @@ import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.userdatabase.repository.UserAddress
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
+import com.example.fakeshopping.data.usersettingsdatabse.repository.UserSettingRepository
 import com.example.fakeshopping.utils.PaymentOptionId
 import com.example.fakeshopping.utils.extractIntListStringToIntList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
-class CheckoutScreenViewModel @Inject constructor(private val shopRepo: TestDataRepo, private val userRepo: UserRepository ) :ViewModel(){
+class CheckoutScreenViewModel @Inject constructor(
+    private val shopRepo: TestDataRepo,
+    private val userRepo: UserRepository,
+    private val settingsRepo:UserSettingRepository
+) :ViewModel(){
 
     private val _itemsToBuy = mutableStateMapOf<Int, Int>()
     val itemsToBuy get() = _itemsToBuy as Map<Int, Int>
@@ -182,6 +188,15 @@ class CheckoutScreenViewModel @Inject constructor(private val shopRepo: TestData
 
     fun onLandMarkTextValueChange(newValue:String){
         _currentUserLandmark.value = newValue
+    }
+
+    fun checkAddressSchemeSettingState():Boolean{
+        var isEanbled: Boolean
+        runBlocking {
+            isEanbled = settingsRepo.isAdressChangingSchemeEnabled(currentUserId.toLong())
+        }
+
+        return isEanbled
     }
 
 

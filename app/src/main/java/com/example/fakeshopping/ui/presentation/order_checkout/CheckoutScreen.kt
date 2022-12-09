@@ -34,9 +34,13 @@ import com.example.fakeshopping.utils.PaymentScreenRoutes
 import com.example.fakeshopping.ui.presentation.components.IconButton
 import com.example.fakeshopping.data.userdatabase.repository.UserAddress
 import com.example.fakeshopping.ui.presentation.components.UserAddressTextFiled
+import com.example.fakeshopping.utils.SettingStateDataStore
 
 @Composable
-fun ProductCheckoutScreen( navController:NavHostController, selectedProductQuantity:String, selectedProductIds:String, currentUser:String, onContinueToPayment:(paymentOptionRoute:String, amountToBePaid:Float, itemsToBuy:Map<Int,Int>)->Unit) {
+fun ProductCheckoutScreen(
+    navController:NavHostController, selectedProductQuantity:String, selectedProductIds:String, currentUser:String,
+    onContinueToPayment:(paymentOptionRoute:String, amountToBePaid:Float, itemsToBuy:Map<Int,Int>)->Unit,
+) {
 
     val viewModel: CheckoutScreenViewModel = hiltViewModel()
     val context = LocalContext.current
@@ -66,8 +70,10 @@ fun ProductCheckoutScreen( navController:NavHostController, selectedProductQuant
 
                     if(!viewModel.isStoredAddressSelectedFordelivery.value){
                         if(viewModel.verifyAddress()){
-                                Toast.makeText(context,"Address Updated ✔", Toast.LENGTH_SHORT).show()
+                            if(viewModel.checkAddressSchemeSettingState()) {
+                                Toast.makeText(context, "Address Updated ✔", Toast.LENGTH_SHORT).show()
                                 viewModel.updateUserAddress()
+                            }
                         }else{
                             Toast.makeText(context,"Please enter a valid Address !", Toast.LENGTH_SHORT).show()
                         }
@@ -428,7 +434,7 @@ private fun DeliveryAddressSelectionSection(viewModel: CheckoutScreenViewModel) 
                         modifier = Modifier
                             .size(21.dp)
                             .clip(CircleShape)
-                            .background( if( viewModel.isStoredAddressSelectedFordelivery.value ) ColorYellow else Color.LightGray)
+                            .background(if (viewModel.isStoredAddressSelectedFordelivery.value) ColorYellow else Color.LightGray)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
@@ -447,10 +453,14 @@ private fun DeliveryAddressSelectionSection(viewModel: CheckoutScreenViewModel) 
         }
 
         Card(
-            shape= RoundedCornerShape(12.dp), modifier=Modifier.fillMaxWidth().clickable { viewModel.toggleDeleveryAddressMode(false) },
+            shape= RoundedCornerShape(12.dp), modifier= Modifier
+                .fillMaxWidth()
+                .clickable { viewModel.toggleDeleveryAddressMode(false) },
             border = if(!viewModel.isStoredAddressSelectedFordelivery.value) BorderStroke(1.7.dp, ColorYellow) else null
         ){
-            Column(modifier=Modifier.fillMaxWidth(0.9f).padding(horizontal = 14.dp, vertical = 16.dp)){
+            Column(modifier= Modifier
+                .fillMaxWidth(0.9f)
+                .padding(horizontal = 14.dp, vertical = 16.dp)){
                 Row(
                     Modifier
                         .fillMaxWidth()
@@ -460,7 +470,7 @@ private fun DeliveryAddressSelectionSection(viewModel: CheckoutScreenViewModel) 
                         Modifier
                             .size(21.dp)
                             .clip(CircleShape)
-                            .background( if( viewModel.isStoredAddressSelectedFordelivery.value ) Color.LightGray else ColorYellow))
+                            .background(if (viewModel.isStoredAddressSelectedFordelivery.value) Color.LightGray else ColorYellow))
                     Spacer(Modifier.width(14.dp))
                     Text(
                         text= "Add new address",

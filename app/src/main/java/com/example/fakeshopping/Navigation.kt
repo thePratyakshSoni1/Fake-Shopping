@@ -9,7 +9,6 @@ import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.fakeshopping.data.userdatabase.UserOrders
 import com.example.fakeshopping.ui.presentation.*
 import com.example.fakeshopping.ui.presentation.homscreen.HomeScreen
 import com.example.fakeshopping.ui.presentation.login.LoginScreenNavigation
@@ -18,9 +17,17 @@ import com.example.fakeshopping.ui.presentation.myorders.UserOrdersScreen
 import com.example.fakeshopping.ui.presentation.myprofile.MyProfileScreen
 import com.example.fakeshopping.ui.presentation.order_checkout.ProductCheckoutScreen
 import com.example.fakeshopping.utils.Routes
+import com.example.fakeshopping.utils.SettingStateDataStore
 
 @Composable
-fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getCurrentLoggedUser:()->String?, onContinueToPayment:(paymentOptionRoute:String, amountToPaid:Float, itemsToBuy:List<Int>, itemsToBuyQuantity:List<Int>)->Unit ) {
+fun Navigation(
+    window: Window,
+    onLoggedStateChanged:(userId:String?)->Unit,
+    getCurrentLoggedUser:()->String?,
+    onContinueToPayment:(paymentOptionRoute:String,
+    amountToPaid:Float, itemsToBuy:List<Int>,
+    itemsToBuyQuantity:List<Int>)->Unit
+) {
 
     val navController = rememberNavController()
     var currentUser = getCurrentLoggedUser()
@@ -109,7 +116,8 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getC
                         paymentRoute, amountToBePaid,
                         itemsTobuy.keys.toList(),
                         itemsTobuy.values.toList()  )
-                })
+                }
+                )
         }
 
         composable(
@@ -150,6 +158,18 @@ fun Navigation(window: Window, onLoggedStateChanged:(userId:String?)->Unit, getC
             window.statusBarColor = Color.White.toArgb()
             UserOrderDetailScreen(currentUserId = currentUser!!, orderId = backStackentry.arguments?.getString("orderId")!!.toLong(),
                 { navController.popBackStack() } , rootnavController = navController)
+        }
+        
+        composable(
+            route= "${Routes.settingScreen}"
+        ) {
+            SettingsScreen(navController = navController, currentUser.toString())
+        }
+        
+        composable(
+            route= "${Routes.supportScreen}"
+        ) {
+            SupportScreen(navController = navController)
         }
 
     }

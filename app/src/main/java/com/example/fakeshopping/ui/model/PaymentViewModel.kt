@@ -11,6 +11,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.fakeshopping.data.userdatabase.UserOrders
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
+import com.example.fakeshopping.data.usersettingsdatabse.repository.UserSettingRepository
 import com.example.fakeshopping.utils.OrderDeliveryStatus
 import com.example.fakeshopping.utils.PaymentOptionId
 import com.example.fakeshopping.utils.PaymentScreenRoutes
@@ -25,7 +26,11 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
-class PaymentViewModel @Inject constructor( private val userRepo: UserRepository, val application:Application) : ViewModel() {
+class PaymentViewModel @Inject constructor(
+    private val userRepo: UserRepository
+    , val application:Application,
+    private val settingsRepo: UserSettingRepository
+) : ViewModel() {
 
     private var _currentUserId:String = ""
     private val currentUserId get() = _currentUserId
@@ -127,32 +132,41 @@ class PaymentViewModel @Inject constructor( private val userRepo: UserRepository
             }
             userRepo.updateUser(user)
 
-            val workManager = WorkManager.getInstance(application)
-            workManager.beginUniqueWork(
-                "FSWORKER_ORDERPLACEMENT_UNIQUEWORK",
-                ExistingWorkPolicy.REPLACE,
-                OneTimeWorkRequestBuilder<OrderPlacementWorker>().apply {
-
-                    setInitialDelay( 10L , TimeUnit.SECONDS)
-                    Log.d("ORDERID","Adding : ${tempUserOrderDetail.orderId}")
-
-                    setInputData(
-                        Data.Builder()
-                            .putAll(
-                                mutableMapOf(
-                                    OrderWorkerKeys.KEY_ORDEID.value to tempUserOrderDetail.orderId.toString(),
-                                    OrderWorkerKeys.KEY_CURRENT_USER_ID.value to currentUserId
-                                ) as Map<String, Any>
-                            )
-                            .build()
-                    )
-
-                }.build()
-
-            ).enqueue()
+            if(settingsRepo.isOrderUpdatesNotificationEnabled(currentUserId.toLong())){
+                scheduleOrderUdate(tempUserOrderDetail)
+            }
 
         }
 
+
+    }
+
+    private fun scheduleOrderUdate(tempUserOrderDetail:UserOrders){
+
+
+        val workManager = WorkManager.getInstance(application)
+        workManager.beginUniqueWork(
+            "FSWORKER_ORDERPLACEMENT_UNIQUEWORK",
+            ExistingWorkPolicy.REPLACE,
+            OneTimeWorkRequestBuilder<OrderPlacementWorker>().apply {
+
+                setInitialDelay( 10L , TimeUnit.SECONDS)
+                Log.d("ORDERID","Adding : ${tempUserOrderDetail.orderId}")
+
+                setInputData(
+                    Data.Builder()
+                        .putAll(
+                            mutableMapOf(
+                                OrderWorkerKeys.KEY_ORDEID.value to tempUserOrderDetail.orderId.toString(),
+                                OrderWorkerKeys.KEY_CURRENT_USER_ID.value to currentUserId
+                            ) as Map<String, Any>
+                        )
+                        .build()
+                )
+
+            }.build()
+
+        ).enqueue()
 
     }
 

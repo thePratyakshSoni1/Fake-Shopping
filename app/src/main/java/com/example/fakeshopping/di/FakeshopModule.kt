@@ -11,6 +11,9 @@ import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.userdatabase.UserDatabase
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
 import com.example.fakeshopping.data.userdatabase.repository.UserRepositoryImpl
+import com.example.fakeshopping.data.usersettingsdatabse.UserSettingsDatabase
+import com.example.fakeshopping.data.usersettingsdatabse.repository.UserSettingRepository
+import com.example.fakeshopping.data.usersettingsdatabse.repository.UserSettingsRepositoryImpl
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -71,6 +74,23 @@ object FakeshopModule {
     @Singleton
     fun provideUsersRepository(db: UserDatabase): UserRepository {
         return UserRepositoryImpl(db.dao)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideUsersSettingsDatabase(app:Application): UserSettingsDatabase{
+        return Room.databaseBuilder(
+            app,
+            UserSettingsDatabase::class.java,
+            "users_settings_db"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUsersSettingsRepository(db: UserSettingsDatabase): UserSettingRepository {
+        return UserSettingsRepositoryImpl(db.dao)
     }
 
 
