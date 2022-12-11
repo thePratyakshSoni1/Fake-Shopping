@@ -107,7 +107,19 @@ fun PaymentScreen(onPaymentSuccessNav:()->Unit, stratDestination:String,razorpay
             }
 
             composable(route = PaymentScreenRoutes.walletFragment) {
-                WalletPaymentFragment()
+                WalletPaymentFragment(
+                    razorpay = razorpay,
+                    amount = amoutToBePaid,
+                    currentUser = currentUserId,
+                    sendPayRequest = { payload ->
+                        sendPayRequest(
+                            payload = payload, razorpay = razorpay,
+                            setPaymentWebViewVisibility = { setPaymentWebviewVisibility(it) },
+                            context, onFailurePay = onPaymentFailure,
+                            onSuccessPay = onPaymentSuccess
+                        )
+                    }
+                )
             }
 
         }

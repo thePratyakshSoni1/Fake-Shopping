@@ -122,7 +122,6 @@ private fun SupportScreenActionButtons(
     ){
 
         Box(modifier= Modifier
-            .fillMaxHeight(0.2f)
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(ColorYellow)
@@ -139,7 +138,6 @@ private fun SupportScreenActionButtons(
         Spacer(modifier = Modifier.height(8.dp))
 
         Box(modifier= Modifier
-            .fillMaxHeight(0.2f)
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(Color.Transparent)
