@@ -27,7 +27,10 @@ import com.razorpay.ValidationListener
 import org.json.JSONObject
 
 @Composable
-fun PaymentScreen(onPaymentSuccessNav:()->Unit, stratDestination:String,razorpay: Razorpay, amoutToBePaid:Float, currentUserId: Long, onGoBack:()->Unit, itemsToBuyListString:String, itemsToBuyQuantityListString:String) {
+fun PaymentScreen(
+    onPaymentSuccessNav:()->Unit, stratDestination:String,razorpay: Razorpay, amoutToBePaid:Float, currentUserId: Long,
+    onGoBack:()->Unit, itemsToBuyListString:String, itemsToBuyQuantityListString:String
+) {
 
     val context = LocalContext.current
     val paymentWebView = WebView(context)
@@ -85,7 +88,21 @@ fun PaymentScreen(onPaymentSuccessNav:()->Unit, stratDestination:String,razorpay
             }
 
             composable(route = PaymentScreenRoutes.upiFragment) {
-                UpiPaymentFragment()
+                UpiPaymentFragment(
+                    razorpay = razorpay,
+                    currentUserId,
+                    sendPayRequest = { payload ->
+                        sendPayRequest(
+                            payload,
+                            razorpay,
+                            setPaymentWebViewVisibility = { setPaymentWebviewVisibility(true) },
+                            context,
+                            onSuccessPay = onPaymentSuccess,
+                            onFailurePay = onPaymentFailure
+                        )
+                    },
+                    amountToPay = amoutToBePaid
+                )
             }
 
             composable(route = PaymentScreenRoutes.netBankingFragment) {

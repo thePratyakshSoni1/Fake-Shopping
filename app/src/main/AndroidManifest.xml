@@ -55,4 +55,22 @@
             android:value="rzp_test_mSc4yamsDh8f16" />
     </application>
 
+    <queries>
+        <!-- List of apps which you want to support for Intent pay -->
+        <package android:name="com.google.android.apps.nbu.paisa.user" />
+        <package android:name="com.phonepe.app"/>
+        <package android:name="in.org.npci.upiapp"/>
+        <package android:name="net.one97.paytm"/>
+        <package android:name="in.amazon.mShop.android.shopping"/>
+        <package android:name="com.sbi.upi"/>
+        <package android:name="com.fss.pnbpsp"/>
+        <!--
+             Specific intents you query for,
+             eg: for a custom share UI
+        -->
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+        </intent>
+    </queries>
+
 </manifest>

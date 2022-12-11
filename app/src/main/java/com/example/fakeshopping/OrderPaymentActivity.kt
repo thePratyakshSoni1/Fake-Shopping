@@ -1,5 +1,6 @@
 package com.example.fakeshopping
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -7,8 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.fakeshopping.ui.model.PaymentViewModel
 import com.example.fakeshopping.ui.presentation.order_checkout.PaymentScreen
 import com.example.fakeshopping.ui.theme.FakeShoppingTheme
 import com.example.fakeshopping.utils.Routes
@@ -24,11 +23,14 @@ import org.json.JSONObject
 @AndroidEntryPoint
 class OrderPaymentActivity : PaymentResultListener, ComponentActivity()   {
 
+    private lateinit var razorpay:Razorpay
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val tempVpa = "fakeShopTestVpa@okhdfcbank"
 
-        val razorpay = Razorpay(this@OrderPaymentActivity)
+        razorpay = Razorpay(this@OrderPaymentActivity)
         val startDestination = intent.extras?.getString("FAKESHOPPING_PAYMENT_ROUTE")!!
         val amountToBePaid = intent.extras?.getFloat("FAKESHOPPING_AMOUNT_TO_BE_PAID")!!
         val currentUserId = intent.extras?.getString("FAKESHOPPING_CURRENT_USER_ID")!!
@@ -41,7 +43,7 @@ class OrderPaymentActivity : PaymentResultListener, ComponentActivity()   {
                 val context = LocalContext.current
 
                 LaunchedEffect(key1 = true, block = {
-                    razorpay.isValidVpa("pratyakshsmarty@okhdfcbank", object : ValidateVpaCallback {
+                    razorpay.isValidVpa(tempVpa, object : ValidateVpaCallback {
                         override fun onResponse(b: JSONObject?) {
 //                            if (b)
                             Log.d("RAZOR", b.toString())
@@ -83,8 +85,27 @@ class OrderPaymentActivity : PaymentResultListener, ComponentActivity()   {
     }
 
     override fun onPaymentSuccess(razorpayPaymentId: String?) { }
-
     override fun onPaymentError(p0: Int, p1: String?) { }
 
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (razorpay != null) {
+            Log.d("RPAY","In activity results")
+            razorpay.onActivityResult(requestCode, resultCode, data)
+        }else{
+            Log.d("RPAY","Orderactivity RPay was null in activity results")
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
