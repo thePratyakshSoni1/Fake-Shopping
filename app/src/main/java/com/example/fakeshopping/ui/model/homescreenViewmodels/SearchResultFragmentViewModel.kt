@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchResultFragmentViewModel @Inject constructor(val repository: TestDataRepo, val userRepo: UserRepository ): ViewModel() {
+class SearchResultFragmentViewModel @Inject constructor(val repository: ShopApiRepository, val userRepo: UserRepository ): ViewModel() {
 
     private val _searchString:MutableState<TextFieldValue> = mutableStateOf( TextFieldValue("") )
     private val _resultProducts:SnapshotStateList<ShopApiProductsResponse> = mutableStateListOf()

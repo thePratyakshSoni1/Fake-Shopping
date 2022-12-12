@@ -3,4 +3,11 @@ It's a basic Shop app that uses fakeStore API to fetch products, details and I h
 
 I know it's not good looking right now but as soon as i finish the basic structure and working of application , i will give it's UI a finished look
 
-<img src="Screenshot_2022-07-04-00-31-22-39_f7fb009309b391892b59bc45df42d336.jpg"/>
+<img style="width: 25%" src="preview.jpg"/>
+<img style="width: 25%" src="preview1.jpg"/>
+<img style="width: 25%" src="preview2.jpg"/>
+<img style="width: 25%" src="preview3.jpg"/>
+<img style="width: 25%" src="preview4.jpg"/>
+<img style="width: 25%" src="preview5.jpg"/>
+<img style="width: 25%" src="preview6.jpg"/>
+<img style="width: 25%" src="preview7.jpg"/>

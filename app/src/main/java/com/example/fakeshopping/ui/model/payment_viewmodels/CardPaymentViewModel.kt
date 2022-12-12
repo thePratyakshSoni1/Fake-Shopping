@@ -42,7 +42,7 @@ class CardPaymentViewModel @Inject constructor(private val userRepo:UserReposito
     }
 
     fun isHolderNameValid():Boolean{
-        return !cardHolderName.value.contains( Regex("[^A-Za-z]")) && cardHolderName.value.isNotEmpty()
+        return !cardHolderName.value.contains( Regex("[^A-Za-z\\s]")) && cardHolderName.value.isNotEmpty()
     }
 
     fun isCardNumberValid():Boolean{

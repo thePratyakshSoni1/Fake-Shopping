@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
-class ProductsDetailScreenViewModel @Inject constructor(private val shopRepo: TestDataRepo, private val userRepo:UserRepository, val application: Application) : ViewModel() {
+class ProductsDetailScreenViewModel @Inject constructor(private val shopRepo: ShopApiRepository, private val userRepo:UserRepository, val application: Application) : ViewModel() {
 
     private var _product: MutableState<ShopApiProductsResponse?> = mutableStateOf(null)
     val product get() = _product

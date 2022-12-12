@@ -83,8 +83,7 @@ fun SettingsScreen(navController:NavHostController, currentUserId:String) {
                     isEnabled = viewModel.isOrderupdatesEnabled,
                     onCheckChange = {
                         viewModel.onOrderUpdatesSettingSwitchToggle(it)
-                    },
-                    settingItemEnabled = false
+                    }
                 )
 
                 SettingItem(
@@ -158,8 +157,6 @@ private fun SettingItem(
                 .fillMaxWidth(0.75f),
 
         )
-
-        val x = remember{ mutableStateOf(true) }
 
         Switch(
             checked = isEnabled.value,

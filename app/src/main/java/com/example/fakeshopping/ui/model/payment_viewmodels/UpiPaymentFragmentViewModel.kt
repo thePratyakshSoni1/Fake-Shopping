@@ -30,6 +30,22 @@ class UpiPaymentFragmentViewModel @Inject constructor(): ViewModel() {
         _upiId.value= newvalue
     }
 
+    fun validateUpiFormat():String?{
+
+        var formatError:String? = null
+
+        if( upiId.value.isEmpty() ){
+            formatError = "Enter a UPI id first"
+        }else if( !upiId.value.contains("@") ){
+            formatError = "Enter a valid upi id"
+        }else if( upiId.value.contains(" " ) ){
+            formatError = "UPI id should not contain any spaces"
+        }
+
+        return formatError
+
+    }
+
     fun initViewModelWithuserandRazorpay(rPay:Razorpay, currentuser:Long, amount:Float ){
 
         razorpay = rPay

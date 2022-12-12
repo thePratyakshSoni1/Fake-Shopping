@@ -20,7 +20,7 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
-class ShoppingCartScreenViewModel @Inject constructor(private val userRepo: UserRepository, private val shopRepo: TestDataRepo): ViewModel() {
+class ShoppingCartScreenViewModel @Inject constructor(private val userRepo: UserRepository, private val shopRepo: ShopApiRepository): ViewModel() {
 
     private lateinit var _currentUserId:String
 

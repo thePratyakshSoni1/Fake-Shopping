@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenFragmentViewmodel @Inject constructor(private val repository: TestDataRepo, private val userRepo:UserRepository) : ViewModel() {
+class HomeScreenFragmentViewmodel @Inject constructor(private val repository: ShopApiRepository, private val userRepo:UserRepository) : ViewModel() {
 
     override fun onCleared() {
 

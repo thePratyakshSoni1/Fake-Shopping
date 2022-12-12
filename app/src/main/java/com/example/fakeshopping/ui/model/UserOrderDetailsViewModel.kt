@@ -8,6 +8,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fakeshopping.data.ShopApiProductsResponse
+import com.example.fakeshopping.data.repository.ShopApiRepository
 import com.example.fakeshopping.data.repository.TestDataRepo
 import com.example.fakeshopping.data.userdatabase.UserOrders
 import com.example.fakeshopping.data.userdatabase.repository.UserRepository
@@ -17,7 +18,7 @@ import javax.inject.Inject
 import kotlin.properties.Delegates
 
 @HiltViewModel
-class UserOrderDetailsViewModel @Inject constructor(private val shopRepo:TestDataRepo, private val userRepo:UserRepository ) : ViewModel() {
+class UserOrderDetailsViewModel @Inject constructor(private val shopRepo: ShopApiRepository, private val userRepo:UserRepository ) : ViewModel() {
 
     private lateinit var _currentUserId:String
     val currentUserId get() = _currentUserId

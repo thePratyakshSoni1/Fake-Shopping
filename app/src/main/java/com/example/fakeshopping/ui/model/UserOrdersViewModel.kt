@@ -16,7 +16,7 @@ import javax.inject.Inject
 import kotlin.math.absoluteValue
 
 @HiltViewModel
-class UserOrdersViewModel @Inject constructor( private val userRepo:UserRepository, private val shopRepo:TestDataRepo ) : ViewModel() {
+class UserOrdersViewModel @Inject constructor( private val userRepo:UserRepository, private val shopRepo:ShopApiRepository ) : ViewModel() {
 
     private var _currentUserId:Long = 0L
     val currentUserId:Long get() = _currentUserId

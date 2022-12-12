@@ -92,7 +92,7 @@ fun CardPaymentFragment(
                     backgroundColor = ColorWhiteVariant,
                     textColor = Color.Black,
                     hintColor = Color.DarkGray,
-                    hintTxt = "1234",
+                    hintTxt = "000",
                     textType = KeyboardType.NumberPassword,
                     isPasswordVisible = viewModel.isCvvVisible,
                     onTogglePassword = { viewModel.toggleCvvVisibility() }

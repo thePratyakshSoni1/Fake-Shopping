@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FavouriteScreenViewmodel @Inject constructor( private val userRepo:UserRepository, private val shopRepo: TestDataRepo) : ViewModel(){
+class FavouriteScreenViewmodel @Inject constructor( private val userRepo:UserRepository, private val shopRepo: ShopApiRepository) : ViewModel(){
 
     private lateinit var _currentUserId:String
 

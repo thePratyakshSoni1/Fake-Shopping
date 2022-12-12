@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CheckoutScreenViewModel @Inject constructor(
-    private val shopRepo: TestDataRepo,
+    private val shopRepo: ShopApiRepository,
     private val userRepo: UserRepository,
     private val settingsRepo:UserSettingRepository
 ) :ViewModel(){
