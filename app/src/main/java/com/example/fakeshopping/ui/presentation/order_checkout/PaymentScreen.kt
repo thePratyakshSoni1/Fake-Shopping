@@ -97,9 +97,15 @@ fun PaymentScreen(
                             razorpay,
                             setPaymentWebViewVisibility = { setPaymentWebviewVisibility(true) },
                             context,
-                            onSuccessPay = onPaymentSuccess,
-                            onFailurePay = onPaymentFailure
-                        )
+                            onSuccessPay = { paymentId ->
+                                onPaymentSuccess(paymentId)
+                                paymentScreenNavController.popBackStack()
+                            },
+                            onFailurePay = {
+                                onPaymentFailure()
+                                paymentScreenNavController.popBackStack()
+                            }
+                                )
                     },
                     amountToPay = amoutToBePaid
                 )

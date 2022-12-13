@@ -11,16 +11,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.Role.Companion.Button
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -38,11 +41,18 @@ private object UpiPayRoutes{
 
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun UpiPaymentFragment(razorpay: Razorpay, currentUser:Long, sendPayRequest:(payload:JSONObject)->Unit,  amountToPay:Float){
+fun UpiPaymentFragment(
+    razorpay: Razorpay,
+    currentUser:Long,
+    sendPayRequest:( payload:JSONObject)->Unit,
+    amountToPay:Float
+){
 
     val viewModel = hiltViewModel<UpiPaymentFragmentViewModel>()
     val ctx = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(key1 = true, block = {
         viewModel.initViewModelWithuserandRazorpay(
@@ -79,6 +89,7 @@ fun UpiPaymentFragment(razorpay: Razorpay, currentUser:Long, sendPayRequest:(pay
                     val upiValidationErrors = viewModel.validateUpiFormat()
                     if(upiValidationErrors == null){
                         viewModel.onIntentCollectClick()
+                        keyboardController?.hide()
                         sendPayRequest(viewModel.payload)
                     }else{
                         Toast.makeText(ctx,upiValidationErrors, Toast.LENGTH_SHORT).show()

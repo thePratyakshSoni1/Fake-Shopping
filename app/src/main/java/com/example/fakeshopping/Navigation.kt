@@ -163,12 +163,14 @@ fun Navigation(
         composable(
             route= "${Routes.settingScreen}"
         ) {
+            window.statusBarColor = Color.White.toArgb()
             SettingsScreen(navController = navController, currentUser.toString())
         }
         
         composable(
             route= "${Routes.supportScreen}"
         ) {
+            window.statusBarColor = Color.White.toArgb()
             SupportScreen(navController = navController)
         }
 

@@ -9,9 +9,11 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -28,6 +30,7 @@ import com.squareup.moshi.Json
 import org.json.JSONObject
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CardPaymentFragment(
     sendRequest:(payload:JSONObject) -> Unit,
@@ -37,6 +40,7 @@ fun CardPaymentFragment(
 ) {
 
     val viewModel: CardPaymentViewModel = hiltViewModel()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(key1 = true, block = {
         viewModel.initRazorpayPayloadAndAmout(amountToBePaid, currentUserId = currentUserId)
@@ -108,6 +112,7 @@ fun CardPaymentFragment(
                        if(viewModel.isCardExpiryValid()){
                            if(viewModel.isValidCVV()){
                                viewModel.preparePayloadForRequest()
+                               keyboardController?.hide()
                                sendRequest(viewModel.payload.value!!)
                            }else{
                                Toast.makeText(context,"Invalid CVV", Toast.LENGTH_LONG).show()
